@@ -106,5 +106,4 @@ mingw64/
 # torch
 torch.hash.yml
 
-# makefile
-Makefile
+log.txt

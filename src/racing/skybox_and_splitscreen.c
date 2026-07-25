@@ -20,7 +20,7 @@
 #include "menus.h"
 
 Vp D_802B8880[] = {
-    { { { 640, 480, 511, 0 }, { 640, 480, 511, 0 } } },
+    { { { 640, -480, G_NEW_MAXZ, 0 }, { 640, -480, G_NEW_MAXZ, 0 } } },
 };
 
 static Vtx sSkyboxP1[] = {
@@ -78,13 +78,13 @@ void func_802A3730(struct UnkStruct_800DC5EC* arg0) {
     s32 screenStartY = arg0->screenStartY * 4;
 
     arg0->viewport.vp.vscale[0] = screenWidth;
-    arg0->viewport.vp.vscale[1] = screenHeight;
-    arg0->viewport.vp.vscale[2] = 511;
+    arg0->viewport.vp.vscale[1] = -screenHeight;
+    arg0->viewport.vp.vscale[2] = G_NEW_MAXZ;
     arg0->viewport.vp.vscale[3] = 0;
 
     arg0->viewport.vp.vtrans[0] = screenStartX;
-    arg0->viewport.vp.vtrans[1] = screenStartY;
-    arg0->viewport.vp.vtrans[2] = 511;
+    arg0->viewport.vp.vtrans[1] = -screenStartY;
+    arg0->viewport.vp.vtrans[2] = G_NEW_MAXZ;
     arg0->viewport.vp.vtrans[3] = 0;
 
     gSPViewport(gDisplayListHead++, VIRTUAL_TO_PHYSICAL(&arg0->viewport));

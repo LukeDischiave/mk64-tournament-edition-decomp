@@ -131,7 +131,7 @@ typedef u32 OSYieldResult;
 #define OS_YIELD_DATA_SIZE 0xC00
 #endif
 #else
-#define OS_YIELD_DATA_SIZE 0x900
+#define OS_YIELD_DATA_SIZE 0xC00
 #endif
 
 //! @todo These defines shouldn't exist - PR/rcp.h has them properly defined (ultralib)

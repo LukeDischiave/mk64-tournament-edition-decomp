@@ -20,6 +20,11 @@ glabel gspF3DLXTextStart
 .incbin "bin/lib/PR/f3d/F3DLX.bin"
 glabel gspF3DLXTextEnd
 
+glabel gspF3DEX3TextStart
+.incbin "bin/lib/PR/f3d/F3DEX3_BrZ.code"
+glabel gspF3DEX3TextEnd
+.balign 16
+
 # 0x800DB830 DC430-DD0A0
 glabel rspAspMainStart
 .incbin "bin/lib/PR/audio/aspMain.bin"
@@ -36,6 +41,11 @@ glabel gspF3DEXDataEnd
 glabel gspF3DLXDataStart
 .incbin "bin/lib/PR/f3d/F3DLX_data.bin"
 glabel gspF3DLXDataEnd
+
+glabel gspF3DEX3DataStart
+.incbin "bin/lib/PR/f3d/F3DEX3_BrZ.data"
+glabel gspF3DEX3DataEnd
+.balign 16
 
 # 0x800F4D00 F5900-F5C00
 glabel rspAspMainDataStart

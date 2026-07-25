@@ -283,11 +283,11 @@ void create_gfx_task_structure(void) {
     // Singleplayer race mode and all other game states use F3DEX.
     // http://n64devkit.square7.ch/n64man/ucode/gspF3DEX.htm
     if (gGamestate != RACING || gPlayerCountSelection1 == 1) {
-        gGfxSPTask->task.t.ucode = gspF3DEXTextStart;
-        gGfxSPTask->task.t.ucode_data = gspF3DEXDataStart;
+        gGfxSPTask->task.t.ucode = gspF3DEX3TextStart;
+        gGfxSPTask->task.t.ucode_data = gspF3DEX3DataStart;
     } else {
-        gGfxSPTask->task.t.ucode = gspF3DLXTextStart;
-        gGfxSPTask->task.t.ucode_data = gspF3DLXDataStart;
+        gGfxSPTask->task.t.ucode = gspF3DEX3TextStart;
+        gGfxSPTask->task.t.ucode_data = gspF3DEX3DataStart;
     }
     gGfxSPTask->task.t.flags = 0;
     gGfxSPTask->task.t.flags = OS_TASK_DP_WAIT;

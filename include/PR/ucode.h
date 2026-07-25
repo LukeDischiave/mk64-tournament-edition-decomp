@@ -13,10 +13,14 @@ extern u64 gspF3DEXTextStart[], gspF3DEXTextEnd[];
 
 extern u64 gspF3DLXTextStart[], gspF3DLXTextEnd[];
 
+extern u64 gspF3DEX3TextStart[], gspF3DEX3TextEnd[];
+
 // F3D ucode data
 extern u64 gspF3DEXDataStart[], gspF3DEXDataEnd[];
 
 extern u64 gspF3DLXDataStart[], gspF3DLXDataEnd[];
+
+extern u64 gspF3DEX3DataStart[], gspF3DEX3DataEnd[];
 
 // aspMain (audio) ucode
 extern u64 rspAspMainStart[], rspAspMainEnd[];

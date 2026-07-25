@@ -30,7 +30,7 @@ $(eval $(call validate-option,COMPILER,ido gcc))
 # Add debug tools with 'make DEBUG=1' and modify the macros in include/debug.h
 # Adds crash screen enhancement and activates debug mode
 # Run make clean first
-DEBUG ?= 0
+DEBUG ?= 1
 
 # Avoid undefined behavior. Enables shiftability when making changes
 AVOID_UB ?= 1
@@ -47,7 +47,7 @@ $(eval $(call validate-option,VERSION,us eu.v10 eu.v11))
 
 ifeq      ($(VERSION),us)
   DEFINES += VERSION_US=1
-  GRUCODE   ?= f3dex_old
+  GRUCODE   ?= f3dex2
 else ifeq ($(VERSION),eu.v10)
   DEFINES += VERSION_EU=1 VERSION_EU_V10=1
   GRUCODE   ?= f3dex_old
