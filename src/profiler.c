@@ -128,12 +128,15 @@ void draw_profiler_mode_1(void) {
   (yellow): RSP Duration
   (red): VBlank Duration
 */
+/*
+  Draw Profiler Mode 0. This mode renders text over each other to make it
+  easier to see which processes take the longest quantitatively.
+*/
 void draw_profiler_mode_0(void) {
     s32 i;
     struct ProfilerFrameData* profiler;
 
     u64 clockStart;
-    // Does this naming apply to MK64?
     u64 levelScriptDuration;
     u64 renderDuration;
     u64 taskStart;
@@ -141,6 +144,33 @@ void draw_profiler_mode_0(void) {
     u64 rdpDuration;
     u64 vblank;
     u64 soundDuration;
+
+    // Variables for quantitative text printing
+    s32 cpuMs, rspMs, rdpMs;
+    s32 x, y;
+    
+    // Stack-allocated arrays to bypass .rodata placement
+    char cpuLabel[5];
+    char rspLabel[5];
+    char rdpLabel[5];
+
+    cpuLabel[0] = 'C';
+    cpuLabel[1] = 'P';
+    cpuLabel[2] = 'U';
+    cpuLabel[3] = ' ';
+    cpuLabel[4] = '\0';
+
+    rspLabel[0] = 'R';
+    rspLabel[1] = 'S';
+    rspLabel[2] = 'P';
+    rspLabel[3] = ' ';
+    rspLabel[4] = '\0';
+
+    rdpLabel[0] = 'R';
+    rdpLabel[1] = 'D';
+    rdpLabel[2] = 'P';
+    rdpLabel[3] = ' ';
+    rdpLabel[4] = '\0';
 
     // get the last frame profiler. gCurrentFrameIndex1 has the current frame being processed, so
     // xor it to get the last frame profiler.
@@ -157,10 +187,9 @@ void draw_profiler_mode_0(void) {
     rdpDuration = profiler->gfxTimes[2] - profiler->gfxTimes[0];
     vblank = 0;
 
-    // like above functions, toss the odd bit.
+    // toss the odd bit.
     profiler->numSoundTimes &= 0xFFFE;
 
-    // sound duration seems to be rendered with empty space and not actually drawn.
     for (i = 0; i < profiler->numSoundTimes; i += 2) {
         // calculate sound duration of max - min
         soundDuration = profiler->soundTimes[i + 1] - profiler->soundTimes[i];
@@ -175,45 +204,45 @@ void draw_profiler_mode_0(void) {
         }
     }
 
-    // same as above. toss the odd bit.
+    // toss the odd bit.
     profiler->numSoundTimes &= 0xFFFE;
 
-    //! wrong index used to retrieve vblankTimes, thus empty pairs can
-    //  potentially be passed to draw_profiler_bar, because it could be sending
-    //  pairs that are beyond the numVblankTimes enforced non-odd limit, due to
-    //  using the wrong num value.
     for (i = 0; i < profiler->numSoundTimes; i += 2) {
         vblank += (profiler->vblankTimes[i + 1] - profiler->vblankTimes[i]);
     }
 
-    // Draw top profilers.
-
-    // draw sound duration as the first bar. (red)
-    clockStart = 0;
-    draw_profiler_bar(0, clockStart, clockStart + taskStart, 212, GPACK_RGBA5551(255, 40, 40, 1));
-
-    // draw level script execution duration. (yellow)
-    clockStart += taskStart;
-    draw_profiler_bar(0, clockStart, clockStart + levelScriptDuration, 212, GPACK_RGBA5551(255, 255, 40, 1));
-
-    // draw render duration. (orange)
-    clockStart += levelScriptDuration;
-    draw_profiler_bar(0, clockStart, clockStart + renderDuration, 212, GPACK_RGBA5551(255, 120, 40, 1));
-
     // Two added lines in Mario Kart 64
-    D_800DC568 = (s32) (clockStart + renderDuration);
+    D_800DC568 = (s32) (taskStart + levelScriptDuration + renderDuration);
     D_800DC56C[0] = rdpDuration;
 
-    // Draw bottom profilers.
+    // Convert durations to milliseconds
+    if (osClockRate == 0) {
+        cpuMs = 0;
+        rspMs = 0;
+        rdpMs = 0;
+    } else {
+        cpuMs = (s32) (((taskStart + levelScriptDuration + renderDuration) * 1000) / (s64) osClockRate);
+        rspMs = (s32) ((rspDuration * 1000) / (s64) osClockRate);
+        rdpMs = (s32) ((rdpDuration * 1000) / (s64) osClockRate);
+    }
 
-    // rdp duration (orange)
-    draw_profiler_bar(0, 0, rdpDuration, 216, GPACK_RGBA5551(255, 120, 40, 1));
-    // rsp duration (yellow)
-    draw_profiler_bar(0, 0, rspDuration, 216, GPACK_RGBA5551(255, 255, 40, 1));
-    // vblank duration (red)
-    draw_profiler_bar(0, 0, vblank, 216, GPACK_RGBA5551(255, 40, 40, 1));
+    // Print values
+    load_debug_font();
 
-    draw_reference_profiler_bars();
+    x = 30; 
+    y = 110;
+    debug_print_string(&x, &y, cpuLabel);
+    debug_print_number(&x, &y, cpuMs, 10);
+
+    x = 30; 
+    y = 120;
+    debug_print_string(&x, &y, rspLabel);
+    debug_print_number(&x, &y, rspMs, 10);
+
+    x = 30; 
+    y = 130;
+    debug_print_string(&x, &y, rdpLabel);
+    debug_print_number(&x, &y, rdpMs, 10);
 }
 
 // Similar to draw_screen_borders from SM64, with a hint of draw_profiler

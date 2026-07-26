@@ -30,7 +30,7 @@ $(eval $(call validate-option,COMPILER,ido gcc))
 # Add debug tools with 'make DEBUG=1' and modify the macros in include/debug.h
 # Adds crash screen enhancement and activates debug mode
 # Run make clean first
-DEBUG ?= 0
+DEBUG ?= 1
 
 # Avoid undefined behavior. Enables shiftability when making changes
 AVOID_UB ?= 1

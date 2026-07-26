@@ -1599,6 +1599,7 @@ void player_select_menu_act(struct Controller* controller, u16 controllerIdx) {
                     }
                 }
             
+                // pressing A to select character on character select screen + playing character audio
                 if ((btnAndStick & A_BUTTON) && (gCharacterGridIsSelected[controllerIdx] == 0)) {
                     gCharacterGridIsSelected[controllerIdx] = true;
                     func_800C90F4(controllerIdx, ((sCharacterGridOrder - 1)[gCharacterGridSelections[controllerIdx]] * 0x10) + 0x2900800E);
@@ -1728,6 +1729,7 @@ void player_select_menu_act(struct Controller* controller, u16 controllerIdx) {
                     play_sound2(SOUND_MENU_GO_BACK);
                     break;
                 }
+                // if all characters have been selected, any player can press A to continue to course select 
                 if (btnAndStick & A_BUTTON) {
                     func_8009E1C0();
                     play_sound2(SOUND_MENU_OK_CLICKED);
