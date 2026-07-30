@@ -442,3 +442,6 @@ enum PLACE { FIRST_PLACE, SECOND_PLACE, THIRD_PLACE, FOURTH_PLACE };
 #define FACING_Y_AXIS 0x4000
 #define FACING_X_AXIS 0x8000
 #define FACING_Z_AXIS 0x2000
+
+// offset between digits and their ascii representations
+#define NUM_TO_ASCII_OFFSET 48

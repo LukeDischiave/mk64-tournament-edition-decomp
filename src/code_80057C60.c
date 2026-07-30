@@ -43,6 +43,7 @@
 
 bool gFinished[8];
 f32 gFinishTime[8];
+f32 gWinnerTime;
 s32 D_80165590;
 s32 D_80165594;
 s32 D_80165598;

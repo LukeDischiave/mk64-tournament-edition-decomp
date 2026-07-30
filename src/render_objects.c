@@ -2539,19 +2539,60 @@ void func_8004F3E4(s32 arg0) {
     }
 }
 
-s32 func_8004F674(s32* arg0, s32 arg1) {
-    s32 temp_v0;
-    s32 ret;
+// The numerator is modified and becomes the remainder
+s32 div_s32(s32 *numerator, s32 denominator) {
+    s32 num_init;
+    s32 quotient;
 
-    temp_v0 = *arg0;
-    if (temp_v0 != 0) {
-        ret = temp_v0 / arg1;
-        *arg0 = temp_v0 % arg1;
+    num_init = *numerator;
+    if (num_init != 0) {
+        quotient = num_init / denominator;
+        *numerator = num_init % denominator;
     } else {
-        *arg0 = 0;
-        ret = 0;
+        *numerator = 0;
+        quotient = 0;
     }
-    return ret;
+    return quotient;
+}
+
+// time: in seconds
+// decimal_places: decimal places right of the decimal to show
+// keep_leading_zeroes: If true, shows e.g. 0"01"234 instead of 1"234
+// is_offset_value: Adds a "+" before the time.
+
+// Shows times under 10 minutes
+char* time_to_ascii(f32 time, s32 decimal_places, bool keep_leading_zeroes, bool is_offset_value){
+    s32 time_copy;
+    s8 string_idx = 0;
+    s32 i;
+    s32 decimal_mult = 1;
+    char* time_string = "";
+    s8 foo;
+    for (i = 0; i < decimal_places; i++){
+        decimal_mult = decimal_mult * 10;
+    }
+    time_copy = (s32) (time * decimal_mult);
+    if (is_offset_value){
+        time_string[0] = 0x2B; // +
+        string_idx = 1;
+    }
+    if ((time > 60)  | keep_leading_zeroes){
+        time_string[string_idx++] = (div_s32(&time_copy, 60 * decimal_mult) + NUM_TO_ASCII_OFFSET);
+        time_string[string_idx++] = 39; // '
+    }
+    if ((time > 10) | keep_leading_zeroes){
+        time_string[string_idx++] = (div_s32(&time_copy, 10 * decimal_mult) + NUM_TO_ASCII_OFFSET);
+    }
+    time_string[string_idx++] = (div_s32(&time_copy, decimal_mult) + NUM_TO_ASCII_OFFSET);
+    if (decimal_places > 0){
+        time_string[string_idx++] = 34;
+    }
+    for (i = 0; i < decimal_places; i++){
+        decimal_mult /= 10;
+        time_string[string_idx++] = (div_s32(&time_copy, decimal_mult) + NUM_TO_ASCII_OFFSET);
+    }
+    time_string[string_idx++] = '\0';
+    return time_string;
 }
 
 void func_8004F6D0(s32 arg0) {
@@ -2563,11 +2604,11 @@ void func_8004F6D0(s32 arg0) {
     if (arg0 >= 599999) {
         sp24 = 599999;
     }
-    D_801657D0[0] = func_8004F674(&sp24, 60000);
-    D_801657D0[1] = func_8004F674(&sp24, 6000);
-    D_801657D0[3] = func_8004F674(&sp24, 1000);
-    D_801657D0[4] = func_8004F674(&sp24, 100);
-    D_801657D0[6] = func_8004F674(&sp24, 10);
+    D_801657D0[0] = div_s32(&sp24, 60000);
+    D_801657D0[1] = div_s32(&sp24, 6000);
+    D_801657D0[3] = div_s32(&sp24, 1000);
+    D_801657D0[4] = div_s32(&sp24, 100);
+    D_801657D0[6] = div_s32(&sp24, 10);
     D_801657D0[7] = sp24;
     D_801657D0[2] = 10;
     D_801657D0[5] = 11;
