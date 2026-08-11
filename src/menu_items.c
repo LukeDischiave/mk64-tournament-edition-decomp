@@ -2064,6 +2064,41 @@ void text_draw(s32 column, s32 row, char* text, s32 tracking, f32 scaleX, f32 sc
     print_text2(column, row, text, tracking, scaleX, scaleY, 2);
 }
 
+void text_draw_right(s32 column, s32 row, char* text, s32 tracking, f32 scaleX, f32 scaleY) {
+    s32 stringWidth;
+    stringWidth = get_string_width2(text, tracking, scaleX);
+    print_text2(column - stringWidth, row, text, tracking, scaleX, scaleY, 2);
+}
+
+s32 get_string_width2(char* text, s32 tracking, f32 scaleX){
+    s32 glyphIndex;
+    s32 characterWidth;
+    s32 stringWidth = 0;
+
+    char* temp_string = text;
+    while (*temp_string != 0) {
+        glyphIndex = char_to_glyph_index(temp_string);
+        if (glyphIndex >= 0) {
+            if ((glyphIndex >= 0xD5) && (glyphIndex < 0xE0)) {
+                characterWidth = 0x20;
+            } else {
+                characterWidth = 0xC;
+            }
+            stringWidth += ((characterWidth + tracking) * scaleX);
+        } else if ((glyphIndex != -2) && (glyphIndex == -1)) {
+            stringWidth += ((tracking + 7) * scaleX);
+        } else {
+            return;
+        }
+        if (glyphIndex >= 0x30) {
+            temp_string += 2;
+        } else {
+            temp_string += 1;
+        }
+    }
+    return stringWidth;
+}
+
 void func_80093A30(s32 arg0) {
     func_8009E2A8(D_800F0B1C[arg0]);
 }
@@ -8650,7 +8685,7 @@ void func_800A69C8(UNUSED MenuItem* arg0) {
                 set_text_color(TEXT_YELLOW);
                 finishTimeText = time_to_ascii(gFinishTime[playerId] - gWinnerTime, 3, false, true);
             }
-            print_text1_right(thing->column + 60, thing->row + 92, finishTimeText, 0, 0.7f, 0.7f);
+            text_draw_right(thing->column + 65, thing->row + 92, finishTimeText, 0, 0.7f, 0.7f);
         }
     }
     set_text_color(TEXT_BLUE);
@@ -8889,7 +8924,7 @@ void func_800A6E94(s32 playerCount, s32 playerId, u8* placeAry) {
             finishTimeText = time_to_ascii(gFinishTime[playerId] - gWinnerTime, 3, false, true);
         }
         // right aligned to keep digit significance consistent
-        print_text1_right(temp_s0->column + 60, temp_s0->row + 90, finishTimeText, 0, 0.7f, 0.7f);
+        text_draw_right(temp_s0->column + 65, temp_s0->row + 90, finishTimeText, 0, 0.7f, 0.7f);
     }
 }
 

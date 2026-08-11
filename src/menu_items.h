@@ -359,6 +359,7 @@ s32 func_80092DF8(char*);
 s32 func_80092E1C(char*);
 s32 func_80092EE4(char*);
 s32 get_string_width(char*);
+s32 get_string_width2(char*, s32, f32);
 void set_text_color(s32);
 void func_800930E4(s32, s32, char*);
 void print_text0(s32, s32, char*, s32, f32, f32, s32);
