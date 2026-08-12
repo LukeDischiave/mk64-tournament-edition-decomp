@@ -8924,7 +8924,7 @@ void func_800A6E94(s32 playerCount, s32 playerId, u8* placeAry) {
             finishTimeText = time_to_ascii(gFinishTime[playerId] - gWinnerTime, 3, false, true);
         }
         // right aligned to keep digit significance consistent
-        text_draw_right(temp_s0->column + 65, temp_s0->row + 90, finishTimeText, 0, 0.7f, 0.7f);
+        text_draw_right(temp_s0->column + 65, temp_s0->row + 90, finishTimeText, 0, 0.6f, 0.6f);
     }
 }
 
