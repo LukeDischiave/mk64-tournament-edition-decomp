@@ -259,6 +259,7 @@ void func_80085214();
 
 extern bool gFinished[];
 extern f32 gFinishTime[];
+extern f32 gWinnerTime;
 extern s16 D_800E4730[];
 extern u8** D_800E4770[];
 extern u8** D_800E47A0[];

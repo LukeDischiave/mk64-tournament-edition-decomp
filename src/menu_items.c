@@ -2182,6 +2182,41 @@ void text_draw(s32 column, s32 row, char* text, s32 tracking, f32 scaleX, f32 sc
     print_text2(column, row, text, tracking, scaleX, scaleY, 2);
 }
 
+void text_draw_right(s32 column, s32 row, char* text, s32 tracking, f32 scaleX, f32 scaleY) {
+    s32 stringWidth;
+    stringWidth = get_string_width2(text, tracking, scaleX);
+    print_text2(column - stringWidth, row, text, tracking, scaleX, scaleY, 2);
+}
+
+s32 get_string_width2(char* text, s32 tracking, f32 scaleX){
+    s32 glyphIndex;
+    s32 characterWidth;
+    s32 stringWidth = 0;
+
+    char* temp_string = text;
+    while (*temp_string != 0) {
+        glyphIndex = char_to_glyph_index(temp_string);
+        if (glyphIndex >= 0) {
+            if ((glyphIndex >= 0xD5) && (glyphIndex < 0xE0)) {
+                characterWidth = 0x20;
+            } else {
+                characterWidth = 0xC;
+            }
+            stringWidth += ((characterWidth + tracking) * scaleX);
+        } else if ((glyphIndex != -2) && (glyphIndex == -1)) {
+            stringWidth += ((tracking + 7) * scaleX);
+        } else {
+            return;
+        }
+        if (glyphIndex >= 0x30) {
+            temp_string += 2;
+        } else {
+            temp_string += 1;
+        }
+    }
+    return stringWidth;
+}
+
 void func_80093A30(s32 arg0) {
     func_8009E2A8(D_800F0B1C[arg0]);
 }
@@ -8735,8 +8770,7 @@ void func_800A69C8(UNUSED MenuItem* arg0) {
     s32 var_v1;
     char* temp_s3;
     u8* var_s4;
-    s32 finishTimeCopy;
-    char finishTimeText[8];
+    char* finishTimeText;
 
     for (playerId = 0; playerId < gPlayerCount; playerId++) {
         var_v1 = 0;
@@ -8762,7 +8796,7 @@ void func_800A69C8(UNUSED MenuItem* arg0) {
             set_text_color((s32) gGlobalTimer % 3);
         }
         func_800A79F4(var_s4[0], sp74);
-        text_draw(thing->column + 0x10, thing->row + 0x75 + 10, sp74, 0, 1.0f, 1.0f);
+        text_draw(thing->column + 16, thing->row + 127, sp74, 0, 1.0f, 1.0f);
         print_text1_center_mode_2(D_800E7380[playerId].column, D_800E7380[playerId].row, temp_s3, 0, 0.65f, 1.0f);
 
         // show finish time if finished
@@ -8770,27 +8804,18 @@ void func_800A69C8(UNUSED MenuItem* arg0) {
             // winner gets flashing timer
             if (var_v1 != 1){
                 set_text_color(gGlobalTimer % 3);
+                finishTimeText = time_to_ascii(gFinishTime[playerId], 3, true, false);
             }
             else{
                 set_text_color(TEXT_YELLOW);
+                finishTimeText = time_to_ascii(gFinishTime[playerId] - gWinnerTime, 3, false, true);
             }
-            finishTimeCopy = (s32) (1000 * gFinishTime[playerId]);
-
-            // 48 is the offset from digits to ASCII code string representations
-            finishTimeText[0] = func_8004F674(&finishTimeCopy, 60000) + 48;
-            finishTimeText[1] = 39; // '
-            finishTimeText[2] = func_8004F674(&finishTimeCopy, 10000) + 48;
-            finishTimeText[3] = func_8004F674(&finishTimeCopy, 1000) + 48;
-            finishTimeText[4] = 34; // "
-            finishTimeText[5] = func_8004F674(&finishTimeCopy, 100) + 48;
-            finishTimeText[6] = func_8004F674(&finishTimeCopy, 10) + 48;
-            finishTimeText[7] = finishTimeCopy + 48;
-            text_draw(thing->column, thing->row + 0x75 - 25, finishTimeText, 0, 0.7f, 0.7f);
+            text_draw_right(thing->column + 65, thing->row + 92, finishTimeText, 0, 0.7f, 0.7f);
         }
     }
     set_text_color(TEXT_BLUE);
     // Not a hyphen, that is an EUC-JP character
-    text_draw(0x0000009E, D_800E7300[0].row + 0x6D + 15, "ー", 0, 1.0f, 1.0f);
+    text_draw(0x0000009E, D_800E7300[0].row + 124, "ー", 0, 1.0f, 1.0f);
 }
 
         /*Iterates over all players and, based on the current mode selection, 
@@ -8869,8 +8894,7 @@ void func_800A6E94(s32 playerCount, s32 playerId, u8* placeAry) {
     Unk_D_800E70A0* temp_s0;
     char sp40[3];
     s32 rank;
-    s32 finishTimeCopy;
-    char finishTimeText[8];
+    char* finishTimeText;
 
     // var for drawing scores
     s32 base_xPos_4p;
@@ -8897,9 +8921,9 @@ void func_800A6E94(s32 playerCount, s32 playerId, u8* placeAry) {
 
     // base x and y position for drawing scores
     // x-coord increment will be different for 3p and 4p vs
-    base_xPos_4p = 0x1A; 
-    base_xPos_3p = 0x34;
-    Y_pos = 0x1B;
+    base_xPos_4p = 26; 
+    base_xPos_3p = 52;
+    Y_pos = 27;
     // i: player index
     i = 0;
 
@@ -8975,15 +8999,15 @@ void func_800A6E94(s32 playerCount, s32 playerId, u8* placeAry) {
             }
 
             // calculate x-position to draw vs scores
-            X_pos = (gPlayerCountSelection1 == 3) ? (base_xPos_3p + (i * 0x4E)) : (base_xPos_4p + (i * 0x45));
+            X_pos = (gPlayerCountSelection1 == 3) ? (base_xPos_3p + (i * 78)) : (base_xPos_4p + (i * 69));
 
             // player i points - left-aligned with leftmost visible digit at same X position
             // if single digit (space padded), offset X by space width so digit aligns with double-digit numbers
-            draw_offset = (pointsBuf[0] == ' ') ? -0x5 : 0;
+            draw_offset = (pointsBuf[0] == ' ') ? -5 : 0;
             text_draw(X_pos + draw_offset , Y_pos, pointsBuf, 0, 0.80f, 0.80f);
             i++;
+        }
     }
-}
 
     temp_s0 = &D_800E7300[((playerCount - 2) * 4) + playerId];
     rank = gGPCurrentRaceRankByPlayerId[playerId];
@@ -8992,48 +9016,40 @@ void func_800A6E94(s32 playerCount, s32 playerId, u8* placeAry) {
     } else {
         set_text_color(TEXT_YELLOW);
     }
-    text_draw(temp_s0->column + 4, temp_s0->row + 0x69, "1 ｓ ー", 0, 0.8f, 0.8f);
+    text_draw(temp_s0->column + 4, temp_s0->row + 105, "1 ｓ ー", 0, 0.8f, 0.8f);
     temp_v0 = placeAry + (playerId * 3);
     convert_number_to_ascii(temp_v0[0], sp40); // first place tally for each player
-    text_draw(temp_s0->column + 0x2D, temp_s0->row + 0x69, sp40, 0, 0.8f, 0.8f);
+    text_draw(temp_s0->column + 45, temp_s0->row + 105, sp40, 0, 0.8f, 0.8f);
     if (rank == ++rankIdx) {
         set_text_color(gGlobalTimer % 3);
     } else {
         set_text_color(TEXT_BLUE);
     }
-    text_draw(temp_s0->column + 4, temp_s0->row + 0x78, "2 ｎ ー", 0, 0.8f, 0.8f);
+    text_draw(temp_s0->column + 4, temp_s0->row + 120, "2 ｎ ー", 0, 0.8f, 0.8f);
     convert_number_to_ascii(temp_v0[1], sp40); // second place tally for each player
-    text_draw(temp_s0->column + 0x2D, temp_s0->row + 0x78, sp40, 0, 0.8f, 0.8f);
+    text_draw(temp_s0->column + 45, temp_s0->row + 120, sp40, 0, 0.8f, 0.8f);
     if (++rankIdx == rank) {
         set_text_color(gGlobalTimer % 3);
     } else {
         set_text_color(TEXT_RED);
     }
-    text_draw(temp_s0->column + 4, temp_s0->row + 0x87, "3 ｒ ー", 0, 0.8f, 0.8f);
+    text_draw(temp_s0->column + 4, temp_s0->row + 135, "3 ｒ ー", 0, 0.8f, 0.8f);
     convert_number_to_ascii(temp_v0[2], sp40); // third place tally for each player
-    text_draw(temp_s0->column + 0x2D, temp_s0->row + 0x87, sp40, 0, 0.8f, 0.8f);
+    text_draw(temp_s0->column + 45, temp_s0->row + 135, sp40, 0, 0.8f, 0.8f);
 
     // show time if player has finished
     if (gFinished[playerId]){
         // flash timer for winner
         if (rank == 0){
+            finishTimeText = time_to_ascii(gFinishTime[playerId], 3, true, false);
             set_text_color(gGlobalTimer % 3);
         }
         else{
             set_text_color(TEXT_YELLOW);
+            finishTimeText = time_to_ascii(gFinishTime[playerId] - gWinnerTime, 3, false, true);
         }
-        finishTimeCopy = (s32) (1000 * gFinishTime[playerId]);
-
-        // 48 is the offset from digits to ASCII code string representations
-        finishTimeText[0] = func_8004F674(&finishTimeCopy, 60000) + 48;
-        finishTimeText[1] = 39; // '
-        finishTimeText[2] = func_8004F674(&finishTimeCopy, 10000) + 48;
-        finishTimeText[3] = func_8004F674(&finishTimeCopy, 1000) + 48;
-        finishTimeText[4] = 34; // "
-        finishTimeText[5] = func_8004F674(&finishTimeCopy, 100) + 48;
-        finishTimeText[6] = func_8004F674(&finishTimeCopy, 10) + 48;
-        finishTimeText[7] = finishTimeCopy + 48;
-        text_draw(temp_s0->column + 4, temp_s0->row + 0x5A, finishTimeText, 0, 0.7f, 0.7f);
+        // right aligned to keep digit significance consistent
+        text_draw_right(temp_s0->column + 65, temp_s0->row + 90, finishTimeText, 0, 0.6f, 0.6f);
     }
 }
 
@@ -9161,8 +9177,8 @@ void menu_item_credits_render(MenuItem* arg0) {
 // Originally func_800A7894
 // Presumes that "number" is a 2 digit number. Convert it to a string
 void convert_number_to_ascii(s32 number, char* buffer) {
-    buffer[0] = (number / 0xA) + 0x30;
-    buffer[1] = (number % 0xA) + 0x30;
+    buffer[0] = (number / 10) + NUM_TO_ASCII_OFFSET;
+    buffer[1] = (number % 10) + NUM_TO_ASCII_OFFSET;
     // Terminator
     buffer[2] = 0;
 }

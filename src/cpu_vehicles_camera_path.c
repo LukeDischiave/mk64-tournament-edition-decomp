@@ -1265,6 +1265,9 @@ void update_player_path_completion(s32 playerId, Player* player) {
                 if ((gLapCountByPlayerId[playerId] == 3) && !gFinished[playerId]){
                     gFinished[playerId] = true;
                     gFinishTime[playerId] = time_crossed_finish_line(playerId, previousPlayerZ, playerZ);
+                    if (gFinishTime[playerId] < gWinnerTime){
+                        gWinnerTime = gFinishTime[playerId];
+                    }
                 }
                 if ((gModeSelection == GRAND_PRIX) && (gLapCountByPlayerId[playerId] == 5)) {
                     if (gGPCurrentRaceRankByPlayerIdDup[playerId] == 7) {
@@ -2113,6 +2116,7 @@ void init_players(void) {
         gFinished[i] = false;
         // arbitrary large number to be longer than any vs race
         gFinishTime[i] = 1000000.0f;
+        gWinnerTime = 1000000.0f;
         if (gModeSelection == GRAND_PRIX) {
             if (1) {};
             if (1) {}; // Maybe some debug code?
