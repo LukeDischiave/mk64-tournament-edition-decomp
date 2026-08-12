@@ -121,6 +121,7 @@ void update_vehicles(void);
 void play_cpu_sound_effect(s32, Player*);
 void update_player_timer_sound(s32, Player*);
 void update_player(s32);
+void update_cpu_player(s32, Player*);
 
 void func_8000B140(s32);
 s32 are_in_curve(s32, u16);
