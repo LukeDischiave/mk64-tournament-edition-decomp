@@ -1393,24 +1393,302 @@ void update_player_timer_sound(s32 playerId, UNUSED Player* unused) {
     }
 }
 
-void update_player(s32 playerId) {
-    UNUSED s32 pad[14];
+void update_cpu_player(s32 playerId, Player* player){
     s16 var_a0_2;
     s16 newAngle;
     u16 pathIndex;
-
     f32 distX;
     f32 minAngle;
-
     s16 angle;
     s16 steeringSensitivity;
-
-
     s32 maxAngle;
-    Player* player;
-    UNUSED s32 pad3[10];
     TrackPathPoint* pathPoint;
     f32 onePointFive = 1.5f;
+
+    if ((gIsPlayerNewPathPoint == true) && (gCurrentCourseId != COURSE_AWARD_CEREMONY)) {
+        cpu_behaviour(playerId);
+    }
+    // one update it try to use an item, the other it doesn't
+    if ((playerId & 1) != (gIncrementUpdatePlayer & 1)) {
+        cpu_use_item_strategy(playerId);
+    }
+    update_player_timer_sound(playerId, player);
+    D_80162FD0 = 0;
+    switch (gModeSelection) { /* switch 1; irregular */
+        case 1:               /* switch 1 */
+        case 2:               /* switch 1 */
+        case 3:               /* switch 1 */
+            break;
+        case 0: /* switch 1 */
+            break;
+    }
+    D_801631E0[playerId] = false;
+    if ((player->effects & LOST_RACE_EFFECT) && (gCurrentCourseId != COURSE_AWARD_CEREMONY)) {
+        D_801631E0[playerId] = true;
+    }
+    if ((D_801646CC == 1) || (player->type & PLAYER_CINEMATIC_MODE) ||
+        (gCurrentCourseId == COURSE_AWARD_CEREMONY)) {
+        if (gCurrentCourseId != COURSE_TOADS_TURNPIKE) {
+            gPlayerTrackPositionFactorInstruction[playerId].target = 0.0f;
+        }
+        gPlayerTrackPositionFactorInstruction[playerId].unkC = 0.0f;
+    }
+    if (gPlayerPathIndex > 0) {
+        gPlayerTrackPositionFactorInstruction[playerId].target = 0.0f;
+        gPlayerTrackPositionFactorInstruction[playerId].unkC = 0.0f;
+    }
+    gPlayerPathY[playerId] =
+        gTrackPaths[gPlayerPathIndex][gNearestPathPointByPlayerId[playerId]].posY + 4.3f;
+    if ((D_801631F8[playerId] == 1) && (D_801631E0[playerId] == false)) {
+        func_8002E4C4(player);
+    }
+    if (D_801631E0[playerId] == true) {
+        player->pos[1] = gPlayerPathY[playerId];
+    }
+    D_801631F8[playerId] = D_801631E0[playerId];
+    switch (gCurrentCourseId) {
+        case COURSE_YOSHI_VALLEY:
+        case COURSE_AWARD_CEREMONY:
+            gPlayerTrackPositionFactorInstruction[playerId].target = 0.0f;
+            break;
+        default:
+            break;
+        case COURSE_TOADS_TURNPIKE:
+            update_player_track_position_factor_from_box_trucks(playerId);
+            update_player_track_position_factor_from_buses(playerId);
+            update_player_track_position_factor_from_tanker_truck(playerId);
+            update_player_track_position_factor_from_cars(playerId);
+            break;
+    }
+    if (D_801631E0[playerId] == true) {
+        D_801630E8[playerId] = 0;
+        player->effects &= ~DRIFTING_EFFECT;
+        if ((playerId & 1) != (gIncrementUpdatePlayer & 1)) {
+            apply_cpu_turn(player, 0);
+            regulate_cpu_speed(playerId, gPreviousCpuTargetSpeed[playerId], player);
+            return;
+        }
+        if ((gPlayerCount > 0) && (gPlayerCount < 3) && (D_80163330[playerId] == 1) &&
+            (D_8016334C[playerId] < gGPCurrentRaceRankByPlayerId[playerId])) {
+            gPreviousCpuTargetSpeed[playerId] = 8.333333f;
+        } else if (D_80162FD0 == (s16) 1U) {
+            gPreviousCpuTargetSpeed[playerId] = GET_COURSE_D_0D0096B8(gCCSelection);
+            gPlayerTrackPositionFactorInstruction[playerId].target = -0.5f;
+        } else if (gCurrentTrackConsecutiveCurveCountsPath[sSomeNearestPathPoint] > 0) {
+            gPreviousCpuTargetSpeed[playerId] = GET_COURSE_cpu_CurveTargetSpeed(gCCSelection);
+        } else {
+            gPreviousCpuTargetSpeed[playerId] = GET_COURSE_cpu_NormalTargetSpeed(gCCSelection);
+        }
+        check_ai_crossing_distance(playerId);
+        cpu_track_position_factor(playerId);
+        determine_ideal_cpu_position_offset(playerId, gCurrentNearestPathPoint);
+        distX = gOffsetPosition[0] - player->pos[0];
+        minAngle = gOffsetPosition[2] - player->pos[2];
+        if (!(player->effects & BANANA_SPINOUT_EFFECT) && !(player->effects & DRIVING_SPINOUT_EFFECT) &&
+            !(player->effects & BANANA_NEAR_SPINOUT_EFFECT)) {
+            if (((distX * distX) + (minAngle * minAngle)) > 6400.0f) {
+                if (gPlayerPathIndex == 0) {
+                    func_8000B140(playerId);
+                    if (D_80162FF8[playerId] > 0) {
+                        pathIndex = gCurrentNearestPathPoint + 5;
+                        pathIndex %= gSelectedPathCount;
+                        set_track_offset_position(pathIndex, D_80163090[playerId], gPlayerPathIndex);
+                    }
+                }
+                player->rotation[1] = -get_xz_angle_between_points(player->pos, gOffsetPosition);
+            } else {
+                player->rotation[1] =
+                    gPathExpectedRotation[gPlayerPathIndex]
+                                            [(gCurrentNearestPathPoint + 4) % gSelectedPathCount];
+            }
+        }
+        apply_cpu_turn(player, 0);
+        regulate_cpu_speed(playerId, gPreviousCpuTargetSpeed[playerId], player);
+        return;
+    }
+    if ((D_801630E8[playerId] == 1) || (D_801630E8[playerId] == -1)) {
+        player->effects |= DRIFTING_EFFECT;
+    }
+    if (D_801630E8[playerId] != 0) {
+        sPlayerAngle[playerId] = -get_xz_angle_between_points(player->oldPos, player->pos);
+        var_a0_2 =
+            (gCurrentPathPointExpectedRotationPath[(sSomeNearestPathPoint + 2) % gSelectedPathCount] *
+                0x168) /
+            65535;
+        newAngle = (sPlayerAngle[playerId] * 0x168) / 65535;
+        if (var_a0_2 < -0xB4) {
+            var_a0_2 += 0x168;
+        }
+        if (var_a0_2 > 0xB4) {
+            var_a0_2 -= 0x168;
+        }
+        if (newAngle < -0xB4) {
+            newAngle += 0x168;
+        }
+        if (newAngle > 0xB4) {
+            newAngle -= 0x168;
+        }
+        steeringSensitivity = var_a0_2 - newAngle;
+        if (steeringSensitivity < -0xB4) {
+            steeringSensitivity += 0x168;
+        }
+        if (steeringSensitivity > 0xB4) {
+            steeringSensitivity -= 0x168;
+        }
+        switch (D_801630E8[playerId]) {
+            case -1:
+                if (steeringSensitivity > 5) {
+                    D_801630E8[playerId] = 0;
+                    player->effects &= ~DRIFTING_EFFECT;
+                }
+                break;
+            case 1:
+                if (steeringSensitivity < -5) {
+                    D_801630E8[playerId] = 0;
+                    player->effects &= ~DRIFTING_EFFECT;
+                }
+                break;
+            default:
+                break;
+        }
+    }
+
+    if ((playerId & 1) != (gIncrementUpdatePlayer & 1)) {
+        apply_cpu_turn(player, gPreviousAngleSteering[playerId]);
+        regulate_cpu_speed(playerId, gPreviousCpuTargetSpeed[playerId], player);
+        return;
+    }
+    gIsPlayerInCurve[playerId] = are_in_curve(playerId, sSomeNearestPathPoint);
+    determine_ideal_cpu_position_offset(playerId, sSomeNearestPathPoint);
+    if (gCurrentCourseId != COURSE_AWARD_CEREMONY) {
+        if (gNumPathPointsTraversed[playerId] < 0xB) {
+            pathIndex = gCurrentNearestPathPoint;
+            if ((gNumPathPointsTraversed[playerId] > 0) && (gCurrentCourseId == COURSE_TOADS_TURNPIKE)) {
+                pathIndex += 0x14;
+                pathIndex %= gSelectedPathCount;
+                set_track_offset_position(pathIndex, 0.0f, 0);
+                gPlayerTrackPositionFactorInstruction[playerId].target = 0.0f;
+            } else {
+                pathIndex += 8;
+                pathIndex %= gSelectedPathCount;
+                set_track_offset_position(pathIndex, gTrackPositionFactor[playerId], gPlayerPathIndex);
+                gPlayerTrackPositionFactorInstruction[playerId].current = gTrackPositionFactor[playerId];
+            }
+        }
+        if ((D_80162FD0 == 1) && (D_80162FF8[playerId] == 0)) {
+            pathIndex = gCurrentNearestPathPoint + 7;
+            pathIndex %= gSelectedPathCount;
+            set_track_offset_position(pathIndex, -0.7f, gPlayerPathIndex);
+        }
+        if (1) { } if (1) { } if (1) { } if (1) { } if (1) { } if (1) { }
+        if (gPlayerPathIndex == 0) {
+            func_8000B140(playerId);
+            if (D_80162FF8[playerId] > 0) {
+                pathIndex = gCurrentNearestPathPoint + 5;
+
+                pathIndex %= gSelectedPathCount;
+                set_track_offset_position(pathIndex, D_80163090[playerId], gPlayerPathIndex);
+            }
+        }
+    }
+    if (gCurrentCourseId == COURSE_AWARD_CEREMONY) {
+        switch (D_80163410[playerId]) { /* switch 3; irregular */
+            case 3:                     /* switch 3 */
+                gOffsetPosition[0] = D_80163418[playerId];
+                gOffsetPosition[2] = D_80163438[playerId];
+                break;
+            case 4: /* switch 3 */
+                pathPoint = &gTrackPaths[playerId][(gNearestPathPointByPlayerId[playerId] + 0xA) %
+                                                    gPathCountByPathIndex[playerId]];
+                gOffsetPosition[0] = pathPoint->posX;
+                gOffsetPosition[2] = pathPoint->posZ;
+                break;
+        }
+    }
+    gOffsetPosition[0] = (gPreviousPlayerAiOffsetX[playerId] + gOffsetPosition[0]) * 0.5f; // average
+    gOffsetPosition[2] = (gPreviousPlayerAiOffsetZ[playerId] + gOffsetPosition[2]) * 0.5f; // average
+    gPreviousPlayerAiOffsetX[playerId] = gOffsetPosition[0];
+    gPreviousPlayerAiOffsetZ[playerId] = gOffsetPosition[2];
+    minAngle = onePointFive * 182.0f;
+    maxAngle = -onePointFive * 182.0f;
+
+    angle = -get_xz_angle_between_points(player->pos, gOffsetPosition);
+    angle -= (newAngle = player->rotation[1]);
+    if ((s16) minAngle < angle) {
+        angle = minAngle;
+    }
+    if (angle < (s16) maxAngle) {
+        angle = maxAngle;
+    }
+    steeringSensitivity = GET_COURSE_AISteeringSensitivity;
+    switch (gCurrentTrackSectionTypesPath[playerId]) { /* switch 4; irregular */
+        case RIGHT_CURVE:                              /* switch 4 */
+            if (gTrackPositionFactor[playerId] > (0.5f * 1.0f)) {
+                steeringSensitivity = 0x0014;
+            }
+            if (gTrackPositionFactor[playerId] < -0.5f) {
+                steeringSensitivity = 0x0035;
+            }
+            break;
+        case LEFT_CURVE: /* switch 4 */
+            if (gTrackPositionFactor[playerId] > 0.5f) {
+                steeringSensitivity = 0x0035;
+            }
+            if (gTrackPositionFactor[playerId] < -0.5f) {
+                steeringSensitivity = 0x0014;
+            }
+            break;
+    }
+    if ((cpu_BehaviourState[playerId] == CPU_BEHAVIOUR_STATE_RUNNING) &&
+        ((gTrackPositionFactor[playerId] > 0.9f) || (gTrackPositionFactor[playerId] < -0.9f))) {
+        D_801630E8[playerId] = 0;
+        player->effects &= ~DRIFTING_EFFECT;
+    }
+    if (player->effects & HOP_EFFECT) {
+        switch (D_801630E8[playerId]) {
+            case 1:
+                newAngle = 0x0035;
+                break;
+            case -1:
+                newAngle = -0x0035;
+                break;
+            default:
+                newAngle =
+                    (gPreviousAngleSteering[playerId] + ((angle * steeringSensitivity) / minAngle)) / 2;
+                break;
+        }
+    } else if (player->effects & (UNKNOWN_EFFECT_0x10000000 | MIDAIR_EFFECT | BOOST_RAMP_WOOD_EFFECT)) {
+        newAngle = 0;
+    } else {
+        newAngle = (gPreviousAngleSteering[playerId] + ((angle * steeringSensitivity) / minAngle)) / 2;
+    }
+    apply_cpu_turn(player, newAngle);
+    gPreviousAngleSteering[playerId] = newAngle;
+    if ((gIsPlayerInCurve[playerId] == true) || (D_801630E8[playerId] == 1) ||
+        (D_801630E8[playerId] == -1) ||
+        (player->effects & (UNKNOWN_EFFECT_0x10000000 | MIDAIR_EFFECT | BOOST_RAMP_WOOD_EFFECT))) {
+        cpu_TargetSpeed[playerId] = GET_COURSE_cpu_CurveTargetSpeed(gCCSelection);
+    } else {
+        cpu_TargetSpeed[playerId] = GET_COURSE_cpu_NormalTargetSpeed(gCCSelection);
+    }
+    if ((gTrackPositionFactor[playerId] > 0.9f) || (gTrackPositionFactor[playerId] < -0.9f)) {
+        cpu_TargetSpeed[playerId] = GET_COURSE_cpu_OffTrackTargetSpeed(gCCSelection);
+    }
+    if (D_80162FD0 == 1) {
+        cpu_TargetSpeed[playerId] = GET_COURSE_D_0D0096B8(gCCSelection);
+    }
+    if ((D_801630E8[playerId] == 2) || (D_801630E8[playerId] == -2) || (D_801630E8[playerId] == 3)) {
+        cpu_TargetSpeed[playerId] = 3.3333333f;
+    }
+    gCurrentCpuTargetSpeed = cpu_TargetSpeed[playerId];
+    player->effects &= ~CPU_FAST_EFFECT;
+    gPreviousCpuTargetSpeed[playerId] = gCurrentCpuTargetSpeed;
+    check_ai_crossing_distance(playerId);
+    regulate_cpu_speed(playerId, gCurrentCpuTargetSpeed, player);
+}
+
+void update_player(s32 playerId) {
+    Player* player;
     s8 numPlayer;
 
     player = &gPlayers[playerId];
@@ -1463,286 +1741,7 @@ void update_player(s32 playerId) {
             update_player_path_completion(playerId, player);
 
             if (player->type & PLAYER_CPU) {
-                if ((gIsPlayerNewPathPoint == true) && (gCurrentCourseId != COURSE_AWARD_CEREMONY)) {
-                    cpu_behaviour(playerId);
-                }
-                // one update it try to use an item, the other it doesn't
-                if ((playerId & 1) != (gIncrementUpdatePlayer & 1)) {
-                    cpu_use_item_strategy(playerId);
-                }
-                update_player_timer_sound(playerId, player);
-                D_80162FD0 = 0;
-                switch (gModeSelection) { /* switch 1; irregular */
-                    case 1:               /* switch 1 */
-                    case 2:               /* switch 1 */
-                    case 3:               /* switch 1 */
-                        break;
-                    case 0: /* switch 1 */
-                        break;
-                }
-                D_801631E0[playerId] = false;
-                if ((player->effects & LOST_RACE_EFFECT) && (gCurrentCourseId != COURSE_AWARD_CEREMONY)) {
-                    D_801631E0[playerId] = true;
-                }
-                if ((D_801646CC == 1) || (player->type & PLAYER_CINEMATIC_MODE) ||
-                    (gCurrentCourseId == COURSE_AWARD_CEREMONY)) {
-                    if (gCurrentCourseId != COURSE_TOADS_TURNPIKE) {
-                        gPlayerTrackPositionFactorInstruction[playerId].target = 0.0f;
-                    }
-                    gPlayerTrackPositionFactorInstruction[playerId].unkC = 0.0f;
-                }
-                if (gPlayerPathIndex > 0) {
-                    gPlayerTrackPositionFactorInstruction[playerId].target = 0.0f;
-                    gPlayerTrackPositionFactorInstruction[playerId].unkC = 0.0f;
-                }
-                gPlayerPathY[playerId] =
-                    gTrackPaths[gPlayerPathIndex][gNearestPathPointByPlayerId[playerId]].posY + 4.3f;
-                if ((D_801631F8[playerId] == 1) && (D_801631E0[playerId] == false)) {
-                    func_8002E4C4(player);
-                }
-                if (D_801631E0[playerId] == true) {
-                    player->pos[1] = gPlayerPathY[playerId];
-                }
-                D_801631F8[playerId] = D_801631E0[playerId];
-                switch (gCurrentCourseId) {
-                    case COURSE_YOSHI_VALLEY:
-                    case COURSE_AWARD_CEREMONY:
-                        gPlayerTrackPositionFactorInstruction[playerId].target = 0.0f;
-                        break;
-                    default:
-                        break;
-                    case COURSE_TOADS_TURNPIKE:
-                        update_player_track_position_factor_from_box_trucks(playerId);
-                        update_player_track_position_factor_from_buses(playerId);
-                        update_player_track_position_factor_from_tanker_truck(playerId);
-                        update_player_track_position_factor_from_cars(playerId);
-                        break;
-                }
-                if (D_801631E0[playerId] == true) {
-                    D_801630E8[playerId] = 0;
-                    player->effects &= ~DRIFTING_EFFECT;
-                    if ((playerId & 1) != (gIncrementUpdatePlayer & 1)) {
-                        apply_cpu_turn(player, 0);
-                        regulate_cpu_speed(playerId, gPreviousCpuTargetSpeed[playerId], player);
-                        return;
-                    }
-                    if ((gPlayerCount > 0) && (gPlayerCount < 3) && (D_80163330[playerId] == 1) &&
-                        (D_8016334C[playerId] < gGPCurrentRaceRankByPlayerId[playerId])) {
-                        gPreviousCpuTargetSpeed[playerId] = 8.333333f;
-                    } else if (D_80162FD0 == (s16) 1U) {
-                        gPreviousCpuTargetSpeed[playerId] = GET_COURSE_D_0D0096B8(gCCSelection);
-                        gPlayerTrackPositionFactorInstruction[playerId].target = -0.5f;
-                    } else if (gCurrentTrackConsecutiveCurveCountsPath[sSomeNearestPathPoint] > 0) {
-                        gPreviousCpuTargetSpeed[playerId] = GET_COURSE_cpu_CurveTargetSpeed(gCCSelection);
-                    } else {
-                        gPreviousCpuTargetSpeed[playerId] = GET_COURSE_cpu_NormalTargetSpeed(gCCSelection);
-                    }
-                    check_ai_crossing_distance(playerId);
-                    cpu_track_position_factor(playerId);
-                    determine_ideal_cpu_position_offset(playerId, gCurrentNearestPathPoint);
-                    distX = gOffsetPosition[0] - player->pos[0];
-                    minAngle = gOffsetPosition[2] - player->pos[2];
-                    if (!(player->effects & BANANA_SPINOUT_EFFECT) && !(player->effects & DRIVING_SPINOUT_EFFECT) &&
-                        !(player->effects & BANANA_NEAR_SPINOUT_EFFECT)) {
-                        if (((distX * distX) + (minAngle * minAngle)) > 6400.0f) {
-                            if (gPlayerPathIndex == 0) {
-                                func_8000B140(playerId);
-                                if (D_80162FF8[playerId] > 0) {
-                                    pathIndex = gCurrentNearestPathPoint + 5;
-                                    pathIndex %= gSelectedPathCount;
-                                    set_track_offset_position(pathIndex, D_80163090[playerId], gPlayerPathIndex);
-                                }
-                            }
-                            player->rotation[1] = -get_xz_angle_between_points(player->pos, gOffsetPosition);
-                        } else {
-                            player->rotation[1] =
-                                gPathExpectedRotation[gPlayerPathIndex]
-                                                     [(gCurrentNearestPathPoint + 4) % gSelectedPathCount];
-                        }
-                    }
-                    apply_cpu_turn(player, 0);
-                    regulate_cpu_speed(playerId, gPreviousCpuTargetSpeed[playerId], player);
-                    return;
-                }
-                if ((D_801630E8[playerId] == 1) || (D_801630E8[playerId] == -1)) {
-                    player->effects |= DRIFTING_EFFECT;
-                }
-                if (D_801630E8[playerId] != 0) {
-                    sPlayerAngle[playerId] = -get_xz_angle_between_points(player->oldPos, player->pos);
-                    var_a0_2 =
-                        (gCurrentPathPointExpectedRotationPath[(sSomeNearestPathPoint + 2) % gSelectedPathCount] *
-                         0x168) /
-                        65535;
-                    newAngle = (sPlayerAngle[playerId] * 0x168) / 65535;
-                    if (var_a0_2 < -0xB4) {
-                        var_a0_2 += 0x168;
-                    }
-                    if (var_a0_2 > 0xB4) {
-                        var_a0_2 -= 0x168;
-                    }
-                    if (newAngle < -0xB4) {
-                        newAngle += 0x168;
-                    }
-                    if (newAngle > 0xB4) {
-                        newAngle -= 0x168;
-                    }
-                    steeringSensitivity = var_a0_2 - newAngle;
-                    if (steeringSensitivity < -0xB4) {
-                        steeringSensitivity += 0x168;
-                    }
-                    if (steeringSensitivity > 0xB4) {
-                        steeringSensitivity -= 0x168;
-                    }
-                    switch (D_801630E8[playerId]) {
-                        case -1:
-                            if (steeringSensitivity > 5) {
-                                D_801630E8[playerId] = 0;
-                                player->effects &= ~DRIFTING_EFFECT;
-                            }
-                            break;
-                        case 1:
-                            if (steeringSensitivity < -5) {
-                                D_801630E8[playerId] = 0;
-                                player->effects &= ~DRIFTING_EFFECT;
-                            }
-                            break;
-                        default:
-                            break;
-                    }
-                }
-
-                if ((playerId & 1) != (gIncrementUpdatePlayer & 1)) {
-                    apply_cpu_turn(player, gPreviousAngleSteering[playerId]);
-                    regulate_cpu_speed(playerId, gPreviousCpuTargetSpeed[playerId], player);
-                    return;
-                }
-                gIsPlayerInCurve[playerId] = are_in_curve(playerId, sSomeNearestPathPoint);
-                determine_ideal_cpu_position_offset(playerId, sSomeNearestPathPoint);
-                if (gCurrentCourseId != COURSE_AWARD_CEREMONY) {
-                    if (gNumPathPointsTraversed[playerId] < 0xB) {
-                        pathIndex = gCurrentNearestPathPoint;
-                        if ((gNumPathPointsTraversed[playerId] > 0) && (gCurrentCourseId == COURSE_TOADS_TURNPIKE)) {
-                            pathIndex += 0x14;
-                            pathIndex %= gSelectedPathCount;
-                            set_track_offset_position(pathIndex, 0.0f, 0);
-                            gPlayerTrackPositionFactorInstruction[playerId].target = 0.0f;
-                        } else {
-                            pathIndex += 8;
-                            pathIndex %= gSelectedPathCount;
-                            set_track_offset_position(pathIndex, gTrackPositionFactor[playerId], gPlayerPathIndex);
-                            gPlayerTrackPositionFactorInstruction[playerId].current = gTrackPositionFactor[playerId];
-                        }
-                    }
-                    if ((D_80162FD0 == 1) && (D_80162FF8[playerId] == 0)) {
-                        pathIndex = gCurrentNearestPathPoint + 7;
-                        pathIndex %= gSelectedPathCount;
-                        set_track_offset_position(pathIndex, -0.7f, gPlayerPathIndex);
-                    }
-                    if (1) { } if (1) { } if (1) { } if (1) { } if (1) { } if (1) { }
-                    if (gPlayerPathIndex == 0) {
-                        func_8000B140(playerId);
-                        if (D_80162FF8[playerId] > 0) {
-                            pathIndex = gCurrentNearestPathPoint + 5;
-
-                            pathIndex %= gSelectedPathCount;
-                            set_track_offset_position(pathIndex, D_80163090[playerId], gPlayerPathIndex);
-                        }
-                    }
-                }
-                if (gCurrentCourseId == COURSE_AWARD_CEREMONY) {
-                    switch (D_80163410[playerId]) { /* switch 3; irregular */
-                        case 3:                     /* switch 3 */
-                            gOffsetPosition[0] = D_80163418[playerId];
-                            gOffsetPosition[2] = D_80163438[playerId];
-                            break;
-                        case 4: /* switch 3 */
-                            pathPoint = &gTrackPaths[playerId][(gNearestPathPointByPlayerId[playerId] + 0xA) %
-                                                               gPathCountByPathIndex[playerId]];
-                            gOffsetPosition[0] = pathPoint->posX;
-                            gOffsetPosition[2] = pathPoint->posZ;
-                            break;
-                    }
-                }
-                gOffsetPosition[0] = (gPreviousPlayerAiOffsetX[playerId] + gOffsetPosition[0]) * 0.5f; // average
-                gOffsetPosition[2] = (gPreviousPlayerAiOffsetZ[playerId] + gOffsetPosition[2]) * 0.5f; // average
-                gPreviousPlayerAiOffsetX[playerId] = gOffsetPosition[0];
-                gPreviousPlayerAiOffsetZ[playerId] = gOffsetPosition[2];
-                minAngle = onePointFive * 182.0f;
-                maxAngle = -onePointFive * 182.0f;
-
-                angle = -get_xz_angle_between_points(player->pos, gOffsetPosition);
-                angle -= (newAngle = player->rotation[1]);
-                if ((s16) minAngle < angle) {
-                    angle = minAngle;
-                }
-                if (angle < (s16) maxAngle) {
-                    angle = maxAngle;
-                }
-                steeringSensitivity = GET_COURSE_AISteeringSensitivity;
-                switch (gCurrentTrackSectionTypesPath[playerId]) { /* switch 4; irregular */
-                    case RIGHT_CURVE:                              /* switch 4 */
-                        if (gTrackPositionFactor[playerId] > (0.5f * 1.0f)) {
-                            steeringSensitivity = 0x0014;
-                        }
-                        if (gTrackPositionFactor[playerId] < -0.5f) {
-                            steeringSensitivity = 0x0035;
-                        }
-                        break;
-                    case LEFT_CURVE: /* switch 4 */
-                        if (gTrackPositionFactor[playerId] > 0.5f) {
-                            steeringSensitivity = 0x0035;
-                        }
-                        if (gTrackPositionFactor[playerId] < -0.5f) {
-                            steeringSensitivity = 0x0014;
-                        }
-                        break;
-                }
-                if ((cpu_BehaviourState[playerId] == CPU_BEHAVIOUR_STATE_RUNNING) &&
-                    ((gTrackPositionFactor[playerId] > 0.9f) || (gTrackPositionFactor[playerId] < -0.9f))) {
-                    D_801630E8[playerId] = 0;
-                    player->effects &= ~DRIFTING_EFFECT;
-                }
-                if (player->effects & HOP_EFFECT) {
-                    switch (D_801630E8[playerId]) {
-                        case 1:
-                            newAngle = 0x0035;
-                            break;
-                        case -1:
-                            newAngle = -0x0035;
-                            break;
-                        default:
-                            newAngle =
-                                (gPreviousAngleSteering[playerId] + ((angle * steeringSensitivity) / minAngle)) / 2;
-                            break;
-                    }
-                } else if (player->effects & (UNKNOWN_EFFECT_0x10000000 | MIDAIR_EFFECT | BOOST_RAMP_WOOD_EFFECT)) {
-                    newAngle = 0;
-                } else {
-                    newAngle = (gPreviousAngleSteering[playerId] + ((angle * steeringSensitivity) / minAngle)) / 2;
-                }
-                apply_cpu_turn(player, newAngle);
-                gPreviousAngleSteering[playerId] = newAngle;
-                if ((gIsPlayerInCurve[playerId] == true) || (D_801630E8[playerId] == 1) ||
-                    (D_801630E8[playerId] == -1) ||
-                    (player->effects & (UNKNOWN_EFFECT_0x10000000 | MIDAIR_EFFECT | BOOST_RAMP_WOOD_EFFECT))) {
-                    cpu_TargetSpeed[playerId] = GET_COURSE_cpu_CurveTargetSpeed(gCCSelection);
-                } else {
-                    cpu_TargetSpeed[playerId] = GET_COURSE_cpu_NormalTargetSpeed(gCCSelection);
-                }
-                if ((gTrackPositionFactor[playerId] > 0.9f) || (gTrackPositionFactor[playerId] < -0.9f)) {
-                    cpu_TargetSpeed[playerId] = GET_COURSE_cpu_OffTrackTargetSpeed(gCCSelection);
-                }
-                if (D_80162FD0 == 1) {
-                    cpu_TargetSpeed[playerId] = GET_COURSE_D_0D0096B8(gCCSelection);
-                }
-                if ((D_801630E8[playerId] == 2) || (D_801630E8[playerId] == -2) || (D_801630E8[playerId] == 3)) {
-                    cpu_TargetSpeed[playerId] = 3.3333333f;
-                }
-                gCurrentCpuTargetSpeed = cpu_TargetSpeed[playerId];
-                player->effects &= ~CPU_FAST_EFFECT;
-                gPreviousCpuTargetSpeed[playerId] = gCurrentCpuTargetSpeed;
-                check_ai_crossing_distance(playerId);
-                regulate_cpu_speed(playerId, gCurrentCpuTargetSpeed, player);
+                update_cpu_player(playerId, player);
             }
         }
 
