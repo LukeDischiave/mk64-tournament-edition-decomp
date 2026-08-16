@@ -48,8 +48,8 @@ Refactor of Mario Kart 64 ROM hack with configuration menu
 
 
 ### CREDITS
-Megamech and the mk64 decomp team 
-Please credit Climatee, Zserf, and dntn31 if you decided to fork this specific repo
+- Megamech and the mk64 decomp team 
+- Please credit Climatee, Zserf, and dntn31 if you decided to fork this specific repo
 
 ## Building (Windows)
 This decompilation of Mario Kart 64 pursues historical and educational elements within the game found via taking it apart and putting it back together. Inspiration to do so not only emanates from the game's hardware and technology but also its immensely positive effects on the cultures and families of nearly every nationality.
