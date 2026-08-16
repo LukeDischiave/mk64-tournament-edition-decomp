@@ -1,4 +1,60 @@
-# Mario Kart 64   
+# Refactor of Mario Kart 64 Multiplayer ROM Hack (Tournament Edition)
+Refactor of Mario Kart 64 ROM hack with configuration menu
+
+## Features
+### TITLE MENU Options
+- Game Pacing: Default/original (15-30fps)* / 30fps** / 60fps
+- Widescreen: 4:3*(default) / 16:9**
+- MP Music: Disabled*(Default) / Enabled**
+- VS Detail: Original*(Default) / Enabled** / Both
+  - Multiplayer DKJP Boat: Enabled* / Disabled**
+  - Multiplayer KD Train: Original* / Full**
+- Practice mode: Disabled*(Default) / Enabled**
+- Extra mode: Disabled*(Default) / Enabled**
+- Force Minimap: Disabled*(Default) / prog view**, map
+- Anti-aliasing: Disabled*(Default) / Enabled**
+
+### FEATURES
+- Tie-logic: Based off the in-game timer instead of player port
+- Lightning: Single white flash so easier on the eyes
+- VS timer: Players' finish timers are displayed on the points screen
+- Sounds: No c-up or c-right sounds during the race
+- Slow pause: players must hold pause for roughly .5 sec to mitigate accidental pauses
+
+### CHARACTER SELECT Options
+- Character Stats: Original / All Yoshi / All Wario
+
+### VS MAP SELECT Screen
+- Track Selection: VA*(Original) / Kaillera**(in-order) / Random
+
+### VS MATCH RANKING Screen
+- Include total score by player as 3/2/1 (3P) or 3/2/1/0 (4P)
+- Include ability to adjust VS scores if all players hold L + R bumpers and use C-UP and C-DOWN to adjust scores
+
+## TODO
+
+### TITLE MENU Options
+
+### GAME SELECT Menu Options
+- Course Z Scaler: Original / Minimum / Maximum
+- Randomizer
+- Engine (150cc): 150cc / 200cc
+- Engine (Extra): 100cc / 150cc / 200cc
+- Practice mode bots
+
+### VS MAP SELECT Screen
+- VS Track Order: All Cups (Random Order)
+- VS Bomb Karts: Enabled / Disabled
+- VS CPUs: None / 1 / 2 / 3 / 4 / 5 / 6 / 7
+
+### VS MATCH RANKING Screen
+
+
+### CREDITS
+- Megamech and the mk64 decomp team 
+Please credit Climatee, Zserf, and dntn31 if you decided to fork this specific repo
+
+## Building (Windows)
 This decompilation of Mario Kart 64 pursues historical and educational elements within the game found via taking it apart and putting it back together. Inspiration to do so not only emanates from the game's hardware and technology but also its immensely positive effects on the cultures and families of nearly every nationality.
 
 This repository does not contain assets. Compiling requires asset extraction from a prior copy of the game.
