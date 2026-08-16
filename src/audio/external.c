@@ -2931,6 +2931,7 @@ void func_800C9060(u8 playerId, u32 soundBits) {
     }
 }
 
+// plays character voice
 void func_800C90F4(u8 playerId, u32 soundBits) {
     if (D_800EA108 == 0) {
         switch (D_800EA0EC[playerId]) {

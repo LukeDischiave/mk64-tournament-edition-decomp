@@ -196,6 +196,7 @@ void clean_effect(Player* player, s8 playerIndex) {
     player->effects = (s32) (player->effects & ~AB_SPIN_EFFECT);
 }
 
+// rollover/green shell tumbles
 void func_8008C528(Player* player, s8 playerIndex) {
     UNUSED s32 sp24;
     s32 temp_v1;
@@ -217,7 +218,7 @@ void func_8008C528(Player* player, s8 playerIndex) {
     player->unk_042 = 0;
     if (((player->type & PLAYER_HUMAN) == PLAYER_HUMAN) &&
         ((player->type & PLAYER_INVISIBLE_OR_BOMB) != PLAYER_INVISIBLE_OR_BOMB)) {
-        func_800C90F4(playerIndex, (temp_v1 * 0x10) + 0x29008005);
+        func_800C90F4(playerIndex, (player->characterId * 0x10) + 0x29008005);
         func_800C9060(playerIndex, SOUND_ACTION_EXPLOSION);
     } else {
         play_cpu_sound_effect(playerIndex, player);
