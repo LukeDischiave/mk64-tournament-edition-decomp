@@ -38,20 +38,17 @@ Refactor of Mario Kart 64 ROM hack with configuration menu
 ### GAME SELECT Menu Options
 - Course Z Scaler: Original / Minimum / Maximum
 - Randomizer
-- Engine (150cc): 150cc / 200cc
-- Engine (Extra): 100cc / 150cc / 200cc
-- Practice mode bots
+- 200cc
+- Improved practice mode bots
 
 ### VS MAP SELECT Screen
-- VS Track Order: All Cups (Random Order)
-- VS Bomb Karts: Enabled / Disabled
-- VS CPUs: None / 1 / 2 / 3 / 4 / 5 / 6 / 7
+
 
 ### VS MATCH RANKING Screen
 
 
 ### CREDITS
-- Megamech and the mk64 decomp team 
+Megamech and the mk64 decomp team 
 Please credit Climatee, Zserf, and dntn31 if you decided to fork this specific repo
 
 ## Building (Windows)
