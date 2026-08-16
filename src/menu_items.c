@@ -460,7 +460,7 @@ static s32 getRandomTrackOrderIndex(COURSES courseId) {
     return -1;
 }
 
-static COURSES getRandomNextCourseId(void) {
+COURSES getRandomNextCourseId(void) {
     s32 currentIndex;
 
     if (!sRandomTrackOrderInitialized || (sRandomTrackOrderMode != gTournamentCourseMode)) {
@@ -1613,6 +1613,7 @@ void func_80092290(s32 arg0, s32* arg1, s32* arg2) {
     }
 }
 
+// display time
 void func_80092500(void) {
 
     switch (gModeSelection) {
@@ -1625,6 +1626,7 @@ void func_80092500(void) {
     }
 }
 
+// display loss in GP mode
 void func_80092564(void) {
     add_menu_item(MENU_ITEM_TYPE_0AC, 0, 0, MENU_ITEM_PRIORITY_0);
     func_8005D18C();
@@ -1642,7 +1644,7 @@ void func_800925CC(void) {
     }
 }
 
-// 4p and 3p vs menu?
+// 4p and 3p vs menu
 void func_80092604(void) {
     add_menu_item(MENU_ITEM_TYPE_0B0, 0, 0, MENU_ITEM_PRIORITY_0);
 }
@@ -4795,7 +4797,7 @@ void func_8009CE1C(void) {
     }
 }
 
-// fade out transition for versus menu
+// fade out transition for menu
 void func_8009CE64(s32 arg0) {
     s32 thing;
     s32 var_a1;
@@ -4831,16 +4833,11 @@ void func_8009CE64(s32 arg0) {
                 var_a1 = 0;
                 temp_v0 = find_menu_items(0x000000B0);
                 if (temp_v0 != NULL) {
+                    // EVENT HANDLER FOR VS MENU
                     switch (temp_v0->state) { /* switch 8; irregular */
                         case 10:              /* switch 8 */
-                            if (gModeSelection == VERSUS) {
-                                // custom function: go to next track
-                                gotoNextTrack();
-                            }
-                            else {
-                                // retry (vs mode)
-                                func_802903B0();
-                            }
+                            // go to next track in selection (VS mode)
+                            gotoNextTrack();
                             break;
                         case 11: /* switch 8 */
                             // course change (vs mode)
@@ -4852,8 +4849,8 @@ void func_8009CE64(s32 arg0) {
                             break;
                         default: /* switch 8 */
                         case 13: /* switch 8 */
-                            // quit (vs mode)
-                            func_80290338();
+                            // retry (vs mode)
+                            func_802903B0();
                             break;
                     }
                 } else {
@@ -5960,7 +5957,7 @@ void render_custom_overlay(void) {
     };
 
     /* per-option label arrays */
-    static const char* tracks_labels[] = {"VA", "kaillera", "kaillera mmf", "random"};
+    static const char* tracks_labels[] = {"VA", "kaillera", "random"};
     static const char* stats_labels[] = {"all yoshi", "default", "all wario"};
     static const char* scaling_labels[] = {"default", "30fps", "60fps"};
     static const char* widescreen_labels[] = {"default", "enabled"};
@@ -5977,7 +5974,7 @@ void render_custom_overlay(void) {
     print_text1_center_mode_1(x, y - 0x28, "WEATHERTON  ABNEY  CLIMATEE  ZSERF  DNTN31", 0, 0.60f, 0.60f);
 
     // version / date (smaller) - left-aligned to start under 'KART'
-    print_text1_left(x + 0x78, y + 0x06, "TE V2026-08-08 RELEASE 1.3b", 0, 0.65f, 0.65f);
+    print_text1_left(x + 0x78, y + 0x06, "TE V2026-08-16 RELEASE 1.4b", 0, 0.65f, 0.65f);
 
     // option name placeholders (second column) and values (third column)
     for (i = 0; i < CUSTOM_MENU_ROWS; i++) {
@@ -6089,131 +6086,8 @@ void render_custom_overlay(void) {
     }
 }
 
-
-s16 getNextCourseId(void) {
-    switch (gTournamentCourseMode) {
-        // va track order
-        case 0:
-            switch(gCurrentCourseId) {
-                case COURSE_LUIGI_RACEWAY:
-                    return COURSE_MOO_MOO_FARM;
-                case COURSE_MOO_MOO_FARM:
-                    return COURSE_KOOPA_BEACH;
-                case COURSE_KOOPA_BEACH:
-                    return COURSE_KALAMARI_DESERT;
-                case COURSE_KALAMARI_DESERT:
-                    return COURSE_DK_JUNGLE;
-                case COURSE_DK_JUNGLE:
-                    return COURSE_YOSHI_VALLEY;
-                case COURSE_YOSHI_VALLEY:
-                    return COURSE_BANSHEE_BOARDWALK;
-                case COURSE_BANSHEE_BOARDWALK:
-                    return COURSE_RAINBOW_ROAD;
-                case COURSE_RAINBOW_ROAD:
-                    return COURSE_WARIO_STADIUM;
-                case COURSE_WARIO_STADIUM:
-                    return COURSE_SHERBET_LAND;
-                case COURSE_SHERBET_LAND:
-                    return COURSE_ROYAL_RACEWAY;
-                case COURSE_ROYAL_RACEWAY:
-                    return COURSE_BOWSER_CASTLE;
-                case COURSE_BOWSER_CASTLE:
-                    return COURSE_TOADS_TURNPIKE;
-                case COURSE_TOADS_TURNPIKE:
-                    return COURSE_FRAPPE_SNOWLAND;
-                case COURSE_FRAPPE_SNOWLAND:
-                    return COURSE_CHOCO_MOUNTAIN;
-                case COURSE_CHOCO_MOUNTAIN:
-                    return COURSE_MARIO_RACEWAY;
-                case COURSE_MARIO_RACEWAY:
-                    return COURSE_LUIGI_RACEWAY;
-                default:
-                    break;
-            }
-        // kaillera track order
-        case 1:
-            switch(gCurrentCourseId) {
-                case COURSE_LUIGI_RACEWAY:
-                    return COURSE_MOO_MOO_FARM;
-                case COURSE_MOO_MOO_FARM:
-                    return COURSE_KOOPA_BEACH;
-                case COURSE_KOOPA_BEACH:
-                    return COURSE_KALAMARI_DESERT;
-                case COURSE_KALAMARI_DESERT:
-                    return COURSE_TOADS_TURNPIKE;
-                case COURSE_TOADS_TURNPIKE:
-                    return COURSE_FRAPPE_SNOWLAND;
-                case COURSE_FRAPPE_SNOWLAND:
-                    return COURSE_CHOCO_MOUNTAIN;
-                case COURSE_CHOCO_MOUNTAIN:
-                    return COURSE_MARIO_RACEWAY;
-                case COURSE_MARIO_RACEWAY:
-                    return COURSE_WARIO_STADIUM;
-                case COURSE_WARIO_STADIUM:
-                    return COURSE_SHERBET_LAND;
-                case COURSE_SHERBET_LAND:
-                    return COURSE_ROYAL_RACEWAY;
-                case COURSE_ROYAL_RACEWAY:
-                    return COURSE_BOWSER_CASTLE;
-                case COURSE_BOWSER_CASTLE:
-                    return COURSE_DK_JUNGLE;
-                case COURSE_DK_JUNGLE:
-                    return COURSE_YOSHI_VALLEY;
-                case COURSE_YOSHI_VALLEY:
-                    return COURSE_BANSHEE_BOARDWALK;
-                case COURSE_BANSHEE_BOARDWALK:
-                    return COURSE_RAINBOW_ROAD;
-                case COURSE_RAINBOW_ROAD:
-                    return COURSE_LUIGI_RACEWAY;
-                default:
-                    break;
-            }
-        // kaillera mmf track order
-        case 2:
-            switch(gCurrentCourseId) {
-                case COURSE_LUIGI_RACEWAY:
-                    return COURSE_MOO_MOO_FARM;
-                case COURSE_MOO_MOO_FARM:
-                    return COURSE_KOOPA_BEACH;
-                case COURSE_KOOPA_BEACH:
-                    return COURSE_KALAMARI_DESERT;
-                case COURSE_KALAMARI_DESERT:
-                    return COURSE_TOADS_TURNPIKE;
-                case COURSE_TOADS_TURNPIKE:
-                    return COURSE_FRAPPE_SNOWLAND;
-                case COURSE_FRAPPE_SNOWLAND:
-                    return COURSE_CHOCO_MOUNTAIN;
-                case COURSE_CHOCO_MOUNTAIN:
-                    return COURSE_MARIO_RACEWAY;
-                case COURSE_MARIO_RACEWAY:
-                    return COURSE_WARIO_STADIUM;
-                case COURSE_WARIO_STADIUM:
-                    return COURSE_SHERBET_LAND;
-                case COURSE_SHERBET_LAND:
-                    return COURSE_ROYAL_RACEWAY;
-                case COURSE_ROYAL_RACEWAY:
-                    return COURSE_BOWSER_CASTLE;
-                case COURSE_BOWSER_CASTLE:
-                    return COURSE_DK_JUNGLE;
-                case COURSE_DK_JUNGLE:
-                    return COURSE_YOSHI_VALLEY;
-                case COURSE_YOSHI_VALLEY:
-                    return COURSE_BANSHEE_BOARDWALK;
-                case COURSE_BANSHEE_BOARDWALK:
-                    return COURSE_MOO_MOO_FARM;
-                default:
-                    break;
-            }
-        // randomized track order
-        case 3:
-            return getRandomNextCourseId();
-        default:
-            break;
-    }
-
-}
-
 // Get the course abbreviation string for the next course
+// used for printing on the vs points screen
 char* getNextCourseAbbrString(void) {
     switch (gTournamentCourseMode) {
         // va track order
@@ -6292,43 +6166,8 @@ char* getNextCourseAbbrString(void) {
                 default:
                     break;
             }
-        // kaillera mmf track order
+        // random track order
         case 2:
-            switch(gCurrentCourseId) {
-                case COURSE_LUIGI_RACEWAY:
-                    return "MMF";
-                case COURSE_MOO_MOO_FARM:
-                    return "KTB";
-                case COURSE_KOOPA_BEACH:
-                    return "KD";
-                case COURSE_KALAMARI_DESERT:
-                    return "TT";
-                case COURSE_TOADS_TURNPIKE:
-                    return "FS";
-                case COURSE_FRAPPE_SNOWLAND:
-                    return "CM";
-                case COURSE_CHOCO_MOUNTAIN:
-                    return "MR";
-                case COURSE_MARIO_RACEWAY:
-                    return "WS";
-                case COURSE_WARIO_STADIUM:
-                    return "SL";
-                case COURSE_SHERBET_LAND:
-                    return "RRy";
-                case COURSE_ROYAL_RACEWAY:
-                    return "BC";
-                case COURSE_BOWSER_CASTLE:
-                    return "DKJP";
-                case COURSE_DK_JUNGLE:
-                    return "YV";
-                case COURSE_YOSHI_VALLEY:
-                    return "BB";
-                case COURSE_BANSHEE_BOARDWALK:
-                    return "MMF";
-                default:
-                    break;
-            }
-        case 3:
             return getCourseAbbrFromId(getRandomNextCourseId());
         default:
             break;
@@ -7184,13 +7023,7 @@ void func_800A1500(MenuItem* arg0) {
             break;
     }
 }
-/*Renders a course selection menu item by determining the course ID 
-from the cup/course order based on the item's type, displaying 
-the course image and name bar, and optionally drawing a flashing 
-selection highlight with a checkmark icon (from D_02004A0C) if the
- course has been completed (as indicated by func_800B639C returning 
- a non-negative value). Note: the ^ 0 XOR on arg0->row is a deliberate
-  no-op used to force a specific register allocation in the compiled output.*/
+
 void func_800A15EC(MenuItem* arg0) {
     s16 courseId = gCupCourseOrder[(arg0->type - 0x7C) / 4][(arg0->type - 0x7C) % 4];
     gDisplayListHead =
@@ -7207,14 +7040,7 @@ void func_800A15EC(MenuItem* arg0) {
             func_8009C204(gDisplayListHead, segmented_to_virtual_dupe(&D_02004A0C), arg0->column + 0x20, arg0->row, 2);
     }
 }
-/*This function renders a menu item by interpolating between 
-two consecutive colors from a color table (D_800E74D0) based on param1 
-as a blend factor (0-256) and param2 as the base color index, 
-setting the result as the display list's primitive color, 
-and then drawing a menu texture at the item's column and row position. 
-The color interpolation cycles through three colors using modular
- arithmetic, creating a smooth color transition effect for the menu 
- element.*/
+
 void func_800A1780(MenuItem* arg0) {
     RGBA16* temp_a1;
     RGBA16* temp_v1;
@@ -8590,15 +8416,6 @@ void func_800A6034(MenuItem* arg0) {
     }
 }
 
-/*Renders a pause menu overlay by drawing a darkened background box 
-and displaying pause button text entries, with behavior depending on 
-the menu's state: when in state 0, it fades in using param1 as an 
-opacity factor and draws text in yellow, otherwise it draws at 
-full opacity with a rainbow text effect and a selection cursor 
-(func_800A66A8) positioned based on the current state. 
-Additionally, if param2 is positive, it draws horizontal 
-screen-wipe bars from the top and bottom edges of the
- screen, used for a transition or iris effect.*/
 void func_800A6154(MenuItem* arg0) {
     UNUSED s32 stackPadding0;
     UNUSED s32 stackPadding1;
@@ -8687,7 +8504,7 @@ void func_800A638C(MenuItem* arg0) {
 
     if (arg0->state >= 10) {
         for (var_s1 = 0; var_s1 < 4; var_s1++) {
-            /* For 3P/4P Versus, change the first option to "CONTINUE TO <next course>" */
+            // For 3P/4P Versus, change the first option to "CONTINUE TO <next course>" 
             text_rainbow_effect(arg0->state - 0xA, var_s1, TEXT_GREEN);
             if ((var_s1 == 0) && (gModeSelection == VERSUS) && ((gPlayerCount == 3) || (gPlayerCount == 4))) {
                 continueText = "CONTINUE TO ";
@@ -8695,6 +8512,10 @@ void func_800A638C(MenuItem* arg0) {
                 xOffset = (get_string_width(continueText) * 0.8f) + 1.0f;
                 print_text_mode_1((s32) (0x00000069 + xOffset), 0xAE + (0xF * var_s1) + 10, getNextCourseAbbrString(),
                                   0, 0.8f, 0.8f);
+            // For 3P/4P Versus, change the last option to "RETRY"
+            } else if ((var_s1 == 3) && (gModeSelection == VERSUS) && ((gPlayerCount == 3) || (gPlayerCount == 4))) {
+                print_text_mode_1(0x00000069, 0xAE + (0xF * var_s1) + 10, gTextPauseButton[1], 0, 0.8f,
+                                  0.8f);
             } else {
                 print_text_mode_1(0x00000069, 0xAE + (0xF * var_s1) + 10, gTextPauseButton[var_s1 + 1], 0, 0.8f,
                                   0.8f);
@@ -8704,14 +8525,6 @@ void func_800A638C(MenuItem* arg0) {
     }
 }
 
-        /*This function animates and renders a 3D menu item with a spinning/tumbling effect
-         by applying cumulative rotations around all three axes 
-         (with rotation speeds derived from arg0->paramf and arg0->subState)
-          and a scaling factor, while gradually decaying paramf toward a minimum of 1.5.
-           It constructs a composite transformation matrix (scale → Y rotation → Z rotation → X rotation
-            → translation to the item's grid position), pushes it to the display list,
-             and draws the display list D_0D003090 with cloud-surface blending and modulated 
-             intensity-alpha combine mode.*/
 void func_800A66A8(MenuItem* arg0, Unk_D_800E70A0* arg1) {
     Mtx* mtx;
     f32 tmp;

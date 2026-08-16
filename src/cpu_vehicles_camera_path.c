@@ -3577,10 +3577,11 @@ void func_80019D2C(Camera* camera, Player* player, s32 arg2) {
     }
 }
 
+// camera stuff for drivers points gp mode
 void func_80019DE4(void) {
     D_801646CC = 1;
 }
-
+// camera init for vs winner
 void func_80019DF4(void) {
     s32 i;
     s32 playerId = gGPCurrentRacePlayerIdByRank[0];
@@ -3593,6 +3594,7 @@ void func_80019DF4(void) {
     D_801646CC = 2;
 }
 
+// time trials camera stuff
 void func_80019E58(void) {
     D_80164680[0] = 1;
     func_80019890(0, 0);

@@ -2759,6 +2759,7 @@ void func_8005D0FC(s32 playerId) {
     }
 }
 
+// rank scroll?
 void func_8005D18C(void) {
     if ((gModeSelection == GRAND_PRIX) && (gPlayerCountSelection1 == TIME_TRIALS)) {
         D_801657D8 = 1;

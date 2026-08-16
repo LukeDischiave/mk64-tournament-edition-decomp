@@ -37,6 +37,7 @@ extern u16 D_802BA048;
 extern s32 D_8018D2AC;
 extern s32 D_802B91E0;
 extern s16 getNextCourseId(void);
+extern COURSES getRandomNextCourseId(void);
 
 u16 D_802BA030;
 u16 D_802BA032;
@@ -70,10 +71,7 @@ void func_8028DF38(void) {
         controllers++;
     }
 }
-/*This function increments a tracked statistic for the winning player
- by updating a specific global array based on the current player count.
-  Additionally, it calls a helper function using the winner's index, 
-  updates a state variable, and initializes the demo timer.*/
+
 void func_8028E028(void) {
 
     switch (gPlayerCountSelection1) {
@@ -150,16 +148,22 @@ void func_8028E298(void) {
     update_player_rankings();
 }
 
+// check if race is finished and moves next course select pointer in cup
+// does not actually advance to next track when "CONTINUE TO..." is pressed
 void func_8028E3A0(void) {
+    // if race is cleared
     if (D_80150120) {
-
+        // if race cleared and last course was finished
         if (gCourseIndexInCup == COURSE_FOUR) {
             gGotoMode = ENDING;
+        // if not in the last course of the cup
         } else {
+            // cup number
             D_800DC544++;
             gCourseIndexInCup++;
             gGotoMode = RACING;
         }
+    // if race is not cleared
     } else {
         D_800DC544++;
         gCourseIndexInCup++;
@@ -167,6 +171,7 @@ void func_8028E3A0(void) {
     }
 }
 
+// zoom animation for vs finish
 void func_8028E438(void) {
     struct UnkStruct_800DC5EC* temp_v0 = &D_8015F480[gPlayerWinningIndex];
     s32 phi_v1_4;
@@ -242,11 +247,14 @@ void func_8028E438(void) {
     }
 }
 
+// function for zoom animation finish
+// I dont think this is ever called in VS mode
 void func_8028E678(void) {
     s32 phi_a0_10 = 0;
 
     D_800DC5B0 = 1;
 
+    // camera zoom flag
     switch (D_8015F894) {
         case 0:
             // Unused switch?
@@ -1200,12 +1208,56 @@ void func_802903B0(void) {
 
 // proceed to next track in selection (vs mode only)
 void gotoNextTrack(void) {
-    s16 nextCourse;
+    s8 prevCupSelection;
+
+    // Kaillera track order
+    if (gTournamentCourseMode == 1) {
+
+        if (!(gCourseIndexInCup == COURSE_FOUR)) {
+            gCourseIndexInCup++;        
+        } else {
+            gCourseIndexInCup = 0;
+            gCupSelection++;           // Move to next cup
+            if (gCupSelection > 3) {
+                gCupSelection = 0; 
+            }
+        }
+        gCurrentCourseId = gCupCourseOrder[gCupSelection][gCourseIndexInCup];
+    } 
+    // VA track order
+    else if (gTournamentCourseMode == 0) {
+        if (!(gCourseIndexInCup == COURSE_FOUR)) {
+            gCourseIndexInCup++;        
+        } else {
+            gCourseIndexInCup = 0;
+            prevCupSelection = gCupSelection;
+
+            // mushroom -> special
+            if (prevCupSelection == 0) {
+                gCupSelection = SPECIAL_CUP; 
+            }
+            // special -> star
+            else if (prevCupSelection == 3) {
+                gCupSelection = STAR_CUP;
+            }
+            // star -> flower
+            else if (prevCupSelection == 2) {
+                gCupSelection = FLOWER_CUP;
+            }
+            // to mushroom cup default
+            else {
+                gCupSelection = MUSHROOM_CUP; 
+            }
+        }
+        gCurrentCourseId = gCupCourseOrder[gCupSelection][gCourseIndexInCup];
+    }
+    // random track order
+    else if (gTournamentCourseMode == 2) {
+        gCurrentCourseId = getRandomNextCourseId();
+    }
 
     gIsInQuitToMenuTransition = 1;
     gQuitToMenuTransitionCounter = 5;
-    nextCourse = getNextCourseId();
-    gCurrentCourseId = nextCourse;
     gGotoMode = RACING;
 }
 

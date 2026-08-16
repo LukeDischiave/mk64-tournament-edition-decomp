@@ -1103,6 +1103,7 @@ void func_8002A5F4(Vec3f arg0, f32 arg1, Vec3f arg2, f32 arg3, f32 arg4) {
     }
 }
 
+// set start boost function
 void func_8002A704(Player* player, s8 playerIndex) {
     player->effects |= MUSHROOM_EFFECT;
     player->triggers &= ~START_BOOST_TRIGGER;

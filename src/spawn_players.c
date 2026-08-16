@@ -89,8 +89,8 @@ void spawn_player(Player* player, s8 playerIndex, f32 startingRow, f32 startingC
             && (playerType & PLAYER_HUMAN)
             && !(playerType & PLAYER_INVISIBLE_OR_BOMB)
             && !(getLiveControllerBits() & (1 << playerIndex))) {
-                playerType = (playerType & ~PLAYER_HUMAN | PLAYER_CPU);
-                gPracticeCPU[playerIndex] = true; 
+                playerType |= PLAYER_CPU;
+                gPracticeCPU[playerIndex] = true;
             }
         }
         
