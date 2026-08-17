@@ -3,52 +3,47 @@ Refactor of Mario Kart 64 ROM hack with configuration menu
 
 ## Features
 ### TITLE MENU Options
-- Game Pacing: Default/original (15-30fps)* / 30fps** / 60fps
-- Widescreen: 4:3*(default) / 16:9**
-- MP Music: Disabled*(Default) / Enabled**
-- VS Detail: Original*(Default) / Enabled** / Both
-  - Multiplayer DKJP Boat: Enabled* / Disabled**
-  - Multiplayer KD Train: Original* / Full**
-- Practice mode: Disabled*(Default) / Enabled**
-- Extra mode: Disabled*(Default) / Enabled**
-- Force Minimap: Disabled*(Default) / prog view**, map
-- Anti-aliasing: Disabled*(Default) / Enabled**
+- Widescreen: 4:3(default) / 16:9
+- Game Pacing: Default/original (15-30fps) / 30fps (emulator) / 60fps
+- MP Music: (Default) / Enabled
+- VS Detail: Original / High
+  - Multiplayer DKJP Boat: Enabled / Disabled
+  - Multiplayer KD Train: Original / Full
+- Track Selection: Original / Kaillera / Random
+- Practice mode: Default / Enabled
+- Extra mode: Disabled(Default) / Enabled
+- Force Minimap: Default / Prog view / Map
+- Anti-aliasing: Default / Disabled
 
-### FEATURES
-- Tie-logic: Based off the in-game timer instead of player port
-- Lightning: Single white flash so easier on the eyes
-- VS timer: Players' finish timers are displayed on the points screen
-- Sounds: No c-up or c-right sounds during the race
+### NON-MENU FEATURES
+- Tie-logic: Same-frame finishes now determined by in-game timer instead of player port
+- Lightning: Now a single white flash instead of many alterating blue and white flashes
+- VS timer: Players' finish time are displayed on the VS points screen
+- Sounds: No c-up or c-right sounds during VS races
 - Slow pause: players must hold pause for roughly .5 sec to mitigate accidental pauses
 
-### CHARACTER SELECT Options
-- Character Stats: Original / All Yoshi / All Wario
-
-### VS MAP SELECT Screen
-- Track Selection: VA*(Original) / Kaillera**(in-order) / Random
 
 ### VS MATCH RANKING Screen
-- Include total score by player as 3/2/1 (3P) or 3/2/1/0 (4P)
+- Include total score by player as 2/1/0 (3P) or 3/2/1/0 (4P)
 - Include ability to adjust VS scores if all players hold L + R bumpers and use C-UP and C-DOWN to adjust scores
 
 ## TODO
-
 ### TITLE MENU Options
-
-### GAME SELECT Menu Options
+- 200cc
 - Course Z Scaler: Original / Minimum / Maximum
 - Randomizer
-- 200cc
-- Improved practice mode bots
+- Improve practice mode bots
 
-### VS MAP SELECT Screen
-
-
-### VS MATCH RANKING Screen
-
+## NON-MENU Stuff
+- Patch shortcuts
+- Update microcode + optimize code so that 4p runs at 30fps on console + fix jumbotron
+- internal rollback netcode for future online play
+- storing item stats for each VS race, export data somehow
+- DKR-inspired timer for 3p/4p vs mode 
+- Amped Up-style practice bots
 
 ### CREDITS
-- Megamech and the mk64 decomp team 
+- Megamech + the mk64 decomp team, and abitalive
 - Please credit Climatee, Zserf, and dntn31 if you decided to fork this specific repo
 
 ## Building (Windows)
