@@ -347,7 +347,7 @@ s32 func_800B5218(void) {
         return 0;
     }
 }
-
+// save cup points
 void func_800B536C(s32 arg0) {
     u8* points;
     u8 tmp;

@@ -862,5 +862,6 @@ extern s8 gTournamentShellLimit; // unused
 extern s8 gTournamentForceMap;
 extern s8 gTournamentExtraMode;
 extern s8 gPracticeMode;
+extern s8 gVSPoints[8];
 
 #endif

@@ -383,6 +383,7 @@ void spawn_player(Player* player, s8 playerIndex, f32 startingRow, f32 startingC
 void func_80039AE4(void) {
     switch (gActiveScreenMode) {
         case SCREEN_MODE_1P:
+        case SCREEN_MODE_3P_4P_SPLITSCREEN:
             if (gGamestate == ENDING) {
                 D_80165578 = 0x898;
                 D_8016557A = 0;
@@ -833,12 +834,14 @@ void spawn_players_4p_battle(f32* arg0, f32* arg1, f32 arg2) {
 }
 
 void func_8003BE30(void) {
+    //spawn character spawning at the highest point earner
     spawn_player(gPlayerOne, 0, -2770.774f, -345.187f, -34.6f, 0.0f, gCharacterIdByGPOverallRank[0],
                  PLAYER_EXISTS | PLAYER_CPU | PLAYER_START_SEQUENCE);
     spawn_player(gPlayerTwo, 1, -3691.506f, -6.822f, -6.95f, 36400.0f, gCharacterIdByGPOverallRank[1],
                  PLAYER_EXISTS | PLAYER_CPU | PLAYER_START_SEQUENCE);
     spawn_player(gPlayerThree, 2, -3475.028f, -998.485f, -8.059f, 45500.0f, gCharacterIdByGPOverallRank[2],
                  PLAYER_EXISTS | PLAYER_CPU | PLAYER_START_SEQUENCE);
+    // this spawns players at the start of the race based off of pole position
     if (D_802874D8.unk1D >= 3) {
         spawn_player(gPlayerFour, 3, -3025.772f, 110.039f, -23.224f, 28210.0f, D_802874D8.unk1E,
                      PLAYER_EXISTS | PLAYER_CPU | PLAYER_START_SEQUENCE);

@@ -1195,6 +1195,7 @@ void render_hud_4p_multi(void) {
     }
 }
 
+// stores player params somewhere
 void func_80059820(s32 playerId) {
     hud_player* temp_v0;
 
@@ -1411,7 +1412,7 @@ void func_80059D00(void) {
         func_800744CC();
     }
 }
-
+// various init for items in podium finish?
 void func_8005A070(void) {
     func_8008C1D8(&D_80165678);
     gMatrixHudCount = 0;

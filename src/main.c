@@ -115,7 +115,7 @@ f32 D_80150118;
 
 u16 wasSoftReset;
 u16 D_8015011E;
-
+// race cleared
 s32 D_80150120;
 s32 gGotoMode;
 UNUSED s32 D_80150128;

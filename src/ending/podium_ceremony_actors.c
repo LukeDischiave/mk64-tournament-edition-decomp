@@ -449,17 +449,18 @@ void podium_ceremony_loop(void) {
     gMatrixObjectCount = 0;
     D_802874FC = 0;
     update_camera_podium_ceremony();
-    func_80028F70();
-    func_80022744();
+    func_80028F70(); // something graphical
+    func_80022744(); // also something graphical?
     func_80059AC8();
     func_80059AC8();
     func_8005A070();
+    // if kart is not moving?
     if (D_802874D8.unk1C != 0) {
         func_8001C14C();
         update_vehicles();
     }
     render_podium_ceremony();
-    func_80281540();
+    func_80281540(); // does literally nothing
 #if DVDL
     display_dvdl();
 #endif

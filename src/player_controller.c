@@ -616,6 +616,7 @@ void func_80028D3C(Player* player, Camera* camera, s8 playerId, s8 screenId) {
     }
 }
 
+// moves the kart
 void func_80028E70(Player* player, Camera* camera, s8 playerId, s8 screenId) {
     if ((player->type & PLAYER_EXISTS) == PLAYER_EXISTS) {
         switch (gGamestate) {
@@ -4880,6 +4881,7 @@ void func_80038BE4(Player* player, s16 arg1) {
     player->unk_08C = (player->currentSpeed * player->currentSpeed) / 25.0f;
 }
 
+// run karts in podium finish?
 void func_80038C6C(Player* player, UNUSED Camera* camera, s8 screenId, s8 playerId) {
     Vec3f sp114 = { 0.0, 0.0, 1.0 };
     Vec3f sp108 = { 0.0, 0.0, 0.0 };

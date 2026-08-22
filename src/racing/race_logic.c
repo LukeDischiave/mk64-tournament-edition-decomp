@@ -12,6 +12,7 @@
 #include "main.h"
 #include "code_800029B0.h"
 #include "code_80057C60.h"
+#include "code_80281780.h"
 #include "update_objects.h"
 #include "menu_items.h"
 #include "cpu_vehicles_camera_path.h"
@@ -27,6 +28,10 @@
 #include "spawn_players.h"
 
 #pragma intrinsic(sqrtf)
+
+extern s8 gVSPoints[8];
+extern s8 gCharacterSelections[8];
+extern s8 gCharacterIdByGPOverallRank[8];
 
 extern s16 gPlayerBalloonCount[];
 extern s16 D_8016348C;
@@ -750,6 +755,7 @@ void func_8028F4E8(void) {
     }
 }
 
+// function to set the Vp scale
 void func_8028F588(void) {
     s16 screenWidth;
 
@@ -996,7 +1002,7 @@ void end_demo_update(void) {
         gMenuSelection = LOGO_INTRO_MENU;
     }
 }
-
+// controls races
 void func_8028FCBC(void) {
     Player* ply = &gPlayers[0];
     s32 i;
@@ -1206,9 +1212,47 @@ void func_802903B0(void) {
     gGotoMode = RACING;
 }
 
+// builds vs standings for ALL 8 players :)
+// if a player gets 0 points, an empty slot should never be ranked above
+// resolves ties based off of port priority (no other way)
+void build_vs_standings() {
+    s32 i,j;
+    u8 order[8];
+    u8 key;
+    u8 defaultCharacterIds[] = { 1, 2, 3, 4, 5, 6, 7, 0 };
+
+
+    for (i=0; i<8; i++) {
+        // default characters are mario for non-players
+        gCharacterIdByGPOverallRank[i] = 0;
+    }
+
+    for (i=0; i < gPlayerCount; i++) {
+        order[i] = i;
+    }
+
+
+    // insertion sort
+    for (i=1; i<8; i++) {
+        key = order[i];
+        j = i -1;
+        while (j>=0 && gVSPoints[order[j]] < gVSPoints[key]) {
+            order[j+1] = order[j];
+            j--;
+        }
+        order[j+1] = key;
+    }
+
+    for (i=0; i<gPlayerCount; i++) {
+        gCharacterIdByGPOverallRank[i] = gCharacterSelections[order[i]];
+    }
+    gPlayerWinningIndex = order[0];
+}
+
 // proceed to next track in selection (vs mode only)
 void gotoNextTrack(void) {
     s8 prevCupSelection;
+    u8 i;
 
     // Kaillera track order
     if (gTournamentCourseMode == 1) {
@@ -1221,8 +1265,18 @@ void gotoNextTrack(void) {
             if (gCupSelection > 3) {
                 gCupSelection = 0; 
             }
+            
         }
-        gCurrentCourseId = gCupCourseOrder[gCupSelection][gCourseIndexInCup];
+        if (gCurrentCourseId == COURSE_RAINBOW_ROAD) {
+            // this spot in memory needs to be populated or else the ceremony wont run
+            // bcopy(&defaultCharacterIds, &gCharacterIdByGPOverallRank, 8);
+            build_vs_standings();
+            gGamestateNext = ENDING;
+            return; 
+        }
+        else {
+            gCurrentCourseId = gCupCourseOrder[gCupSelection][gCourseIndexInCup];
+        }
     } 
     // VA track order
     else if (gTournamentCourseMode == 0) {
@@ -1249,13 +1303,21 @@ void gotoNextTrack(void) {
                 gCupSelection = MUSHROOM_CUP; 
             }
         }
-        gCurrentCourseId = gCupCourseOrder[gCupSelection][gCourseIndexInCup];
+        if (gCurrentCourseId == COURSE_MARIO_RACEWAY) {
+            // this spot in memory needs to be populated or else the ceremony wont run
+            // bcopy(&defaultCharacterIds, &gCharacterIdByGPOverallRank, 8);
+            build_vs_standings();
+            gGamestateNext = ENDING;
+            return;
+        }
+        else {
+            gCurrentCourseId = gCupCourseOrder[gCupSelection][gCourseIndexInCup];
+        }
     }
     // random track order
     else if (gTournamentCourseMode == 2) {
         gCurrentCourseId = getRandomNextCourseId();
     }
-
     gIsInQuitToMenuTransition = 1;
     gQuitToMenuTransitionCounter = 5;
     gGotoMode = RACING;

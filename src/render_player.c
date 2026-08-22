@@ -876,8 +876,8 @@ void move_u16_towards(u16* startingValue, s16 targetValue, f32 somePercent) {
 }
 
 void func_80022744(void) {
-    func_8006E058();
-    func_8002276C();
+    func_8006E058(); // something to do with kart effect
+    func_8002276C(); // something to do with vtx 
 }
 
 void func_8002276C(void) {
@@ -940,7 +940,7 @@ void func_8002276C(void) {
             }
             break;
         case SCREEN_MODE_3P_4P_SPLITSCREEN:
-            if ((VERSUS == gModeSelection) || (BATTLE == gModeSelection)) {
+            if ((gModeSelection == VERSUS) || (gModeSelection == BATTLE)) {
                 func_80022A98(gPlayerOne, 0);
                 func_80022A98(gPlayerTwo, 1);
                 func_80022A98(gPlayerThree, 2);

@@ -7925,7 +7925,7 @@ void func_80086528(s32 objectIndex, s32 arg1) {
             break;
     }
 }
-
+// spawning/moving objects?
 void func_80086604(void) {
     s32 objectIndex;
     s32 var_s1;
@@ -8080,7 +8080,7 @@ void func_80086C6C(s32 objectIndex) {
     }
     func_800773D8(sp24, (s32) D_801658F4);
 }
-
+// spawning golden cup?
 void func_80086D80(void) {
     s32 temp_s2;
     s32 var_s0;

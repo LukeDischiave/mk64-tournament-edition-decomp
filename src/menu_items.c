@@ -55,6 +55,7 @@ void* gSomeDLBuffer;
  * has scored
  */
 s8 gGPPointsByCharacterId[8];
+s8 gVSPoints[8] = {0};
 s8 gCharacterIdByGPOverallRank[8];
 s8 D_8018D9D8;
 s8 D_8018D9D9;
@@ -6124,7 +6125,7 @@ char* getNextCourseAbbrString(void) {
                 case COURSE_CHOCO_MOUNTAIN:
                     return "MR";
                 case COURSE_MARIO_RACEWAY:
-                    return "LR";
+                    return "AWARDS";
                 default:
                     break;
             }
@@ -6162,7 +6163,7 @@ char* getNextCourseAbbrString(void) {
                 case COURSE_BANSHEE_BOARDWALK:
                     return "RRd";
                 case COURSE_RAINBOW_ROAD:
-                    return "LR";
+                    return "AWARDS";
                 default:
                     break;
             }
@@ -7567,13 +7568,7 @@ void func_800A32B4(s32 arg0, s32 arg1, s32 characterId, s32 rank) {
     print_text_mode_1(arg0 + 0x62, arg1, "\"", 0, 0.7f, 0.7f);
     func_800939C8(arg0 + 0x6A, arg1, sp3C, 0, 0.7f, 0.7f);
 }
-/*Renders the Grand Prix "Driver's Points" scoreboard UI for a MenuItem, 
-displaying the current round number, each player's rank and character 
-with animated text colors (cycling for human players, static for CPU), 
-the cup name, and the CC/engine class selection, with support for 
-both mid-race rankings (states 1-8) and final overall rankings
- (state 9+), including a staggered reveal animation controlled by 
- param1.*/
+/*Renders the Grand Prix "Driver's Points" scoreboard UI*/
 void func_800A34A8(MenuItem* arg0) {
     s8 sp80[8];
     UNUSED s32 stackPadding0;
@@ -8634,8 +8629,7 @@ void func_800A69C8(UNUSED MenuItem* arg0) {
         /*Iterates over all players and, based on the current mode selection, 
         calls either func_800A6E94 (for Versus mode) or func_800A6D94 
         (for Battle mode) with a fixed parameter of 3 (3 PLAYER VERSUS), the current player 
-        index, and a mode-specific global value (nmi_gVersusResults3P or gNmiUnknown5).
-         The MenuItem parameter is unused.*/
+        index, and a mode-specific global value (nmi_gVersusResults3P or gNmiUnknown5)..*/
 void func_800A6BEC(UNUSED MenuItem* arg0) {
     s32 var_s0;
 
@@ -8800,9 +8794,18 @@ void func_800A6E94(s32 playerCount, s32 playerId, u8* placeAry) {
             seconds = tally[i * 3 + 1];
             thirds  = tally[i * 3 + 2];
 
-            // custom point calculation; wraps around to 0 after hitting 48
-            points = (u8)((( (firsts * 3) + (seconds * 2) + (thirds * 1) + tally_overrides[i] ) % 49 + 49) % 49);
+            // custom point calculation; wraps around to 0 after hitting 48 for 4p
+            // wraps around to 0 after hitting 32 for 3p
+            if (gPlayerCountSelection1 == 4) {
+                points = (u8)((( (firsts * 3) + (seconds * 2) + (thirds * 1) + tally_overrides[i] ) % 49 + 49) % 49);
+            }
+            if (gPlayerCountSelection1 == 3) {
+                points = (u8)((( (firsts * 2) + (seconds * 1) + (thirds * 0) + tally_overrides[i] ) % 33 + 33) % 33); 
+            }
             
+            // copy points into global array sorted by playerId
+            gVSPoints[i] = (s8)points;
+
             // convert to ascii char
             convert_number_to_ascii(points, pointsBuf);
 
@@ -8910,10 +8913,13 @@ void func_800A72FC(MenuItem* arg0) {
     s32 cupNameLength = (((f32) get_string_width(gCupNames[gCupSelection]) * 1) + 10) / 2;
     s32 ccNameLength = (((f32) get_string_width(D_800E76CC[gCCSelection]) * 1) + 10) / 2;
 
-    set_text_color(TEXT_YELLOW);
-    print_text1_center_mode_1(arg0->column - ccNameLength, arg0->row, gCupNames[gCupSelection], 0, 1, 1);
-    set_text_color(TEXT_YELLOW);
-    print_text1_center_mode_1(arg0->column + cupNameLength, arg0->row, D_800E76DC[gCCSelection], 0, 1, 1);
+    // don't render the text for CUP + CC on congratulations screen
+    if (gPlayerCount < 3) {
+        set_text_color(TEXT_YELLOW);
+        print_text1_center_mode_1(arg0->column - ccNameLength, arg0->row, gCupNames[gCupSelection], 0, 1, 1);
+        set_text_color(TEXT_YELLOW);
+        print_text1_center_mode_1(arg0->column + cupNameLength, arg0->row, D_800E76DC[gCCSelection], 0, 1, 1);
+    }
 }
 
 void func_800A7448(MenuItem* arg0) {
@@ -8921,16 +8927,19 @@ void func_800A7448(MenuItem* arg0) {
     s32 sp40;
     s32 sp3C;
     s32 thing = D_802874D8.unk1D;
-    if (thing >= 3) {
-        set_text_color(TEXT_YELLOW);
-        print_text1_center_mode_1(arg0->column, arg0->row, D_800E7A98, 0, 0.75f, 0.75f);
-    } else {
-        sp40 = (s32) (((f32) (get_string_width(D_800E7A88[0]) + 5) * 0.75f) / 2);
-        sp3C = (s32) (((f32) (get_string_width(D_800E7A88[thing + 1]) + 5) * 0.75f) / 2);
-        set_text_color(TEXT_YELLOW);
-        print_text1_center_mode_1(arg0->column - sp3C, arg0->row, D_800E7A88[0], 0, 0.75f, 0.75f);
-        set_text_color(TEXT_YELLOW);
-        print_text1_center_mode_1(arg0->column + sp40, arg0->row, D_800E7A88[thing + 1], 0, 0.75f, 0.75f);
+    // don't render the text for "you have been awarded the bronze/silver/gold cup"
+    if (gPlayerCount < 3) {
+        if (thing >= 3) {
+            set_text_color(TEXT_YELLOW);
+            print_text1_center_mode_1(arg0->column, arg0->row, D_800E7A98, 0, 0.75f, 0.75f);
+        } else {
+            sp40 = (s32) (((f32) (get_string_width(D_800E7A88[0]) + 5) * 0.75f) / 2);
+            sp3C = (s32) (((f32) (get_string_width(D_800E7A88[thing + 1]) + 5) * 0.75f) / 2);
+            set_text_color(TEXT_YELLOW);
+            print_text1_center_mode_1(arg0->column - sp3C, arg0->row, D_800E7A88[0], 0, 0.75f, 0.75f);
+            set_text_color(TEXT_YELLOW);
+            print_text1_center_mode_1(arg0->column + sp40, arg0->row, D_800E7A88[thing + 1], 0, 0.75f, 0.75f);
+        }
     }
 }
 
@@ -11272,7 +11281,7 @@ void func_800AC324(MenuItem* arg0) {
             break;
     }
 }
-
+// handles game points for GP mode?
 void func_800AC458(MenuItem* arg0) {
     s32 var_a1;
     s32 var_t1;
@@ -11370,7 +11379,10 @@ void func_800AC458(MenuItem* arg0) {
             if (arg0->param1 <= 0) {
                 arg0->state = 0x0000000A;
                 arg0->param1 = 0;
+
+                // IF LAST COURSE IN CUP
                 if (gCourseIndexInCup == 3) {
+                    // go thru all 8 players?  
                     for (var_a1 = 0; var_a1 < 8; var_a1++) {
                         if (gGetPlayerByCharacterId[gCharacterIdByGPOverallRank[var_a1]] < gPlayerCount) {
                             func_800B536C(var_a1);

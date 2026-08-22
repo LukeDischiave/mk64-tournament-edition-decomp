@@ -1392,6 +1392,7 @@ void render_player_four_3p_4p_screen(void) {
     D_8015F788 += 1;
 }
 
+// init some data 
 void func_802A74BC(void) {
     struct UnkStruct_800DC5EC* wrapper = &D_8015F480[0];
     Player* player = &gPlayers[0];
