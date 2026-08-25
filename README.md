@@ -32,6 +32,7 @@ Refactor of Mario Kart 64 ROM hack with configuration menu
 - Course Z Scaler: Original / Minimum / Maximum
 - Randomizer
 - Improve practice mode bots
+- strategic items
 
 ## NON-MENU Stuff
 - Patch shortcuts
