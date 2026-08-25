@@ -19,8 +19,6 @@
 #include "menu_items.h"
 #include <course.h>
 
-#define PLAYER_STATS_CHARACTER_ID(player) ((gTournamentCharacterStats == 0) ? YOSHI : (gTournamentCharacterStats == 2) ? WARIO : (player)->characterId)
-
 s32 D_8018D900[8];  
 s16 D_8018D920[8];
 s32 gPlayerStarEffectStartTime[8];
@@ -200,16 +198,14 @@ void clean_effect(Player* player, s8 playerIndex) {
 void func_8008C528(Player* player, s8 playerIndex) {
     UNUSED s32 sp24;
     s32 temp_v1;
-    s32 statsCharacterId;
     clean_effect(player, playerIndex);
     func_8008C310(player);
     temp_v1 = (gTournamentCharacterStats == 0) ? YOSHI : (gTournamentCharacterStats == 2) ? WARIO : player->characterId;
-    statsCharacterId = PLAYER_STATS_CHARACTER_ID(player);
     player->unk_0C2 = 0;
-    player->kartHopJerk = D_800E37B0[statsCharacterId];
+    player->kartHopJerk = D_800E37B0[temp_v1];
     player->kartHopAcceleration = 0.0f;
 
-    player->kartHopVelocity = D_800E3790[statsCharacterId];
+    player->kartHopVelocity = D_800E3790[temp_v1];
     player->unk_0A8 = 0;
     player->effects = player->effects | HIT_BY_GREEN_SHELL_EFFECT;
     player->effects = player->effects & ~DRIFTING_EFFECT;
@@ -568,9 +564,9 @@ void func_8008D570(Player* player, s8 playerIndex) {
     player->effects |= UNKNOWN_EFFECT_0x80000;
     player->effects &= ~DRIFTING_EFFECT;
     player->triggers &= ~UNUSED_TRIGGER_0x1000;
-    player->kartHopJerk = D_800E3730[PLAYER_STATS_CHARACTER_ID(player)];
+    player->kartHopJerk = D_800E3730[(gTournamentCharacterStats == 0) ? YOSHI : (gTournamentCharacterStats == 2) ? WARIO : player->characterId];
     player->kartHopAcceleration = 0.0f;
-    player->kartHopVelocity = (f32) D_800E3710[PLAYER_STATS_CHARACTER_ID(player)];
+    player->kartHopVelocity = (f32) D_800E3710[(gTournamentCharacterStats == 0) ? YOSHI : (gTournamentCharacterStats == 2) ? WARIO : player->characterId];
     player->unk_0B2 = 1;
     player->unk_0C0 = 0;
     player->unk_07C = 0;
@@ -616,7 +612,7 @@ void func_8008D760(Player* player) {
     player->unk_0C0 = 0;
     player->rotation[1] = player->unk_0AE;
     player->effects &= ~UNKNOWN_EFFECT_0x80000;
-    player->kartGravity = gKartGravityTable[PLAYER_STATS_CHARACTER_ID(player)];
+    player->kartGravity = gKartGravityTable[(gTournamentCharacterStats == 0) ? YOSHI : (gTournamentCharacterStats == 2) ? WARIO : player->characterId];
     player->type &= 0xFF7F;
 }
 
@@ -627,9 +623,9 @@ void func_8008D7B0(Player* player, s8 playerIndex) {
     player->effects |= UNKNOWN_EFFECT_0x800000;
     player->effects &= ~DRIFTING_EFFECT;
     player->triggers &= ~UNUSED_TRIGGER_0x20000;
-    player->kartHopJerk = D_800E3770[PLAYER_STATS_CHARACTER_ID(player)];
+    player->kartHopJerk = D_800E3770[(gTournamentCharacterStats == 0) ? YOSHI : (gTournamentCharacterStats == 2) ? WARIO : player->characterId];
     player->kartHopAcceleration = 0.0f;
-    player->kartHopVelocity = D_800E3750[PLAYER_STATS_CHARACTER_ID(player)];
+    player->kartHopVelocity = D_800E3750[(gTournamentCharacterStats == 0) ? YOSHI : (gTournamentCharacterStats == 2) ? WARIO : player->characterId];
     D_8018D920[playerIndex] = 0;
     player->unk_0B2 = 4;
     player->unk_0C0 = 0;
@@ -670,7 +666,7 @@ void func_8008D97C(Player* player) {
     player->unk_0C0 = 0;
     player->rotation[1] = player->unk_0AE;
     player->effects &= ~UNKNOWN_EFFECT_0x800000;
-    player->kartGravity = gKartGravityTable[PLAYER_STATS_CHARACTER_ID(player)];
+    player->kartGravity = gKartGravityTable[(gTournamentCharacterStats == 0) ? YOSHI : (gTournamentCharacterStats == 2) ? WARIO : player->characterId];
 }
 
 void func_8008D9C0(Player* player) {
@@ -822,7 +818,7 @@ void apply_hit_effect(Player* player, s8 playerIndex) {
             player->unk_DB4.unk2 = 0;
             player->effects |= POST_SQUISH_EFFECT;
             player->size = 1.0f;
-            player->boundingBoxSize = gKartBoundingBoxSizeTable[PLAYER_STATS_CHARACTER_ID(player)];
+            player->boundingBoxSize = gKartBoundingBoxSizeTable[(gTournamentCharacterStats == 0) ? YOSHI : (gTournamentCharacterStats == 2) ? WARIO : player->characterId];
             D_80165190[0][playerIndex] = 1;
             D_80165190[1][playerIndex] = 1;
             D_80165190[2][playerIndex] = 1;
@@ -912,7 +908,7 @@ void apply_lightning_effect(Player* player, s8 playerIndex) {
         if ((player->unk_0B0 >= 0) && (player->unk_0B0 < 0x1CC)) {
             move_f32_towards(&player->size, 0.7f, 0.1f);
             move_f32_towards(&player->boundingBoxSize,
-                             (f32) ((f64) gKartBoundingBoxSizeTable[PLAYER_STATS_CHARACTER_ID(player)] * 0.9), 0.1f);
+                             (f32) ((f64) gKartBoundingBoxSizeTable[(gTournamentCharacterStats == 0) ? YOSHI : (gTournamentCharacterStats == 2) ? WARIO : player->characterId] * 0.9), 0.1f);
         } else {
             remove_lightning_effect(player, playerIndex);
             if (player->type & PLAYER_HUMAN) {
@@ -924,11 +920,11 @@ void apply_lightning_effect(Player* player, s8 playerIndex) {
 
 void remove_lightning_effect(Player* player, UNUSED s8 playerIndex) {
     move_f32_towards(&player->size, 1.0f, 0.1f);
-    move_f32_towards(&player->boundingBoxSize, gKartBoundingBoxSizeTable[PLAYER_STATS_CHARACTER_ID(player)], 0.1f);
+    move_f32_towards(&player->boundingBoxSize, gKartBoundingBoxSizeTable[(gTournamentCharacterStats == 0) ? YOSHI : (gTournamentCharacterStats == 2) ? WARIO : player->characterId], 0.1f);
 
     player->effects &= ~LIGHTNING_EFFECT;
     player->size = 1.0f;
-    player->boundingBoxSize = gKartBoundingBoxSizeTable[PLAYER_STATS_CHARACTER_ID(player)];
+    player->boundingBoxSize = gKartBoundingBoxSizeTable[(gTournamentCharacterStats == 0) ? YOSHI : (gTournamentCharacterStats == 2) ? WARIO : player->characterId];
     player->unk_DB4.unk10 = 3.0f;
     player->unk_DB4.unk2 = 0;
     player->effects |= POST_SQUISH_EFFECT;
@@ -1012,8 +1008,8 @@ void trigger_vertical_tumble(Player* player, s8 playerIndex) {
     player->kartHopJerk = 0.0f;
     player->kartHopAcceleration = 0.0f;
     player->kartHopVelocity = 0.0f;
-    player->kartHopJerk = D_800E3730[PLAYER_STATS_CHARACTER_ID(player)];
-    player->kartHopVelocity = D_800E3710[PLAYER_STATS_CHARACTER_ID(player)];
+    player->kartHopJerk = D_800E3730[(gTournamentCharacterStats == 0) ? YOSHI : (gTournamentCharacterStats == 2) ? WARIO : player->characterId];
+    player->kartHopVelocity = D_800E3710[(gTournamentCharacterStats == 0) ? YOSHI : (gTournamentCharacterStats == 2) ? WARIO : player->characterId];
     player->unk_236 = 4;
     player->unk_042 = 0;
     player->unk_0E0 = 0;
@@ -1121,8 +1117,8 @@ void trigger_high_tumble(Player* player, s8 playerIndex) {
     player->kartHopJerk = 0.0f;
     player->kartHopAcceleration = 0.0f;
     player->kartHopVelocity = 0.0f;
-    player->kartHopJerk = D_800E3730[PLAYER_STATS_CHARACTER_ID(player)];
-    player->kartHopVelocity = D_800E3710[PLAYER_STATS_CHARACTER_ID(player)];
+    player->kartHopJerk = D_800E3730[(gTournamentCharacterStats == 0) ? YOSHI : (gTournamentCharacterStats == 2) ? WARIO : player->characterId];
+    player->kartHopVelocity = D_800E3710[(gTournamentCharacterStats == 0) ? YOSHI : (gTournamentCharacterStats == 2) ? WARIO : player->characterId];
     player->unk_236 = 4;
     player->unk_042 = 0;
     player->unk_0E0 = 0;
@@ -1225,7 +1221,7 @@ void trigger_wood_ramp_boost(Player* player, s8 playerId) {
 }
 
 void apply_boost_ramp_wood_effect(Player* player) {
-    player->currentSpeed = gTopSpeedTable[0][PLAYER_STATS_CHARACTER_ID(player)];
+    player->currentSpeed = gTopSpeedTable[0][(gTournamentCharacterStats == 0) ? YOSHI : (gTournamentCharacterStats == 2) ? WARIO : player->characterId];
 
     if ((player->surfaceType != BOOST_RAMP_WOOD) && ((player->effects & MIDAIR_EFFECT) != MIDAIR_EFFECT)) {
         move_f32_towards(&player->boostPower, 0, 1.0f);
@@ -1579,9 +1575,9 @@ void func_8008FDF4(Player* player, s8 playerIndex) {
     clean_effect(player, playerIndex);
 
     player->effects &= ~DRIFTING_EFFECT;
-    player->kartHopJerk = D_800E37F0[PLAYER_STATS_CHARACTER_ID(player)];
+    player->kartHopJerk = D_800E37F0[(gTournamentCharacterStats == 0) ? YOSHI : (gTournamentCharacterStats == 2) ? WARIO : player->characterId];
     player->kartHopAcceleration = 0.0f;
-    player->kartHopVelocity = D_800E37D0[PLAYER_STATS_CHARACTER_ID(player)];
+    player->kartHopVelocity = D_800E37D0[(gTournamentCharacterStats == 0) ? YOSHI : (gTournamentCharacterStats == 2) ? WARIO : player->characterId];
     player->triggers &= ~UNUSED_TRIGGER_0x10000;
     player->effects |= UNKNOWN_EFFECT_0x10000000;
 }
@@ -2092,7 +2088,7 @@ void func_80091298(Player* player, s8 arg1) {
                 player->unk_0C0 = 0;
                 player->unk_DB4.unkC = 3.0f;
                 player->unk_044 &= ~0x800;
-                player->kartGravity = gKartGravityTable[PLAYER_STATS_CHARACTER_ID(player)];
+                player->kartGravity = gKartGravityTable[(gTournamentCharacterStats == 0) ? YOSHI : (gTournamentCharacterStats == 2) ? WARIO : player->characterId];
                 player->unk_0D4[0] = 0;
                 player->type |= PLAYER_START_SEQUENCE;
                 player->speed = 0.0f;

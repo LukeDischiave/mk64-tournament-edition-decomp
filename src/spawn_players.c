@@ -83,6 +83,11 @@ void spawn_player(Player* player, s8 playerIndex, f32 startingRow, f32 startingC
     s32 statsCharacterId;
     s32 statsCCIndex;
 
+    // 200 CC top speed table per character
+    f32 gTopSpeed200cc[] = { 
+         335.0, 335.0, 339.0, 339.0, 335.0, 335.0, 339.0, 335.0,
+    };
+    
     /* empty-port human in VS -> spawn CPU in all versus modes */
     if (gPracticeMode) {
         if ((gModeSelection == VERSUS) && !gDemoMode
@@ -99,6 +104,8 @@ void spawn_player(Player* player, s8 playerIndex, f32 startingRow, f32 startingC
     player->characterId = characterId;
     player->unk_0B6 = 0;
     statsCharacterId = (gTournamentCharacterStats == 0) ? YOSHI : (gTournamentCharacterStats == 2) ? WARIO : player->characterId;
+    
+    // may need to be adjusted for 200CC
     player->kartFriction = gKartFrictionTable[statsCharacterId];
     player->boundingBoxSize = gKartBoundingBoxSizeTable[statsCharacterId];
     player->kartGravity = gKartGravityTable[statsCharacterId];
@@ -120,10 +127,22 @@ void spawn_player(Player* player, s8 playerIndex, f32 startingRow, f32 startingC
             break;
     }
 
+    // sets some other stuff
+    // set forward grip?
     player->unk_084 = D_800E2400[statsCCIndex][statsCharacterId];
+    // set reverse tire grip?
     player->unk_088 = D_800E24B4[statsCCIndex][statsCharacterId];
+    // set maximum power
     player->unk_210 = D_800E2568[statsCCIndex][statsCharacterId];
-    player->topSpeed = gTopSpeedTable[statsCCIndex][statsCharacterId];
+
+
+    // 200cc mode overrides 150cc
+    if (g200CC && statsCCIndex == CC_150) {
+        player->topSpeed = gTopSpeed200cc[statsCharacterId];
+    }
+    else {
+        player->topSpeed = gTopSpeedTable[statsCCIndex][statsCharacterId];
+    }
 
     player->pos[0] = startingRow;
     ret = get_surface_height(startingRow, arg4 + 50.0f, startingColumn) + player->boundingBoxSize;

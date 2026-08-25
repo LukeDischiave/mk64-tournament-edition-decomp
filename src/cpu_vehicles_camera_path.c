@@ -1818,18 +1818,29 @@ void func_8000B140(s32 playerId) {
     }
 
     // Exclude heavyweights
-    if (player->characterId == WARIO) {
+    // run default code
+    // yes, even CPUs get all yoshi/wario stats!
+    if (gTournamentCharacterStats == 1) {
+        if (player->characterId == WARIO) {
+            return;
+        }
+
+        if (player->characterId == BOWSER) {
+            return;
+        }
+
+        if (player->characterId == DK) {
+            return;
+        }
+    }
+    // run all wario stats (return)
+    else if (gTournamentCharacterStats == 2) {
         return;
     }
+    // if all yoshi stats, do nothing
+    else {
 
-    if (player->characterId == BOWSER) {
-        return;
     }
-
-    if (player->characterId == DK) {
-        return;
-    }
-
     // Skip if player has star
     if (player->effects & STAR_EFFECT) {
         return;

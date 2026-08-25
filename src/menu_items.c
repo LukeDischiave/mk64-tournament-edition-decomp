@@ -373,6 +373,7 @@ s8 gTournamentForceMap = 0;
 s8 gTournamentShellLimit = 0; // not currently in menu
 s8 gTournamentExtraMode = 0;
 s8 gPracticeMode = 0;
+s8 g200CC = 0;
 
 static const COURSES rand_courses[] = {
     COURSE_MARIO_RACEWAY,     // 0x00
@@ -5942,7 +5943,7 @@ void render_custom_overlay(void) {
     Unk_D_800E70A0 sp84;
     
 
-    /* Menu items; if an entry is empty, fallback to "Modifier N" */
+    /* Menu items*/
     static const char* customModifierNames[CUSTOM_MENU_ROWS] = {
         "tracks",
         "stats",
@@ -5953,7 +5954,8 @@ void render_custom_overlay(void) {
         "AA",
         "force minimap",
         "extra",
-        "practice mode"
+        "practice mode",
+        "200CC"
         /* keep last empty if CUSTOM_MENU_ROWS > 12 */
     };
 
@@ -5968,6 +5970,8 @@ void render_custom_overlay(void) {
     static const char* minimap_labels[] = {"default", "prog view", "map"};
     static const char* extra_labels[] = {"default", "enabled"};
     static const char* practice_labels[] = {"default", "enabled"};
+    static const char* CC_200_labels[] = {"default", "enabled"};
+
 
     set_text_color(TEXT_YELLOW);
 
@@ -5975,7 +5979,7 @@ void render_custom_overlay(void) {
     print_text1_center_mode_1(x, y - 0x28, "WEATHERTON  ABNEY  CLIMATEE  ZSERF  DNTN31", 0, 0.60f, 0.60f);
 
     // version / date (smaller) - left-aligned to start under 'KART'
-    print_text1_left(x + 0x78, y + 0x06, "TE V2026-08-16 RELEASE 1.4b", 0, 0.65f, 0.65f);
+    print_text1_left(x + 0x78, y + 0x06, "TE V2026-08-25 RELEASE 1.5b", 0, 0.65f, 0.65f);
 
     // option name placeholders (second column) and values (third column)
     for (i = 0; i < CUSTOM_MENU_ROWS; i++) {
@@ -6082,6 +6086,14 @@ void render_custom_overlay(void) {
              if (idx >= (int)(sizeof(practice_labels) / sizeof(practice_labels[0]))) idx = 0;
              print_text1_center_mode_1(x + 0x50, rowY, (char*)practice_labels[idx], 0, 0.6f, 0.6f);
              gPracticeMode = idx;
+             break;
+        case 10:
+            /* 200cc: labels (default, enabled) */
+             idx = gCustomMenuOptionValues[i];
+             if (idx < 0) idx = 0;
+             if (idx >= (int)(sizeof(CC_200_labels) / sizeof(CC_200_labels[0]))) idx = 0;
+             print_text1_center_mode_1(x + 0x50, rowY, (char*)CC_200_labels[idx], 0, 0.6f, 0.6f);
+             g200CC = idx;
              break;
         }
     }

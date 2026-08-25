@@ -325,14 +325,14 @@ typedef struct {
     /* 0x0150 */ Mat3 unk_150;
     /* 0x0174 */ Mat3 orientationMatrix;
     /* 0x0198 */ KartTyre tyres[4];
-    /* 0x01F8 */ f32 unk_1F8;
-    /* 0x01FC */ f32 unk_1FC;
+    /* 0x01F8 */ f32 unk_1F8; // mid front tire?
+    /* 0x01FC */ f32 unk_1FC; // mid rear tire?
     /* 0x0200 */ u32 unk_200; // May be s32. but less casting required if u32
-    /* 0x0204 */ s16 unk_204;
-    /* 0x0206 */ s16 unk_206;
-    /* 0x0208 */ f32 unk_208;
-    /* 0x020C */ f32 unk_20C;
-    /* 0x0210 */ f32 unk_210;
+    /* 0x0204 */ s16 unk_204; // drift counter
+    /* 0x0206 */ s16 unk_206; // front tumble?
+    /* 0x0208 */ f32 unk_208; // all rear tire grip?
+    /* 0x020C */ f32 unk_20C; // brake counter
+    /* 0x0210 */ f32 unk_210; // maximum power?
     /* 0x0214 */ f32 topSpeed;
     /* 0x0218 */ f32 unk_218;
     /* 0x021C */ f32 unk_21C;
