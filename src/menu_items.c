@@ -374,6 +374,7 @@ s8 gTournamentShellLimit = 0; // not currently in menu
 s8 gTournamentExtraMode = 0;
 s8 gPracticeMode = 0;
 s8 g200CC = 0;
+s8 gStrategicItems = 0;
 
 static const COURSES rand_courses[] = {
     COURSE_MARIO_RACEWAY,     // 0x00
@@ -5955,7 +5956,8 @@ void render_custom_overlay(void) {
         "force minimap",
         "extra",
         "practice mode",
-        "200CC"
+        "200CC",
+        "4p strategic items"
         /* keep last empty if CUSTOM_MENU_ROWS > 12 */
     };
 
@@ -5971,6 +5973,7 @@ void render_custom_overlay(void) {
     static const char* extra_labels[] = {"default", "enabled"};
     static const char* practice_labels[] = {"default", "enabled"};
     static const char* CC_200_labels[] = {"default", "enabled"};
+    static const char* strategic_4p_labels[] = {"default", "enabled"};
 
 
     set_text_color(TEXT_YELLOW);
@@ -6094,6 +6097,14 @@ void render_custom_overlay(void) {
              if (idx >= (int)(sizeof(CC_200_labels) / sizeof(CC_200_labels[0]))) idx = 0;
              print_text1_center_mode_1(x + 0x50, rowY, (char*)CC_200_labels[idx], 0, 0.6f, 0.6f);
              g200CC = idx;
+             break;
+        case 11:
+            /* 4p strategic items: labels (default, enabled) */
+             idx = gCustomMenuOptionValues[i];
+             if (idx < 0) idx = 0;
+             if (idx >= (int)(sizeof(strategic_4p_labels) / sizeof(strategic_4p_labels[0]))) idx = 0;
+             print_text1_center_mode_1(x + 0x50, rowY, (char*)strategic_4p_labels[idx], 0, 0.6f, 0.6f);
+             gStrategicItems = idx;
              break;
         }
     }

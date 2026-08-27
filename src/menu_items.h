@@ -864,5 +864,6 @@ extern s8 gTournamentExtraMode;
 extern s8 gPracticeMode;
 extern s8 gVSPoints[8];
 extern s8 g200CC;
+extern s8 gStrategicItems;
 
 #endif
