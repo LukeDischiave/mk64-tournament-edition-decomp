@@ -1,5 +1,5 @@
 # Refactor of Mario Kart 64 Multiplayer ROM Hack (Tournament Edition)
-Refactor of Mario Kart 64 ROM hack with configuration menu
+Refactor of Mario Kart 64 ROM hack with enhanced configuration menu
 
 ## Features
 ### TITLE MENU Options
@@ -9,18 +9,20 @@ Refactor of Mario Kart 64 ROM hack with configuration menu
 - VS Detail: Original / High
   - Multiplayer DKJP Boat: Enabled / Disabled
   - Multiplayer KD Train: Original / Full
-- Track Selection: Original / Kaillera / Random
-- Practice mode: Default / Enabled
+- Track Selection: Original (VA) / Kaillera / Random
+- Practice mode (bots): Default / Enabled
 - Extra mode: Disabled(Default) / Enabled
 - Force Minimap: Default / Prog view / Map
 - Anti-aliasing: Default / Disabled
+- 4P mode strategic items
 
 ### NON-MENU FEATURES
-- Tie-logic: Same-frame finishes now determined by in-game timer instead of player port
+- Tie-logic: Same-frame finishes now determined by in-game timer, which is floating point precise, instead of player port
 - Lightning: Now a single white flash instead of many alterating blue and white flashes
 - VS timer: Players' finish time are displayed on the VS points screen
 - Sounds: No c-up or c-right sounds during VS races
 - Slow pause: players must hold pause for roughly .5 sec to mitigate accidental pauses
+- Trophy ceremony finish in 4P vs mode
 
 
 ### VS MATCH RANKING Screen
@@ -31,8 +33,7 @@ Refactor of Mario Kart 64 ROM hack with configuration menu
 ### TITLE MENU Options
 - Course Z Scaler: Original / Minimum / Maximum
 - Randomizer
-- Improve practice mode bots
-- strategic items
+- Improve practice mode bots based on Amped Up
 
 ## NON-MENU Stuff
 - Patch shortcuts
@@ -41,6 +42,7 @@ Refactor of Mario Kart 64 ROM hack with configuration menu
 - storing item stats for each VS race, export data somehow
 - DKR-inspired timer for 3p/4p vs mode 
 - Amped Up-style practice bots
+- Savestates for practice mode
 
 ### CREDITS
 - Megamech + the mk64 decomp team, and abitalive
