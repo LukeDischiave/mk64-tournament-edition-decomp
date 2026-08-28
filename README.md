@@ -23,6 +23,7 @@ Refactor of Mario Kart 64 ROM hack with enhanced configuration menu
 - Sounds: No c-up or c-right sounds during VS races
 - Slow pause: players must hold pause for roughly .5 sec to mitigate accidental pauses
 - Trophy ceremony finish in 4P vs mode
+- FOV settings saved between different cups in VS mode
 
 
 ### VS MATCH RANKING Screen
