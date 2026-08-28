@@ -1317,8 +1317,11 @@ void gotoNextTrack(void) {
     // random track order
     else if (gTournamentCourseMode == 2) {
         gCurrentCourseId = getRandomNextCourseId();
-                            
-        // this is an attempt to save zoom out settings between races
+                        
+        // stores the current random course into memory 
+        // so the game knows which course and track you were on if you enter course select
+        // but that's not particularly useful since if you try to enter that course again,
+        // it doesnt load that course. good if you want to cycle random tracks though
         gCupSelection = gCupSelectionByCourseId[gCurrentCourseId];
         D_800DC540 = gCupSelection;
         gCourseIndexInCup = (s8) gPerCupIndexByCourseId[gCurrentCourseId];

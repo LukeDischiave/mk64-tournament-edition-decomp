@@ -2279,14 +2279,20 @@ void func_80014D30(s32 cameraId, s32 pathIndex) {
     check_bounding_collision(&cameras[cameraId].collision, 10.0f, (f32) temp_v0->posX, (f32) temp_v0->posY + 30.0f,
                              (f32) temp_v0->posZ);
 }
-
+// camera init
 void func_80014DE4(s32 cameraIndex) {
     s32 cameraId;
 
     D_801646CC = 0;
+    // storing FOV for each player
     D_80164678[cameraIndex] = D_80164670[cameraIndex];
-    if ((gModeSelection != 1) && ((gCourseIndexInCup == COURSE_ONE) || (gDemoMode == (u16) 1))) {
-        D_80164678[cameraIndex] = 0;
+    // resets camera mode when you enter course one of a cup in Vs mode
+    if ((gModeSelection != TIME_TRIALS) && ((gCourseIndexInCup == COURSE_ONE) || (gDemoMode == (u16) 1))) {
+        // only run this if you aren't playing in VS mode
+        // this is an attempt to save zoom out settings between races
+        if (gModeSelection != VERSUS) {
+            D_80164678[cameraIndex] = 0; 
+        }
     } else if ((D_80164678[cameraIndex] != 0) && (D_80164678[cameraIndex] != (s16) 1) &&
                (D_80164678[cameraIndex] != 2) && (D_80164678[cameraIndex] != 3)) {
         D_80164678[cameraIndex] = 0;
@@ -2298,6 +2304,7 @@ void func_80014DE4(s32 cameraIndex) {
     D_801646D0[cameraIndex].unk0 = 0;
     D_801646D0[cameraIndex].unk2 = 0;
     D_801646D0[cameraIndex].unk4 = 0;
+    // if time trials and map is not init
     if ((gModeSelection == 1) && (gCourseMapInit == 0)) {
         D_80164678[cameraIndex] = 0;
     }
@@ -2307,6 +2314,7 @@ void func_80014DE4(s32 cameraIndex) {
     }
 }
 
+// sets fov distance for each player
 f32 func_80014EE4(f32 arg0, s32 arg1) {
     f32 temp_f0;
     f64 temp_f2;
@@ -3551,11 +3559,14 @@ void func_80019B50(s32 cameraIndex, u16 arg1) {
 void func_80019C50(s32 playerIndex) {
     switch (D_80164678[playerIndex]) {
         case 0:
+            // if p1 presses c_up to zoom out
             if (D_80164608[playerIndex] == 1) {
+                // set camera?
                 D_80164678[playerIndex] = 1;
                 if (gModeSelection != VERSUS) {
                     func_800C9060(playerIndex, SOUND_ARG_LOAD(0x19, 0x00, 0x90, 0x4F));
                 }
+                // copy into another array?
                 D_80164670[playerIndex] = D_80164678[playerIndex];
             }
             break;

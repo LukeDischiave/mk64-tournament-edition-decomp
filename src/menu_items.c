@@ -451,7 +451,8 @@ void initRandomTrackOrder(void) {
     sRandomTrackOrderInitialized = 1;
 }
 
-// grab the next course from the random array; wraps 0-16
+// grab the next course from the random array at vs points screen
+// wraps [0,15]
 COURSES getRandomNextCourseId(void) {
     if (!sRandomTrackOrderInitialized) {
         initRandomTrackOrder();
