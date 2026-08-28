@@ -395,9 +395,8 @@ static const COURSES rand_courses[] = {
     COURSE_WARIO_STADIUM     // 0x0E  
 };
 
-static COURSES sRandomTrackOrder[16];
+COURSES sRandomTrackOrder[16];
 static s32 sRandomTrackOrderInitialized;
-static s8 sRandomTrackOrderMode;
 
 void shuffle_tracks(COURSES *track_order);
 
@@ -440,42 +439,27 @@ static char* getCourseAbbrFromId(COURSES courseId) {
     }
 }
 
-static void initRandomTrackOrder(void) {
-    int i;
+// copies the 16 courses into an sRandomTrackOrder[] and shuffles them in place
+void initRandomTrackOrder(void) {
+    u8 i;
 
     for (i = 0; i < 16; i++) {
         sRandomTrackOrder[i] = rand_courses[i];
     }
+    // shuffle tracks in place
     shuffle_tracks(sRandomTrackOrder);
     sRandomTrackOrderInitialized = 1;
-    sRandomTrackOrderMode = gTournamentCourseMode;
 }
 
-static s32 getRandomTrackOrderIndex(COURSES courseId) {
-    s32 i;
-
-    for (i = 0; i < 16; i++) {
-        if (sRandomTrackOrder[i] == courseId) {
-            return i;
-        }
-    }
-
-    return -1;
-}
-
+// grab the next course from the random array; wraps 0-16
 COURSES getRandomNextCourseId(void) {
-    s32 currentIndex;
-
-    if (!sRandomTrackOrderInitialized || (sRandomTrackOrderMode != gTournamentCourseMode)) {
+    if (!sRandomTrackOrderInitialized) {
         initRandomTrackOrder();
     }
-
-    currentIndex = getRandomTrackOrderIndex(gCurrentCourseId);
-    if (currentIndex < 0) {
-        return sRandomTrackOrder[0];
+    if (sRandomTrackOrder[currentRandomIndex] == gCurrentCourseId) {
+        currentRandomIndex = (currentRandomIndex + 1) % 16;
     }
-
-    return sRandomTrackOrder[(currentIndex + 1) % 16];
+    return sRandomTrackOrder[currentRandomIndex];
 }
 
 
@@ -5982,7 +5966,7 @@ void render_custom_overlay(void) {
     print_text1_center_mode_1(x, y - 0x28, "WEATHERTON  ABNEY  CLIMATEE  ZSERF  DNTN31", 0, 0.60f, 0.60f);
 
     // version / date (smaller) - left-aligned to start under 'KART'
-    print_text1_left(x + 0x78, y + 0x06, "TE V2026-08-26 RELEASE 1.5b", 0, 0.65f, 0.65f);
+    print_text1_left(x + 0x78, y + 0x06, "TE V2026-08-28 VER 1.6b", 0, 0.65f, 0.65f);
 
     // option name placeholders (second column) and values (third column)
     for (i = 0; i < CUSTOM_MENU_ROWS; i++) {

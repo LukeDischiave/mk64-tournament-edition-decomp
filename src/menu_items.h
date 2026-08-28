@@ -4,6 +4,7 @@
 #include <common_structs.h>
 #include "textures.h"
 #include "main.h"
+#include "course.h"
 
 extern u32 _course_mario_raceway_dl_mio0SegmentRomStart[];
 
@@ -865,5 +866,8 @@ extern s8 gPracticeMode;
 extern s8 gVSPoints[8];
 extern s8 g200CC;
 extern s8 gStrategicItems;
+extern COURSES sRandomTrackOrder[16];
+extern u8 currentRandomIndex;
+
 
 #endif

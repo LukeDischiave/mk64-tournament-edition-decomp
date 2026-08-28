@@ -1317,6 +1317,11 @@ void gotoNextTrack(void) {
     // random track order
     else if (gTournamentCourseMode == 2) {
         gCurrentCourseId = getRandomNextCourseId();
+                            
+        // this is an attempt to save zoom out settings between races
+        gCupSelection = gCupSelectionByCourseId[gCurrentCourseId];
+        D_800DC540 = gCupSelection;
+        gCourseIndexInCup = (s8) gPerCupIndexByCourseId[gCurrentCourseId];
     }
     gIsInQuitToMenuTransition = 1;
     gQuitToMenuTransitionCounter = 5;

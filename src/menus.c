@@ -175,6 +175,7 @@ s8 gCustomMenuDate = 0;
 s8 gCustomMenuOption[CUSTOM_MENU_ROWS][2] = { 0 };
 s8 gCustomMenuSelection = 0;
 s8 gCustomMenuOptionValues[CUSTOM_MENU_ROWS] = { 0 };
+u8 currentRandomIndex = 0;
 
 // Per-row number of selectable values (matches label arrays in render_custom_overlay)
 // tracks, stats, scaling, widescreen, mp music, mp train boat, AA, force minimap,
@@ -1858,8 +1859,16 @@ void course_select_menu_act(struct Controller* arg0, u16 controllerIdx) {
                     reset_cycle_flash_menu();
                     play_sound2(SOUND_MENU_CURSOR_MOVE);
                 }
-
-                gCurrentCourseId = gCupCourseOrder[gCupSelection][gCourseIndexInCup];
+                // if random course order is selected and in VS mode
+                if (gTournamentCourseMode == 2 && gModeSelection == VERSUS) {
+                    initRandomTrackOrder();
+                    // load first random course
+                    gCurrentCourseId = (sRandomTrackOrder[currentRandomIndex]);
+                }
+                // run default behavior
+                else {
+                    gCurrentCourseId = gCupCourseOrder[gCupSelection][gCourseIndexInCup];
+                }
                 if ((btnAndStick & B_BUTTON) != 0) {
                     if (gSubMenuSelection == SUB_MENU_MAP_SELECT_COURSE) {
                         gSubMenuSelection = SUB_MENU_MAP_SELECT_CUP;
