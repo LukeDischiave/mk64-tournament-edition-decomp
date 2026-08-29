@@ -454,10 +454,15 @@ void initRandomTrackOrder(void) {
 // grab the next course from the random array at vs points screen
 // wraps [0,15]
 COURSES getRandomNextCourseId(void) {
+    static COURSES lastCourse;
+
     if (!sRandomTrackOrderInitialized) {
         initRandomTrackOrder();
+        lastCourse = gCurrentCourseId;
     }
-    if (sRandomTrackOrder[currentRandomIndex] == gCurrentCourseId) {
+
+    if (gCurrentCourseId != lastCourse){
+        lastCourse = gCurrentCourseId;
         currentRandomIndex = (currentRandomIndex + 1) % 16;
     }
     return sRandomTrackOrder[currentRandomIndex];
@@ -5967,7 +5972,7 @@ void render_custom_overlay(void) {
     print_text1_center_mode_1(x, y - 0x28, "WEATHERTON  ABNEY  CLIMATEE  ZSERF  DNTN31", 0, 0.60f, 0.60f);
 
     // version / date (smaller) - left-aligned to start under 'KART'
-    print_text1_left(x + 0x78, y + 0x06, "TE V2026-08-28 VER 1.6b", 0, 0.65f, 0.65f);
+    print_text1_left(x + 0x78, y + 0x06, "TE V2026-08-28 1.6b", 0, 0.65f, 0.65f);
 
     // option name placeholders (second column) and values (third column)
     for (i = 0; i < CUSTOM_MENU_ROWS; i++) {
