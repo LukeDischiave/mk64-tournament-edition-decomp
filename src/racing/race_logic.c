@@ -1484,3 +1484,101 @@ void func_80290B14(void) {
             break;
     }
 }
+
+// function to handle shell throwing and start boost for practice CPUs
+// refactored from amped up
+// maybe I can spice this up with some old-fashioned rng cool stuff!
+void pracBots()
+{
+    CpuItemStrategyData* CPUItem;
+    Player* player;
+    u16 AI_ITEM_TIMER[NUM_PLAYERS];
+    u16 i;
+
+    // SaveGame.GameSettings.AI/Mode == gPracticeCPU
+    // if num of prac bots >= 1
+    // practice cpu: playerType |= PLAYER_CPU in that player slot
+	if (gPracticeMode)
+	{
+        // loop thru each player to find practice bots/cpu
+		for (i = 0; i < 4; i++)
+		{
+            if (gPracticeCPU[i]) {
+                // bot in slot i has no items?
+                AI_ITEM_BUTTON[i] = 0;
+                // player type for bot i
+                player = &gPlayers[i];
+
+                // gRaceState
+                if (gRaceState <= 4)
+                {
+                    if (gRaceState == 2)
+                    {
+                        // get start boost
+                        // Set_flag, etc are not functions that exist here
+                        player->triggers |= START_BOOST_TRIGGER;
+                        AI_ITEM_TIMER[i] = 235;
+                    }
+                    // setting flags for after startboost
+                    // may not be necessary; I think these are already set by my practice mode +bots code
+                    // SET_FLAG(car->flag,IS_CPU_PLAYER);
+                    // SET_FLAG(car->flag,IS_PLAYER);
+                    // SET_FLAG(car_ex->Flag,EX_IS_AI_BOT);
+                    // CLR_FLAG(car->slip_flag,IS_SLIP_STREAMING);
+                    // EnemyAccelMode[i] = 1;
+
+                    // Disable CPU item timers
+                    CPUItem[i].branch = 0;
+                    CPUItem[i].timeBeforeThrow = 0;
+
+                    if (AI_ITEM_TIMER[i] != 0)
+                    {
+                        AI_ITEM_TIMER[i]--;
+                    }
+
+
+                    if (!(player->type&PLAYER_INVISIBLE_OR_BOMB) && player->type&PLAYER_EXISTS)
+                    {
+                        // returns [0,29] likely
+                        // might need to be %30 instead of %29
+                        if ( ((random_u16() % 29) + 1) + 5 == 10 && AI_ITEM_TIMER[i] == 0)
+
+                            // conditions that need to be met for CPU to use items
+                            if (!(player->unk_0CA&(0x0002|0x0008|0x0004)) &&
+                                !(player->effects&(BANANA_NEAR_SPINOUT_EFFECT|BANANA_SPINOUT_EFFECT|DRIVING_SPINOUT_EFFECT|HIT_BY_STAR_EFFECT|EXPLOSION_CRASH_EFFECT|TERRAIN_TUMBLE_EFFECT|HIT_BY_GREEN_SHELL_EFFECT|SQUISH_EFFECT|LIGHTNING_STRIKE_EFFECT)))
+                            {
+                                // strangely, no green shells or triple greens here
+                                switch (player->currentItemCopy)
+                                {
+                                case ITEM_SUPER_MUSHROOM:
+                                    AI_ITEM_BUTTON[i] = 1;
+                                    AI_ITEM_TIMER[i] = 15;
+                                    continue;
+                                    break;
+                                case ITEM_RED_SHELL:
+                                case ITEM_TRIPLE_RED_SHELL:
+                                case ITEM_BLUE_SPINY_SHELL:
+                                    if (player->currentRank == 0)
+                                    {
+                                        AI_ITEM_TIMER[i] = 45;
+                                        continue;
+                                    }
+                                    break;
+                                case ITEM_MUSHROOM:
+                                case ITEM_DOUBLE_MUSHROOM:
+                                case ITEM_TRIPLE_MUSHROOM:
+                                    if (player->effects&MUSHROOM_EFFECT && player->boostTimer >= 20)
+                                    {
+                                        continue;
+                                    }
+                                    break;
+                                }
+                                AI_ITEM_BUTTON[i] = 1;
+                                AI_ITEM_TIMER[i] = 45;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
