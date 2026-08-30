@@ -1582,3 +1582,30 @@ void pracBots()
             }
         }
     }
+// may need to be refactored from amped up
+void ObjectStrategyHook()
+{
+        for (int i = 0; i < 4; i++)
+        {
+                if (AI_ITEM_BUTTON[i] == 1)
+                {
+                        SET_FLAG(GlobalController[i]->ButtonReleased,BTN_Z);
+                        SET_FLAG(GlobalController[i]->ButtonPressed,BTN_Z);
+                        SET_FLAG(GlobalController[i]->ButtonHeld,BTN_Z);
+                        if (GlobalPlayer[i].rank == 0)
+                        {
+                                GlobalController[i]->AnalogY = -120;
+                        }
+                        else
+                        {
+                                if (rand_limit(4) == 1)
+                                {
+                                        GlobalController[i]->AnalogY = 120;
+                                }
+                        }
+
+                        AI_ITEM_BUTTON[i] = 0;
+                }
+        }
+        ObjectStrategy();
+}
