@@ -174,7 +174,7 @@ s8 gCustomMenuTitle = 0;
 s8 gCustomMenuDate = 0;
 s8 gCustomMenuOption[CUSTOM_MENU_ROWS][2] = { 0 };
 s8 gCustomMenuSelection = 0;
-s8 gCustomMenuOptionValues[CUSTOM_MENU_ROWS] = { 0 };
+s8 gCustomMenuOptionValues[CUSTOM_MENU_ROWS] = { 0, 0, 1, 0, 1, 0, 0, 1, 0 };
 u8 currentRandomIndex = 0;
 
 // Per-row number of selectable values (matches label arrays in render_custom_overlay)
