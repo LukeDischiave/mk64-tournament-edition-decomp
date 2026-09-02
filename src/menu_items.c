@@ -55,7 +55,6 @@ void* gSomeDLBuffer;
  * has scored
  */
 s8 gGPPointsByCharacterId[8];
-s8 gVSPoints[8] = {0};
 s8 gCharacterIdByGPOverallRank[8];
 s8 D_8018D9D8;
 s8 D_8018D9D9;
@@ -370,11 +369,7 @@ s8 gTournamentMusic = 0;
 s8 gTournamentTrainBoat = 0;
 s8 gTournamentAA = 0;
 s8 gTournamentForceMap = 0;
-s8 gTournamentShellLimit = 0; // not currently in menu
 s8 gTournamentExtraMode = 0;
-s8 gPracticeMode = 0;
-s8 g200CC = 0;
-s8 gStrategicItems = 0;
 
 static const COURSES rand_courses[] = {
     COURSE_MARIO_RACEWAY,     // 0x00
@@ -5944,10 +5939,7 @@ void render_custom_overlay(void) {
         "mp train boat",
         "AA",
         "force minimap",
-        "extra",
-        "practice mode",
-        "200CC",
-        "4p strategic items"
+        "extra"
         /* keep last empty if CUSTOM_MENU_ROWS > 12 */
     };
 
@@ -5961,10 +5953,6 @@ void render_custom_overlay(void) {
     static const char* AA_labels[] = {"default", "disabled"};
     static const char* minimap_labels[] = {"default", "prog view", "map"};
     static const char* extra_labels[] = {"default", "enabled"};
-    static const char* practice_labels[] = {"default", "enabled"};
-    static const char* CC_200_labels[] = {"default", "enabled"};
-    static const char* strategic_4p_labels[] = {"default", "enabled"};
-
 
     set_text_color(TEXT_YELLOW);
 
@@ -5972,7 +5960,7 @@ void render_custom_overlay(void) {
     print_text1_center_mode_1(x, y - 0x28, "WEATHERTON  ABNEY  CLIMATEE  ZSERF  DNTN31", 0, 0.60f, 0.60f);
 
     // version / date (smaller) - left-aligned to start under 'KART'
-    print_text1_left(x + 0x78, y + 0x06, "TE V2026-08-28 1.6b", 0, 0.65f, 0.65f);
+    print_text1_left(x + 0x78, y + 0x06, "TE V2026-09-02 1.0", 0, 0.65f, 0.65f);
 
     // option name placeholders (second column) and values (third column)
     for (i = 0; i < CUSTOM_MENU_ROWS; i++) {
@@ -6072,30 +6060,6 @@ void render_custom_overlay(void) {
              print_text1_center_mode_1(x + 0x50, rowY, (char*)extra_labels[idx], 0, 0.6f, 0.6f);
              gTournamentExtraMode = idx;
              break;
-        case 9:
-            /* practice: labels (default, enabled) */
-             idx = gCustomMenuOptionValues[i];
-             if (idx < 0) idx = 0;
-             if (idx >= (int)(sizeof(practice_labels) / sizeof(practice_labels[0]))) idx = 0;
-             print_text1_center_mode_1(x + 0x50, rowY, (char*)practice_labels[idx], 0, 0.6f, 0.6f);
-             gPracticeMode = idx;
-             break;
-        case 10:
-            /* 200cc: labels (default, enabled) */
-             idx = gCustomMenuOptionValues[i];
-             if (idx < 0) idx = 0;
-             if (idx >= (int)(sizeof(CC_200_labels) / sizeof(CC_200_labels[0]))) idx = 0;
-             print_text1_center_mode_1(x + 0x50, rowY, (char*)CC_200_labels[idx], 0, 0.6f, 0.6f);
-             g200CC = idx;
-             break;
-        case 11:
-            /* 4p strategic items: labels (default, enabled) */
-             idx = gCustomMenuOptionValues[i];
-             if (idx < 0) idx = 0;
-             if (idx >= (int)(sizeof(strategic_4p_labels) / sizeof(strategic_4p_labels[0]))) idx = 0;
-             print_text1_center_mode_1(x + 0x50, rowY, (char*)strategic_4p_labels[idx], 0, 0.6f, 0.6f);
-             gStrategicItems = idx;
-             break;
         }
     }
 }
@@ -6138,7 +6102,7 @@ char* getNextCourseAbbrString(void) {
                 case COURSE_CHOCO_MOUNTAIN:
                     return "MR";
                 case COURSE_MARIO_RACEWAY:
-                    return "AWARDS";
+                    return "LR";
                 default:
                     break;
             }
@@ -6176,7 +6140,7 @@ char* getNextCourseAbbrString(void) {
                 case COURSE_BANSHEE_BOARDWALK:
                     return "RRd";
                 case COURSE_RAINBOW_ROAD:
-                    return "AWARDS";
+                    return "LR";
                 default:
                     break;
             }
@@ -8658,12 +8622,12 @@ void func_800A6BEC(UNUSED MenuItem* arg0) {
     }
 }
 
-        /*Iterates over all players and, based on the current mode selection,
-         calls either func_800A6E94 (for Versus mode) or func_800A6D94 
-         (for Battle mode) with a fixed first argument of 4 (4 PLAYER VERSUS), 
-         the current player index, and a corresponding global NMI-related 
-         variable (nmi_gVersusResults4P or gNmiUnknown6). The MenuItem parameter 
-         is unused.*/
+/*Iterates over all players and, based on the current mode selection,
+calls either func_800A6E94 (for Versus mode) or func_800A6D94 
+(for Battle mode) with a fixed first argument of 4 (4 PLAYER VERSUS), 
+the current player index, and a corresponding global NMI-related 
+variable (nmi_gVersusResults4P or gNmiUnknown6). The MenuItem parameter 
+is unused.*/
 void func_800A6CC0(UNUSED MenuItem* arg0) {
     s32 var_s0;
 
@@ -8816,9 +8780,6 @@ void func_800A6E94(s32 playerCount, s32 playerId, u8* placeAry) {
                 points = (u8)((( (firsts * 2) + (seconds * 1) + (thirds * 0) + tally_overrides[i] ) % 33 + 33) % 33); 
             }
             
-            // copy points into global array sorted by playerId
-            gVSPoints[i] = (s8)points;
-
             // convert to ascii char
             convert_number_to_ascii(points, pointsBuf);
 
@@ -8925,14 +8886,10 @@ void func_800A72FC(MenuItem* arg0) {
     UNUSED s32 pad;
     s32 cupNameLength = (((f32) get_string_width(gCupNames[gCupSelection]) * 1) + 10) / 2;
     s32 ccNameLength = (((f32) get_string_width(D_800E76CC[gCCSelection]) * 1) + 10) / 2;
-
-    // don't render the text for CUP + CC on congratulations screen
-    if (gPlayerCount < 3) {
-        set_text_color(TEXT_YELLOW);
-        print_text1_center_mode_1(arg0->column - ccNameLength, arg0->row, gCupNames[gCupSelection], 0, 1, 1);
-        set_text_color(TEXT_YELLOW);
-        print_text1_center_mode_1(arg0->column + cupNameLength, arg0->row, D_800E76DC[gCCSelection], 0, 1, 1);
-    }
+    set_text_color(TEXT_YELLOW);
+    print_text1_center_mode_1(arg0->column - ccNameLength, arg0->row, gCupNames[gCupSelection], 0, 1, 1);
+    set_text_color(TEXT_YELLOW);
+    print_text1_center_mode_1(arg0->column + cupNameLength, arg0->row, D_800E76DC[gCCSelection], 0, 1, 1);
 }
 
 void func_800A7448(MenuItem* arg0) {
@@ -8940,19 +8897,16 @@ void func_800A7448(MenuItem* arg0) {
     s32 sp40;
     s32 sp3C;
     s32 thing = D_802874D8.unk1D;
-    // don't render the text for "you have been awarded the bronze/silver/gold cup"
-    if (gPlayerCount < 3) {
-        if (thing >= 3) {
-            set_text_color(TEXT_YELLOW);
-            print_text1_center_mode_1(arg0->column, arg0->row, D_800E7A98, 0, 0.75f, 0.75f);
-        } else {
-            sp40 = (s32) (((f32) (get_string_width(D_800E7A88[0]) + 5) * 0.75f) / 2);
-            sp3C = (s32) (((f32) (get_string_width(D_800E7A88[thing + 1]) + 5) * 0.75f) / 2);
-            set_text_color(TEXT_YELLOW);
-            print_text1_center_mode_1(arg0->column - sp3C, arg0->row, D_800E7A88[0], 0, 0.75f, 0.75f);
-            set_text_color(TEXT_YELLOW);
-            print_text1_center_mode_1(arg0->column + sp40, arg0->row, D_800E7A88[thing + 1], 0, 0.75f, 0.75f);
-        }
+    if (thing >= 3) {
+        set_text_color(TEXT_YELLOW);
+        print_text1_center_mode_1(arg0->column, arg0->row, D_800E7A98, 0, 0.75f, 0.75f);
+    } else {
+        sp40 = (s32) (((f32) (get_string_width(D_800E7A88[0]) + 5) * 0.75f) / 2);
+        sp3C = (s32) (((f32) (get_string_width(D_800E7A88[thing + 1]) + 5) * 0.75f) / 2);
+        set_text_color(TEXT_YELLOW);
+        print_text1_center_mode_1(arg0->column - sp3C, arg0->row, D_800E7A88[0], 0, 0.75f, 0.75f);
+        set_text_color(TEXT_YELLOW);
+        print_text1_center_mode_1(arg0->column + sp40, arg0->row, D_800E7A88[thing + 1], 0, 0.75f, 0.75f);
     }
 }
 

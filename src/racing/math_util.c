@@ -46,16 +46,8 @@ UNUSED void func_802B4FF0() {
  * to be performed.
  */
 s32 render_set_position(Mat4 mtx, s32 mode) {
-    // default behavior run when shell limit set to default
-    if (gTournamentShellLimit != 1) {
-        if (gMatrixObjectCount >= MTX_OBJECT_POOL_SIZE) {
-            return 0;
-        }
-    } else {
-        // use extra pool size for increased shell limit
-        if (gMatrixObjectCount >= MTX_OBJECT_POOL_SIZE_EXTRA) {
-            return 0;
-        }
+    if (gMatrixObjectCount >= MTX_OBJECT_POOL_SIZE) {
+        return 0;
     }
     mtxf_to_mtx(&gGfxPool->mtxObject[gMatrixObjectCount], mtx);
     switch (mode) { /* irregular */

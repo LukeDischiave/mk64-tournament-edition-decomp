@@ -25,7 +25,6 @@
 #include "courses/all_course_data.h"
 #include "main.h"
 #include "data/other_textures.h"
-#include "menu_items.h"
 
 // Appears to be textures
 // or tluts
@@ -167,44 +166,21 @@ void actor_init(struct Actor* actor, Vec3f startingPos, Vec3s startingRot, Vec3f
             actor->unk_04 = 0;
             actor->boundingBoxSize = 4.0f;
             actor->flags = actor->flags | 0x4000 | 0x2000 | 0x1000;
-            // default behavior, default shell limit
-            if (gTournamentShellLimit != 1) {
-                if ((s32) gNumSpawnedShells >= 0x15) {
-                    cleanup_red_and_green_shells((struct ShellActor*) actor);
-                }
-                break;
+            if ((s32) gNumSpawnedShells >= 0x15) {
+                cleanup_red_and_green_shells((struct ShellActor*) actor);
             }
-            // custom shell limit of 30
-            else {
-                if ((s32) gNumSpawnedShells >= 0x1F) {
-                    cleanup_red_and_green_shells((struct ShellActor*) actor);
-                }
-                break;
-            }
+            break;
         case ACTOR_RED_SHELL:
             gNumSpawnedShells += 1;
             actor->unk_04 = 0;
             actor->boundingBoxSize = 4.0f;
             actor->flags = actor->flags | 0x4000 | 0x2000 | 0x1000;
-            // default behavior, default shell limit
-            if (gTournamentShellLimit != 1) {
-                if ((s32) gNumSpawnedShells >= 0x15) {
-                    cleanup_red_and_green_shells((struct ShellActor*) actor);
-                }
-                break;
+            if ((s32) gNumSpawnedShells >= 0x15) {
+                cleanup_red_and_green_shells((struct ShellActor*) actor);
             }
-            // custom shell limit of 30
-            else {
-                if ((s32) gNumSpawnedShells >= 0x1F) {
-                    cleanup_red_and_green_shells((struct ShellActor*) actor);
-                }
-                break;
-            }
+            break;
         case ACTOR_TREE_MARIO_RACEWAY:
-            // only run this bug if default shell behavior enabled
-            if (gTournamentShellLimit == 0) {
-                gNumSpawnedShells += 1; 
-            }
+            gNumSpawnedShells += 1;
             actor->flags |= 0x4000;
             actor->state = 0x0043;
             actor->boundingBoxSize = 3.0f;
@@ -523,54 +499,26 @@ void render_cows(Camera* camera, Mat4 arg1, UNUSED struct Actor* actor) {
             arg1[3][0] = sp88[0];
             arg1[3][1] = sp88[1];
             arg1[3][2] = sp88[2];
-
-            // use default value for pool size when default shell limit is enabled
-            if (gTournamentShellLimit != 1) {
-                if ((gMatrixObjectCount < MTX_OBJECT_POOL_SIZE) && (render_set_position(arg1, 0) != 0)) {
-                    switch (var_s1->someId) {
-                        case 0:
-                            gSPDisplayList(gDisplayListHead++, d_course_moo_moo_farm_dl_cow1);
-                            break;
-                        case 1:
-                            gSPDisplayList(gDisplayListHead++, d_course_moo_moo_farm_dl_cow2);
-                            break;
-                        case 2:
-                            gSPDisplayList(gDisplayListHead++, d_course_moo_moo_farm_dl_cow3);
-                            break;
-                        case 3:
-                            gSPDisplayList(gDisplayListHead++, d_course_moo_moo_farm_dl_cow4);
-                            break;
-                        case 4:
-                            gSPDisplayList(gDisplayListHead++, d_course_moo_moo_farm_dl_cow5);
-                            break;
-                    }
-                } else {
-                    return;
+            if ((gMatrixObjectCount < MTX_OBJECT_POOL_SIZE) && (render_set_position(arg1, 0) != 0)) {
+                switch (var_s1->someId) {
+                    case 0:
+                        gSPDisplayList(gDisplayListHead++, d_course_moo_moo_farm_dl_cow1);
+                        break;
+                    case 1:
+                        gSPDisplayList(gDisplayListHead++, d_course_moo_moo_farm_dl_cow2);
+                        break;
+                    case 2:
+                        gSPDisplayList(gDisplayListHead++, d_course_moo_moo_farm_dl_cow3);
+                        break;
+                    case 3:
+                        gSPDisplayList(gDisplayListHead++, d_course_moo_moo_farm_dl_cow4);
+                        break;
+                    case 4:
+                        gSPDisplayList(gDisplayListHead++, d_course_moo_moo_farm_dl_cow5);
+                        break;
                 }
-            }
-            // use increased pool with increased shell limit
-            else {
-                if ((gMatrixObjectCount < MTX_OBJECT_POOL_SIZE_EXTRA) && (render_set_position(arg1, 0) != 0)) {
-                    switch (var_s1->someId) {
-                        case 0:
-                            gSPDisplayList(gDisplayListHead++, d_course_moo_moo_farm_dl_cow1);
-                            break;
-                        case 1:
-                            gSPDisplayList(gDisplayListHead++, d_course_moo_moo_farm_dl_cow2);
-                            break;
-                        case 2:
-                            gSPDisplayList(gDisplayListHead++, d_course_moo_moo_farm_dl_cow3);
-                            break;
-                        case 3:
-                            gSPDisplayList(gDisplayListHead++, d_course_moo_moo_farm_dl_cow4);
-                            break;
-                        case 4:
-                            gSPDisplayList(gDisplayListHead++, d_course_moo_moo_farm_dl_cow5);
-                            break;
-                    }
-                } else {
-                    return;
-                }
+            } else {
+                return;
             }
         }
         var_s1++;
@@ -693,17 +641,8 @@ void render_palm_trees(Camera* camera, Mat4 arg1, UNUSED struct Actor* actor) {
         test = (s16) test;
         if (test == 6) {
             mtxf_rotate_zxy_translate(sp90, spD4, sp88);
-            // use default object pool size for default shell behavior
-            if (gTournamentShellLimit != 1) {
-                if (!(gMatrixObjectCount < MTX_OBJECT_POOL_SIZE)) {
-                    break;
-                }
-            }
-             // use higher object pool size for higher shell limit
-            else {
-                if (!(gMatrixObjectCount < MTX_OBJECT_POOL_SIZE_EXTRA)) {
-                    break;
-                }
+            if (!(gMatrixObjectCount < MTX_OBJECT_POOL_SIZE)) {
+                break;
             }
             render_set_position(sp90, 0);
             goto dummylabel;
@@ -711,53 +650,26 @@ void render_palm_trees(Camera* camera, Mat4 arg1, UNUSED struct Actor* actor) {
             arg1[3][0] = spD4[0];
             arg1[3][1] = spD4[1];
             arg1[3][2] = spD4[2];
-
-            // use default behavior for default shell limit
-            if (gTournamentShellLimit != 1) {
-                if (gMatrixObjectCount < MTX_OBJECT_POOL_SIZE) {
-                    render_set_position(arg1, 0);
-                dummylabel:
-                    gSPClearGeometryMode(gDisplayListHead++, G_LIGHTING);
-                    switch (test) {
-                        case 0:
-                            gSPDisplayList(gDisplayListHead++, d_course_dks_jungle_parkway_dl_tree1);
-                            break;
-                        case 4:
-                            gSPDisplayList(gDisplayListHead++, d_course_dks_jungle_parkway_dl_tree2);
-                            break;
-                        case 5:
-                            gSPDisplayList(gDisplayListHead++, d_course_dks_jungle_parkway_dl_tree3);
-                            break;
-                        case 6:
-                            gSPDisplayList(gDisplayListHead++, d_course_dks_jungle_parkway_dl_palm_tree);
-                            break;
-                    }
-                } else {
-                    break;
+            if (gMatrixObjectCount < MTX_OBJECT_POOL_SIZE) {
+                render_set_position(arg1, 0);
+            dummylabel:
+                gSPClearGeometryMode(gDisplayListHead++, G_LIGHTING);
+                switch (test) {
+                    case 0:
+                        gSPDisplayList(gDisplayListHead++, d_course_dks_jungle_parkway_dl_tree1);
+                        break;
+                    case 4:
+                        gSPDisplayList(gDisplayListHead++, d_course_dks_jungle_parkway_dl_tree2);
+                        break;
+                    case 5:
+                        gSPDisplayList(gDisplayListHead++, d_course_dks_jungle_parkway_dl_tree3);
+                        break;
+                    case 6:
+                        gSPDisplayList(gDisplayListHead++, d_course_dks_jungle_parkway_dl_palm_tree);
+                        break;
                 }
-            }
-            // use increased object pool size for increased shell limit
-            else {
-                if (gMatrixObjectCount < MTX_OBJECT_POOL_SIZE_EXTRA) {
-                    render_set_position(arg1, 0);
-                    gSPClearGeometryMode(gDisplayListHead++, G_LIGHTING);
-                    switch (test) {
-                        case 0:
-                            gSPDisplayList(gDisplayListHead++, d_course_dks_jungle_parkway_dl_tree1);
-                            break;
-                        case 4:
-                            gSPDisplayList(gDisplayListHead++, d_course_dks_jungle_parkway_dl_tree2);
-                            break;
-                        case 5:
-                            gSPDisplayList(gDisplayListHead++, d_course_dks_jungle_parkway_dl_tree3);
-                            break;
-                        case 6:
-                            gSPDisplayList(gDisplayListHead++, d_course_dks_jungle_parkway_dl_palm_tree);
-                            break;
-                    }
-                } else {
-                    break;
-                }  
+            } else {
+                break;
             }
             var_s1++;
         }
@@ -1101,10 +1013,10 @@ void init_kiwano_fruit(void) {
     for (i = 0; i < 4; i++) {
         phi_s1 = &gPlayers[i];
         // temp_v0 = *phi_s1;
-        if ((phi_s1->type & 0x4000) == 0) {
+        if ((phi_s1->type & PLAYER_HUMAN) == 0) {
             continue;
         }
-        if ((phi_s1->type & 0x100) != 0) {
+        if ((phi_s1->type & PLAYER_INVISIBLE_OR_BOMB) != 0) {
             continue;
         }
 
@@ -2179,7 +2091,7 @@ void evaluate_collision_between_player_actor(Player* player, struct Actor* actor
             }
             player->triggers |= HIT_BANANA_TRIGGER;
             owner = &gPlayers[temp_v1];
-            if (owner->type & 0x4000) {
+            if (owner->type & PLAYER_HUMAN) {
                 if (actor->flags & 0xF) {
                     if (temp_lo != temp_v1) {
                         func_800C90F4(temp_v1, (owner->characterId * 0x10) + SOUND_ARG_LOAD(0x29, 0x00, 0x80, 0x06));
@@ -2209,7 +2121,7 @@ void evaluate_collision_between_player_actor(Player* player, struct Actor* actor
             player->triggers |= LOW_TUMBLE_TRIGGER;
             func_800C98B8(player->pos, player->velocity, SOUND_ARG_LOAD(0x19, 0x01, 0x80, 0x10));
             owner = &gPlayers[temp_v1];
-            if ((owner->type & 0x4000) && (temp_lo != temp_v1)) {
+            if ((owner->type & PLAYER_HUMAN) && (temp_lo != temp_v1)) {
                 func_800C90F4(temp_v1, (owner->characterId * 0x10) + SOUND_ARG_LOAD(0x29, 0x00, 0x80, 0x06));
             }
             destroy_destructable_actor(actor);
@@ -2228,7 +2140,7 @@ void evaluate_collision_between_player_actor(Player* player, struct Actor* actor
                 func_800C98B8(player->pos, player->velocity, SOUND_ARG_LOAD(0x19, 0x01, 0x80, 0x10));
             }
             owner = &gPlayers[temp_v1];
-            if ((owner->type & 0x4000) && (temp_lo != temp_v1)) {
+            if ((owner->type & PLAYER_HUMAN) && (temp_lo != temp_v1)) {
                 func_800C90F4(temp_v1, (owner->characterId * 0x10) + SOUND_ARG_LOAD(0x29, 0x00, 0x80, 0x06));
             }
             if (temp_lo == actor->unk_04) {
@@ -2253,7 +2165,7 @@ void evaluate_collision_between_player_actor(Player* player, struct Actor* actor
                 func_800C98B8(player->pos, player->velocity, SOUND_ARG_LOAD(0x19, 0x01, 0x80, 0x10));
             }
             owner = &gPlayers[temp_v1];
-            if ((owner->type & 0x4000) && (temp_lo != temp_v1)) {
+            if ((owner->type & PLAYER_HUMAN) && (temp_lo != temp_v1)) {
                 func_800C90F4(temp_v1, (owner->characterId * 0x10) + SOUND_ARG_LOAD(0x29, 0x00, 0x80, 0x06));
             }
             destroy_destructable_actor(actor);
@@ -2311,7 +2223,7 @@ void evaluate_collision_between_player_actor(Player* player, struct Actor* actor
             }
             player->triggers |= VERTICAL_TUMBLE_TRIGGER;
             owner = &gPlayers[temp_v1];
-            if (owner->type & 0x4000) {
+            if (owner->type & PLAYER_HUMAN) {
                 if (actor->flags & 0xF) {
                     if (temp_lo != temp_v1) {
                         func_800C90F4(temp_v1, (owner->characterId * 0x10) + SOUND_ARG_LOAD(0x29, 0x00, 0x80, 0x06));

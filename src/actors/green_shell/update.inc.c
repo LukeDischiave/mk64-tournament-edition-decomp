@@ -192,10 +192,7 @@ void update_actor_green_shell(struct ShellActor* shell) {
             shell->pos[1] += shell->velocity[1];
             if (shell->someTimer == 0) {
                 destroy_actor((struct Actor*) shell);
-                // bugfix toggle for modified shell limit modes
-                if (gTournamentShellLimit != 0) {
-                    gNumSpawnedShells -= 1;
-                }
+                gNumSpawnedShells -= 1;
             }
             break;
         default:

@@ -180,64 +180,11 @@ u8 currentRandomIndex = 0;
 // Per-row number of selectable values (matches label arrays in render_custom_overlay)
 // tracks, stats, scaling, widescreen, mp music, mp train boat, AA, force minimap,
 // extra, practice mode, 200CC
-static const s8 gCustomMenuValueCounts[CUSTOM_MENU_ROWS] = { 3, 3, 3, 2, 2, 4, 2, 3, 2, 2, 2, 2 };
+static const s8 gCustomMenuValueCounts[CUSTOM_MENU_ROWS] = { 3, 3, 3, 2, 2, 4, 2, 3, 2 };
 
 // end of new var init
 
 /**************************/
-
-extern OSContPad gControllerPads[4];
-
-u8 getLiveControllerBits(void) {
-    u8 bits = 0;
-    s32 i;
-    for (i=0; i<4; i++) {
-        if (gControllerPads[i].errno == 0) {
-            bits |= (1 << i);
-        }
-    }
-    return bits;
-}
-
-void checkPlayersAndSelectComputers(void) {
-    s32 i;
-    s32 allHumansReady = 1;
-    u8 physicalBits = getLiveControllerBits();
-
-    // 1. First, verify all HUMAN players have locked in their characters
-    for (i = 0; i < gPlayerCount; i++) {
-        // If the controller bit is set (1 << i checks bits 1, 2, 4, 8)
-        if ((physicalBits & (1 << i)) != 0) {
-            // It's a human player. Have they picked a character?
-            if (!gCharacterGridIsSelected[i]) {
-                allHumansReady = 0;
-                break; // Stop checking, we are still waiting on a human
-            }
-        }
-    }
-
-    // 2. Once humans are done, fill the UNPLUGGED slots with bots
-    if (allHumansReady) {
-        for (i = 0; i < gPlayerCount; i++) {
-            // If the controller bit is 0 (Unplugged)
-            if ((physicalBits & (1 << i)) == 0) {
-                
-                // If the bot hasn't been locked in yet
-                if (!gCharacterGridIsSelected[i]) {
-                    
-                    // 1. Assign the bot's choice to the grid cursor array
-                    gCharacterGridSelections[i] = (random_u16() % 8) + 1;
-                    
-                    // 2. Lock it in (this perfectly mimics pressing the A button)
-                    gCharacterGridIsSelected[i] = true;
-                    
-                    // 3. Play the character's selection voice line
-                    func_800C90F4(i, ((sCharacterGridOrder - 1)[gCharacterGridSelections[i]] * 0x10) + 0x2900800E);
-                }
-            }
-        }
-    }
-}
 
 /**
  * General menu main handler
@@ -300,9 +247,6 @@ void update_menus(void) {
                 case PLAYER_SELECT_MENU_FROM_QUIT:
                 case CHARACTER_SELECT_MENU:
                     player_select_menu_act(&gControllers[controllerIdx], controllerIdx);
-                    if (gPracticeMode && (gModeSelection == VERSUS)) {
-                        checkPlayersAndSelectComputers();
-                    }
                     break;
                 case COURSE_SELECT_MENU_FROM_QUIT:
                 case COURSE_SELECT_MENU:

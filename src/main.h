@@ -17,7 +17,6 @@
 #endif
 
 #define MTX_OBJECT_POOL_SIZE 128
-#define MTX_OBJECT_POOL_SIZE_EXTRA 256
 
 //! @todo Verify with proper documentation
 // functions called by mtxShadow multiply by 8

@@ -68,16 +68,9 @@ void func_802818BC(void) {
     s32 sp1C;
     s32 temp_v0_2;
 
-    if (gPlayerCount == ONE_PLAYERS_SELECTED) {
-        // always follows P1 (default behavior)
+    if (gPlayerCount != TWO_PLAYERS_SELECTED) {
         D_802874D8.unk1D = func_80281880(0);
         D_802874D8.unk1E = gCharacterSelections[0];
-        return;
-    }
-    else if (gPlayerCount != TWO_PLAYERS_SELECTED) {
-        // changed to always follow the winning player 
-        D_802874D8.unk1D = func_80281880(gPlayerWinningIndex);
-        D_802874D8.unk1E = gCharacterSelections[gPlayerWinningIndex];
         return;
     }
     // weird pattern but if it matches it matches

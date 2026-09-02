@@ -859,15 +859,8 @@ extern s8 gTournamentWidescreen;
 extern s8 gTournamentMusic;
 extern s8 gTournamentTrainBoat;
 extern s8 gTournamentAA;
-extern s8 gTournamentShellLimit; // unused
 extern s8 gTournamentForceMap;
 extern s8 gTournamentExtraMode;
-extern s8 gPracticeMode;
-extern s8 gVSPoints[8];
-extern s8 g200CC;
-extern s8 gStrategicItems;
 extern COURSES sRandomTrackOrder[16];
 extern u8 currentRandomIndex;
-
-
 #endif

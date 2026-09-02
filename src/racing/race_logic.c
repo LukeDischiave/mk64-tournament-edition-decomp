@@ -29,7 +29,6 @@
 
 #pragma intrinsic(sqrtf)
 
-extern s8 gVSPoints[8];
 extern s8 gCharacterSelections[8];
 extern s8 gCharacterIdByGPOverallRank[8];
 
@@ -54,8 +53,6 @@ UNUSED s32 D_802BA03C;
 
 s16 D_802BA040[4];
 u16 D_802BA048;
-
-bool gPracticeCPU[4];
 
 void func_8028DF00(void) {
     struct Controller* controllers = &gControllers[0];
@@ -579,8 +576,8 @@ void func_8028EF28(void) {
         } else if (gLapCountByPlayerId[playerId] > player->lapCount) {
             player->lapCount++;
 
-            // if slot has an active player or practice CPU
-            if ((player->type & PLAYER_HUMAN) || gPracticeCPU[playerId]) {
+            // if slot has an active player
+            if ((player->type & PLAYER_HUMAN) != 0) {
                 // if player finishes (3 = starting 4th lap = finished)
                 if (player->lapCount == 3) {
                     add_cinematic_mode(playerId);
@@ -1212,42 +1209,6 @@ void func_802903B0(void) {
     gGotoMode = RACING;
 }
 
-// builds vs standings for ALL 8 players :)
-// if a player gets 0 points, an empty slot should never be ranked above
-// resolves ties based off of port priority (no other way)
-void build_vs_standings() {
-    s32 i,j;
-    u8 order[8];
-    u8 key;
-    u8 defaultCharacterIds[] = { 1, 2, 3, 4, 5, 6, 7, 0 };
-
-
-    for (i=0; i<8; i++) {
-        // default characters are mario for non-players
-        gCharacterIdByGPOverallRank[i] = 0;
-    }
-
-    for (i=0; i < gPlayerCount; i++) {
-        order[i] = i;
-    }
-
-
-    // insertion sort
-    for (i=1; i<8; i++) {
-        key = order[i];
-        j = i -1;
-        while (j>=0 && gVSPoints[order[j]] < gVSPoints[key]) {
-            order[j+1] = order[j];
-            j--;
-        }
-        order[j+1] = key;
-    }
-
-    for (i=0; i<gPlayerCount; i++) {
-        gCharacterIdByGPOverallRank[i] = gCharacterSelections[order[i]];
-    }
-    gPlayerWinningIndex = order[0];
-}
 
 // proceed to next track in selection (vs mode only)
 void gotoNextTrack(void) {
@@ -1265,19 +1226,9 @@ void gotoNextTrack(void) {
             if (gCupSelection > 3) {
                 gCupSelection = 0; 
             }
-            
-        }
-        if (gCurrentCourseId == COURSE_RAINBOW_ROAD) {
-            // this spot in memory needs to be populated or else the ceremony wont run
-            // bcopy(&defaultCharacterIds, &gCharacterIdByGPOverallRank, 8);
-            build_vs_standings();
-            gGamestateNext = ENDING;
-            return; 
-        }
-        else {
             gCurrentCourseId = gCupCourseOrder[gCupSelection][gCourseIndexInCup];
         }
-    } 
+    }
     // VA track order
     else if (gTournamentCourseMode == 0) {
         if (!(gCourseIndexInCup == COURSE_FOUR)) {
@@ -1303,16 +1254,7 @@ void gotoNextTrack(void) {
                 gCupSelection = MUSHROOM_CUP; 
             }
         }
-        if (gCurrentCourseId == COURSE_MARIO_RACEWAY) {
-            // this spot in memory needs to be populated or else the ceremony wont run
-            // bcopy(&defaultCharacterIds, &gCharacterIdByGPOverallRank, 8);
-            build_vs_standings();
-            gGamestateNext = ENDING;
-            return;
-        }
-        else {
-            gCurrentCourseId = gCupCourseOrder[gCupSelection][gCourseIndexInCup];
-        }
+        gCurrentCourseId = gCupCourseOrder[gCupSelection][gCourseIndexInCup];
     }
     // random track order
     else if (gTournamentCourseMode == 2) {

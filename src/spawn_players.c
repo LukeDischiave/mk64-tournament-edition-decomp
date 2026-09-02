@@ -72,9 +72,6 @@ s16 D_8016557E;
 s16 D_80165580;
 s16 D_80165582;
 
-extern u8 getLiveControllerBits(void);
-extern bool gPracticeCPU[4];
-
 // arg4 is height? Or something like that?
 void spawn_player(Player* player, s8 playerIndex, f32 startingRow, f32 startingColumn, f32 arg4, f32 arg5,
                   u16 characterId, s16 playerType) {
@@ -82,23 +79,7 @@ void spawn_player(Player* player, s8 playerIndex, f32 startingRow, f32 startingC
     s8 idx;
     s32 statsCharacterId;
     s32 statsCCIndex;
-
-    // 200 CC top speed table per character
-    f32 gTopSpeed200cc[] = { 
-         335.0, 335.0, 339.0, 339.0, 335.0, 335.0, 339.0, 335.0,
-    };
-    
-    /* empty-port human in VS -> spawn CPU in all versus modes */
-    if (gPracticeMode) {
-        if ((gModeSelection == VERSUS) && !gDemoMode
-            && (playerType & PLAYER_HUMAN)
-            && !(playerType & PLAYER_INVISIBLE_OR_BOMB)
-            && !(getLiveControllerBits() & (1 << playerIndex))) {
-                playerType |= PLAYER_CPU;
-                gPracticeCPU[playerIndex] = true;
-            }
-        }
-        
+          
     player->type = PLAYER_INACTIVE;
     player->unk_08C = 0;
     player->characterId = characterId;
@@ -135,14 +116,7 @@ void spawn_player(Player* player, s8 playerIndex, f32 startingRow, f32 startingC
     // set maximum power
     player->unk_210 = D_800E2568[statsCCIndex][statsCharacterId];
 
-
-    // 200cc mode overrides 150cc
-    if (g200CC && statsCCIndex == CC_150) {
-        player->topSpeed = gTopSpeed200cc[statsCharacterId];
-    }
-    else {
-        player->topSpeed = gTopSpeedTable[statsCCIndex][statsCharacterId];
-    }
+    player->topSpeed = gTopSpeedTable[statsCCIndex][statsCharacterId];
 
     player->pos[0] = startingRow;
     ret = get_surface_height(startingRow, arg4 + 50.0f, startingColumn) + player->boundingBoxSize;
@@ -402,7 +376,6 @@ void spawn_player(Player* player, s8 playerIndex, f32 startingRow, f32 startingC
 void func_80039AE4(void) {
     switch (gActiveScreenMode) {
         case SCREEN_MODE_1P:
-        case SCREEN_MODE_3P_4P_SPLITSCREEN:
             if (gGamestate == ENDING) {
                 D_80165578 = 0x898;
                 D_8016557A = 0;
