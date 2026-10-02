@@ -1485,6 +1485,9 @@ void func_80290B14(void) {
     }
 }
 
+// TODO - Remove
+
+/*
 // function to handle shell throwing and start boost for practice CPUs
 // refactored from amped up
 // maybe I can spice this up with some old-fashioned rng cool stuff!
@@ -1609,3 +1612,4 @@ void ObjectStrategyHook()
         }
         ObjectStrategy();
 }
+*/
