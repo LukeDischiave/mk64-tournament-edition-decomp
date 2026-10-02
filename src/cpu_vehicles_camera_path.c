@@ -150,6 +150,7 @@ BombKart gBombKarts[NUM_BOMB_KARTS_MAX];
 Collision D_80164038[NUM_BOMB_KARTS_MAX];
 struct unexpiredActors gUnexpiredActorsList[8];
 CpuItemStrategyData cpu_ItemStrategy[NUM_PLAYERS];
+CpuPracItemStrategyData cpu_PracItemStrategy[NUM_PLAYERS];
 s16 D_80164358;
 s16 D_8016435A;
 s16 D_8016435C;
@@ -1410,7 +1411,11 @@ void update_cpu_player(s32 playerId, Player* player){
     }
     // one update it try to use an item, the other it doesn't
     if ((playerId & 1) != (gIncrementUpdatePlayer & 1)) {
-        cpu_use_item_strategy(playerId);
+        if ((player->type & PLAYER_HUMAN_CPU) == PLAYER_HUMAN_CPU){
+            cpu_practice_use_item_strategy(playerId);
+        } else {
+            cpu_use_item_strategy(playerId);
+        }
     }
     update_player_timer_sound(playerId, player);
     D_80162FD0 = 0;
@@ -3932,6 +3937,121 @@ void func_8001AAAC(s16 arg0, s16 arg1, s16 arg2) {
 }
 
 #include "cpu_vehicles_camera_path/cpu_item_strategy.inc.c"
+
+void cpu_practice_use_item_strategy(s32 playerId){
+    Player* player = &gPlayerOne[playerId];
+    s32 actorIdx;
+    struct Actor* heldItem;
+    s16 itemType;
+
+    s16 windowItem;
+    CpuPracItemStrategyData* cpuStrategy = &cpu_PracItemStrategy[playerId];
+    struct Controller* controller;
+    bool holdingItem;
+
+    controller = &gControllers[player - gPlayerOne];
+
+    if (gModeSelection == TIME_TRIALS) {
+        return;
+    }
+
+    if ((u16) D_801646CC == 1) {
+        return;
+    }
+
+    if (player->type & PLAYER_CINEMATIC_MODE) {
+        return;
+    }
+    // Manually clear old button signals, so they don't get stuck
+    controller->buttonPressed &= ~Z_TRIG;
+    controller->buttonDepressed &= ~Z_TRIG;
+    controller->rawStickY = 0;
+
+    actorIdx = player->heldItem;
+
+    holdingItem = (actorIdx != -1);
+    if (holdingItem){
+        heldItem = &gActorList[actorIdx];
+        itemType = heldItem->type;
+
+        // for the moment, all items use the same timing. This could be customized
+        // and moved inside case stamements in the future.
+        if (cpuStrategy->timeBeforeUse == -1){
+            cpuStrategy->timeBeforeUse = (random_int(150)) + 10;
+        }
+        cpuStrategy->timer++;
+
+        // please note that this uses the ACTOR type enum, not the ITEM type
+        switch (itemType){
+            case ACTOR_RED_SHELL:
+            case ACTOR_FAKE_ITEM_BOX:
+            case ACTOR_BANANA:
+            case ACTOR_BLUE_SPINY_SHELL:
+                // dragged items you release
+                if (cpuStrategy->timeBeforeUse < cpuStrategy->timer) {
+                    // TODO throwing bananas
+                    controller->buttonDepressed |= Z_TRIG;
+                }
+                break;
+            case ACTOR_GREEN_SHELL:
+                // dragged item you can release backwards
+                if (cpuStrategy->timeBeforeUse < cpuStrategy->timer) {
+                    controller->buttonDepressed |= Z_TRIG;
+                    if ((player->currentRank == 0) | (random_int(4) == 1)){
+                        controller->rawStickY = -100;
+                    }
+                }
+                break;        
+            case ACTOR_TRIPLE_RED_SHELL:
+            case ACTOR_TRIPLE_GREEN_SHELL:
+            case ACTOR_BANANA_BUNCH:
+                // items you have to press z to use
+                // TODO throwing bananas
+                if (cpuStrategy->timeBeforeUse < cpuStrategy->timer) {
+                    controller->buttonPressed |= Z_TRIG;
+                }
+                break;
+        }
+
+        if (((controller->buttonDepressed & Z_TRIG) == Z_TRIG) | ((controller->buttonPressed & Z_TRIG) == Z_TRIG)){
+            cpuStrategy->timer = 0;
+            cpuStrategy->timeBeforeUse = -1;
+        }
+        return;
+    }
+
+    windowItem = player->currentItemCopy;
+    switch(windowItem){
+        case ITEM_NONE:
+            break;
+        case ITEM_FAKE_ITEM_BOX:
+        case ITEM_GREEN_SHELL:
+        case ITEM_RED_SHELL:
+        case ITEM_STAR:
+        case ITEM_BANANA:
+        case ITEM_BANANA_BUNCH:
+        case ITEM_THUNDERBOLT:
+        case ITEM_TRIPLE_GREEN_SHELL:
+        case ITEM_BOO:
+        case ITEM_TRIPLE_RED_SHELL:
+        case ITEM_BLUE_SPINY_SHELL:
+        case ITEM_SUPER_MUSHROOM:
+        case ITEM_TRIPLE_MUSHROOM:
+        case ITEM_DOUBLE_MUSHROOM:
+        case ITEM_MUSHROOM:
+            if (cpuStrategy->timeBeforeUse == -1){
+                cpuStrategy->timeBeforeUse = (random_int(150)) + 10;
+            }
+            cpuStrategy->timer++;
+            if (cpuStrategy->timeBeforeUse < cpuStrategy->timer) {
+                controller->buttonPressed |= Z_TRIG;
+                cpuStrategy->timeBeforeUse = -1;
+                cpuStrategy->timer = 0;
+            }
+            break;
+        return;
+    }
+}
 
 void cpu_use_item_strategy(s32 playerId) {
     Player* player = &gPlayerOne[playerId];

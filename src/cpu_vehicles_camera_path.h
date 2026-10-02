@@ -38,6 +38,12 @@ typedef struct {
 } CpuItemStrategyData; // size = 0x10
 
 typedef struct {
+    s16 branch;
+    s16 timer;
+    s16 timeBeforeUse;
+} CpuPracItemStrategyData;
+
+typedef struct {
     s16 unk0;
     s16 unk2;
     s16 unk4;
@@ -280,6 +286,7 @@ void cpu_decisions_branch_item(s32, s16*, s32);
 void func_8001ABE0(s32, CpuItemStrategyData*);
 void clear_expired_strategies(CpuItemStrategyData*);
 void cpu_use_item_strategy(s32);
+void cpu_practice_use_item_strategy(s32);
 
 void func_8001BE78(void);
 
