@@ -314,7 +314,8 @@ void remove_spinout_effects(Player* player, s8 playerId) {
         player->currentSpeed = (f32) (player->currentSpeed + 100.0f);
     }
     if ((gModeSelection == VERSUS) && ((player->type & PLAYER_CPU) == PLAYER_CPU) && (!gDemoMode) &&
-        ((player->unk_0CA & 2) == 0) && (gGPCurrentRaceRankByPlayerId[playerId] != 0)) {
+        ((player->unk_0CA & 2) == 0) && (gGPCurrentRaceRankByPlayerId[playerId] != 0) && (gRaceState == 5)) {
+        // player blows up when spinning out after race finishes (mostly used for last place finisher)
         player->triggers = (s32) (player->triggers | VERTICAL_TUMBLE_TRIGGER);
     }
 }
