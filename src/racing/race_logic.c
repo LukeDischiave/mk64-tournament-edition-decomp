@@ -55,8 +55,6 @@ UNUSED s32 D_802BA03C;
 s16 D_802BA040[4];
 u16 D_802BA048;
 
-bool gPracticeCPU[4];
-
 void func_8028DF00(void) {
     struct Controller* controllers = &gControllers[0];
     s32 i;
@@ -580,7 +578,7 @@ void func_8028EF28(void) {
             player->lapCount++;
 
             // if slot has an active player or practice CPU
-            if ((player->type & PLAYER_HUMAN) || gPracticeCPU[playerId]) {
+            if (player->type & PLAYER_HUMAN) {
                 // if player finishes (3 = starting 4th lap = finished)
                 if (player->lapCount == 3) {
                     add_cinematic_mode(playerId);

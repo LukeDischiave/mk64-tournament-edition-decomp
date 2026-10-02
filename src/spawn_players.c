@@ -73,7 +73,6 @@ s16 D_80165580;
 s16 D_80165582;
 
 extern u8 getLiveControllerBits(void);
-extern bool gPracticeCPU[4];
 
 // arg4 is height? Or something like that?
 void spawn_player(Player* player, s8 playerIndex, f32 startingRow, f32 startingColumn, f32 arg4, f32 arg5,
@@ -94,8 +93,7 @@ void spawn_player(Player* player, s8 playerIndex, f32 startingRow, f32 startingC
             && (playerType & PLAYER_HUMAN)
             && !(playerType & PLAYER_INVISIBLE_OR_BOMB)
             && !(getLiveControllerBits() & (1 << playerIndex))) {
-                playerType |= PLAYER_CPU;
-                gPracticeCPU[playerIndex] = true;
+                playerType |= PLAYER_HUMAN_AND_CPU;
             }
         }
         
