@@ -293,6 +293,7 @@ void update_actor_banana_bunch(struct BananaBunchParent* banana_bunch) {
             }
             if (someCount == 0) {
                 destroy_actor((struct Actor*) banana_bunch);
+                remove_player_item(banana_bunch->playerId);
                 owner->triggers &= ~DRAG_ITEM_EFFECT;
             } else if ((owner->type & 0x4000) != 0) {
                 controller = &gControllers[banana_bunch->playerId];
@@ -418,6 +419,7 @@ void update_actor_triple_shell(TripleShellParent* parent, s16 shellType) {
             }
             if (shellCount == 0) {
                 destroy_actor((struct Actor*) parent);
+                remove_player_item(parent->playerId);
                 break;
             }
             if ((gControllers[parent->playerId].buttonPressed & Z_TRIG) != 0) {
@@ -679,8 +681,12 @@ s32 use_red_shell_item(Player* player) {
 
 // Interestingly blue shells start their life as a red shell,
 // and then just change the type from red to blue shell
-void use_blue_shell_item(Player* player) {
-    gActorList[use_red_shell_item(player)].type = ACTOR_BLUE_SPINY_SHELL;
+s32 use_blue_shell_item(Player* player) {
+    s32 actorIndex;
+
+    actorIndex = use_red_shell_item(player);
+    gActorList[actorIndex].type = ACTOR_BLUE_SPINY_SHELL;
+    return actorIndex;
 }
 
 #include "actors/banana/update.inc.c"
@@ -880,22 +886,23 @@ void use_thunder_item(Player* player) {
 // Handles item use?
 void player_use_item(Player* player) {
     s32 playerId = player - gPlayerOne;
+    s32 actorIndex = -1;
 
     switch (player->currentItemCopy) {
         case ITEM_GREEN_SHELL:
-            use_green_shell_item(player);
+            actorIndex = use_green_shell_item(player);
             break;
         case ITEM_RED_SHELL:
-            use_red_shell_item(player);
+            actorIndex = use_red_shell_item(player);
             break;
         case ITEM_BLUE_SPINY_SHELL:
-            use_blue_shell_item(player);
+            actorIndex = use_blue_shell_item(player);
             break;
         case ITEM_BANANA:
-            use_banana_item(player);
+            actorIndex = use_banana_item(player);
             break;
         case ITEM_BANANA_BUNCH:
-            use_banana_bunch_item(player);
+            actorIndex = use_banana_bunch_item(player);
             break;
         case ITEM_MUSHROOM:
             player->triggers |= SHROOM_TRIGGER;
@@ -919,16 +926,19 @@ void player_use_item(Player* player) {
             use_thunder_item(player);
             break;
         case ITEM_FAKE_ITEM_BOX:
-            use_fake_itembox_item(player);
+            actorIndex = use_fake_itembox_item(player);
             break;
         case ITEM_TRIPLE_GREEN_SHELL:
-            use_triple_shell_item(player, ACTOR_TRIPLE_GREEN_SHELL);
+            actorIndex = use_triple_shell_item(player, ACTOR_TRIPLE_GREEN_SHELL);
             break;
         case ITEM_TRIPLE_RED_SHELL:
-            use_triple_shell_item(player, ACTOR_TRIPLE_RED_SHELL);
+            actorIndex = use_triple_shell_item(player, ACTOR_TRIPLE_RED_SHELL);
             break;
     }
     consume_item(playerId);
+    if (actorIndex > -1){
+        player->heldItem = actorIndex;
+    }
 }
 
 // Check if a player is using an item?

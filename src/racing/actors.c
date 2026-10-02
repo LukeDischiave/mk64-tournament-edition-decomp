@@ -1413,6 +1413,12 @@ void destroy_actor(struct Actor* actor) {
     gNumActors--;
 }
 
+void remove_player_item(s32 playerId){
+    Player* player;
+    player = &gPlayerOne[playerId];
+    player->heldItem = -1;
+}
+
 s16 try_remove_destructable_item(Vec3f pos, Vec3s rot, Vec3f velocity, s16 actorType) {
     s32 actorIndex;
     struct ShellActor* compare;

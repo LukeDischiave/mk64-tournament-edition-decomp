@@ -2136,6 +2136,7 @@ void init_players(void) {
             gGPCurrentRaceRankByPlayerId[i] = i;
             gPreviousGPCurrentRaceRankByPlayerId[i] = i;
         }
+        player->heldItem = -1;
         temp_v0_3 = gGPCurrentRaceRankByPlayerId[i];
         gGPCurrentRacePlayerIdByRank[temp_v0_3] = (s16) i;
         gPrevPlayerIdByRank[temp_v0_3] = (s16) i;

@@ -57,6 +57,7 @@ void update_actor_banana(struct BananaActor* banana) {
                     controller = &gControllers[banana->rot[0]];
                 }
                 if ((controller->buttonDepressed & Z_TRIG) != 0) {
+                    remove_player_item(banana->playerId);
                     controller->buttonDepressed &= ~Z_TRIG;
                     banana->state = DROPPED_BANANA;
                     banana->unk_04 = 0x00B4;

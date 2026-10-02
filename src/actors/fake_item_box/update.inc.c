@@ -43,6 +43,7 @@ void update_actor_fake_item_box(struct FakeItemBox* fake_item_box) {
             if ((temp_v0_4->type & 0x4000) != 0) {
 
                 if ((temp_v1_3->buttonDepressed & Z_TRIG) != 0) {
+                    remove_player_item(fake_item_box->playerId);
                     temp_v1_3->buttonDepressed &= 0xDFFF;
                     func_802A1064(fake_item_box);
                     temp_v0_4->triggers &= ~DRAG_ITEM_EFFECT;

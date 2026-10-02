@@ -58,6 +58,7 @@ void update_actor_green_shell(struct ShellActor* shell) {
             if ((player->type & PLAYER_HUMAN) != 0) {
                 controller = &gControllers[shell->playerId];
                 if ((controller->buttonDepressed & Z_TRIG) != 0) {
+                    remove_player_item(shell->playerId);
                     controller->buttonDepressed &= ~Z_TRIG;
                     if (controller->rawStickY < -0x2D) {
                         var_f2 = 8.0f;
