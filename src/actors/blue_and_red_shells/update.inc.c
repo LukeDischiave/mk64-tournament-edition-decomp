@@ -478,7 +478,7 @@ void update_actor_red_blue_shell(struct ShellActor* shell) {
                 shell->state = BLUE_SHELL_TARGET_ELIMINATED;
             }
             break;
-        case 9:
+        case BLUE_SHELL_TARGET_ELIMINATED:
             func_802B3E7C(shell, &gPlayers[shell->targetPlayer]);
             break;
         default:
