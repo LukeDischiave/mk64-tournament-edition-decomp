@@ -3725,6 +3725,7 @@ void func_8007ABFC(s32 playerId, bool arg1) {
 
     if (playerHUD[playerId].raceCompleteBool == false) {
         itemWindow = gItemWindowObjectByPlayerId[playerId];
+        // checks if already have item
         if (func_80072354(itemWindow, 4) != 0) {
             init_object(itemWindow, 0);
             if (arg1 != 0) {
@@ -3917,146 +3918,145 @@ void func_8007B254(s32 objectIndex, s32 arg1) {
         func_800C8F80(arg1, 0x0100FE1CU);
     }
 }
-
 void func_8007B34C(s32 playerId) {
-    s32 temp_s0;
+    s32 item_window;
     s32 sp40;
     Object* object;
-    Player* sp38;
+    Player* player;
     struct Controller* new_var;
 
-    temp_s0 = gItemWindowObjectByPlayerId[playerId];
-    sp38 = &gPlayerOne[playerId];
+    item_window = gItemWindowObjectByPlayerId[playerId];
+    player = &gPlayerOne[playerId];
     sp40 = 0;
     new_var = &gControllerOne[playerId];
-    if (new_var->buttonPressed & 0x2000) {
+    if (new_var->buttonPressed & Z_TRIG) {
         sp40 = 1;
     }
     if (D_80165888 != 0) {
-        init_object(temp_s0, 0);
+        init_object(item_window, 0);
     }
-    object = &gObjectList[temp_s0];
+    object = &gObjectList[item_window];
     switch (object->state) {
         case 1:
-            func_8007B254(temp_s0, playerId);
+            func_8007B254(item_window, playerId);
             break;
         case 2:
             if (gActiveScreenMode == 0) {
                 s16_step_up_towards(&playerHUD[playerId].slideItemBoxY, 0x0040, 4);
                 if (playerHUD[playerId].slideItemBoxY == 0x0040) {
-                    object_next_state(temp_s0);
+                    object_next_state(item_window);
                 }
             } else if (gActiveScreenMode == 3) {
                 if ((playerId == 0) || (playerId == 2)) {
                     s16_step_up_towards(&playerHUD[playerId].slideItemBoxX, 0x0080, 8);
                     if (playerHUD[playerId].slideItemBoxX == 0x0080) {
-                        object_next_state(temp_s0);
+                        object_next_state(item_window);
                     }
                 } else {
                     s16_step_down_towards(&playerHUD[playerId].slideItemBoxX, -0x0080, 8);
                     if (playerHUD[playerId].slideItemBoxX == -0x0080) {
-                        object_next_state(temp_s0);
+                        object_next_state(item_window);
                     }
                 }
             } else {
                 s16_step_up_towards(&playerHUD[playerId].slideItemBoxX, 0x0080, 8);
                 if (playerHUD[playerId].slideItemBoxX == 0x0080) {
-                    object_next_state(temp_s0);
+                    object_next_state(item_window);
                 }
             }
             break;
         case 3:
-            func_80072E54(temp_s0, 1, 0x0000000F, 1, 2, 2);
+            func_80072E54(item_window, 1, 0x0000000F, 1, 2, 2);
             break;
         case 4:
-            func_80072E54(temp_s0, 1, 6, 1, 8, 1);
+            func_80072E54(item_window, 1, 6, 1, 8, 1);
             break;
         case 5:
-            func_80072E54(temp_s0, 1, 4, 1, 0x00000010, 1);
+            func_80072E54(item_window, 1, 4, 1, 0x00000010, 1);
             break;
         case 6:
-            object->textureListIndex = func_8007AFB0(temp_s0, playerId);
+            object->textureListIndex = func_8007AFB0(item_window, playerId);
             object->unk_04C = 8;
             object->unk_0D6 = 2;
-            object_next_state(temp_s0);
+            object_next_state(item_window);
             func_800C9018((u8) playerId, SOUND_ARG_LOAD(0x01, 0x00, 0xFE, 0x1C));
             func_800C8F80((u8) playerId, SOUND_ARG_LOAD(0x01, 0x00, 0xFE, 0x47));
             break;
         case 7:
-            func_80072D3C(temp_s0, (s32) object->unk_0A2, 0, 8, 0x0000000A);
+            func_80072D3C(item_window, (s32) object->unk_0A2, 0, 8, 0x0000000A);
             break;
         case 9:
-            func_800722CC(temp_s0, 4);
-            func_80073600(temp_s0);
+            func_800722CC(item_window, 4);
+            func_80073600(item_window);
             object->textureListIndex = 0;
-            object_next_state(temp_s0);
+            object_next_state(item_window);
             break;
         case 10:
-            set_and_run_timer_object(temp_s0, 0x00000014);
+            set_and_run_timer_object(item_window, 0x00000014);
             break;
         case 11:
             if (gActiveScreenMode == 0) {
                 if (s16_step_down_towards(&playerHUD[playerId].slideItemBoxY, 0, 4) != 0) {
-                    object_next_state(temp_s0);
+                    object_next_state(item_window);
                 }
             } else if (gActiveScreenMode == 3) {
                 if ((playerId == 0) || (playerId == 2)) {
                     s16_step_down_towards(&playerHUD[playerId].slideItemBoxX, 0, 8);
                     if (playerHUD[playerId].slideItemBoxX == 0) {
-                        object_next_state(temp_s0);
+                        object_next_state(item_window);
                     }
                 } else {
                     s16_step_up_towards(&playerHUD[playerId].slideItemBoxX, 0, 8);
                     if (playerHUD[playerId].slideItemBoxX == 0) {
-                        object_next_state(temp_s0);
+                        object_next_state(item_window);
                     }
                 }
             } else if (s16_step_down_towards(&playerHUD[playerId].slideItemBoxX, 0, 8) != 0) {
-                object_next_state(temp_s0);
+                object_next_state(item_window);
             }
             break;
         case 12:
-            func_80072428(temp_s0);
+            func_80072428(item_window);
             break;
         case 20:
             if (object->unk_0A2 == 0x000B) {
-                func_80072D3C(temp_s0, object->unk_0A2, 0, 8, 0x0000000A);
+                func_80072D3C(item_window, object->unk_0A2, 0, 8, 0x0000000A);
             } else {
-                func_80072D3C(temp_s0, object->unk_0A2, 0x0000000B, 8, 0x0000000A);
+                func_80072D3C(item_window, object->unk_0A2, 0x0000000B, 8, 0x0000000A);
             }
             break;
         case 21:
-            func_800726CC(temp_s0, 8);
+            func_800726CC(item_window, 8);
             object->unk_0D6 = 2;
             break;
         case 30:
             if (object->unk_0A2 == 0x000B) {
-                func_80072D3C(temp_s0, object->unk_0A2, 0, 8, 0x0000000A);
+                func_80072D3C(item_window, object->unk_0A2, 0, 8, 0x0000000A);
             } else {
-                func_80072D3C(temp_s0, object->unk_0A2, 0x0000000B, 8, 0x0000000A);
+                func_80072D3C(item_window, object->unk_0A2, 0x0000000B, 8, 0x0000000A);
             }
             break;
         case 31:
-            func_800726CC(temp_s0, 9);
+            func_800726CC(item_window, 9);
             break;
         case 40:
             if (object->unk_0A2 == 0x000D) {
-                func_80072D3C(temp_s0, object->unk_0A2, 0x0000000E, 8, 0x0000000A);
+                func_80072D3C(item_window, object->unk_0A2, 0x0000000E, 8, 0x0000000A);
             } else {
-                func_80072D3C(temp_s0, object->unk_0A2, 0x0000000D, 8, 0x0000000A);
+                func_80072D3C(item_window, object->unk_0A2, 0x0000000D, 8, 0x0000000A);
             }
             break;
         case 41:
-            func_800726CC(temp_s0, 8);
+            func_800726CC(item_window, 8);
             break;
         case 50:
-            func_80072D3C(temp_s0, (s32) object->unk_0A2, 0, 8, 0x00000064);
+            func_80072D3C(item_window, (s32) object->unk_0A2, 0, 8, 0x00000064);
             break;
         case 0:
         default:
             break;
     }
-    if (func_80072320(temp_s0, 2) != 0) {
+    if (func_80072320(item_window, 2) != 0) {
         if (object->animationTimer == 0) {
             consume_item(playerId);
         } else {
@@ -4070,35 +4070,35 @@ void func_8007B34C(s32 playerId) {
             switch (object->unk_0D6) { /* switch 1; irregular */
                 case 1:                /* switch 1 */
                     if (sp40 != 0) {
-                        func_80073600(temp_s0);
-                        func_800726CC(temp_s0, 6);
+                        func_80073600(item_window);
+                        func_800726CC(item_window, 6);
                     }
                     break;
                 case 2: /* switch 1 */
-                    set_type_object(temp_s0, (s32) object->unk_0A2);
+                    set_type_object(item_window, (s32) object->unk_0A2);
                     object->unk_0D6 = 3;
                     break;
                 case 3: /* switch 1 */
                     if (object->type == 0) {
-                        if (func_80072354(temp_s0, 1) != 0) {
+                        if (func_80072354(item_window, 1) != 0) {
                             if (object->unk_0A2 == 0x000B) {
-                                if (func_8007B040(temp_s0, playerId) != 0) {
-                                    func_800726CC(temp_s0, 0x00000014);
+                                if (func_8007B040(item_window, playerId) != 0) {
+                                    func_800726CC(item_window, 0x00000014);
                                     object->unk_0D6 = 0;
                                 } else {
-                                    func_800726CC(temp_s0, 9);
+                                    func_800726CC(item_window, 9);
                                 }
                             } else if ((object->unk_0A2 == 0x000D) || (object->unk_0A2 == 0x000E)) {
                                 object->unk_0A2--;
-                                set_type_object(temp_s0, (s32) object->unk_0A2);
+                                set_type_object(item_window, (s32) object->unk_0A2);
                                 object->unk_0D6 = 3;
-                                func_800726CC(temp_s0, 0x00000028);
+                                func_800726CC(item_window, 0x00000028);
                             } else {
-                                func_800726CC(temp_s0, 9);
+                                func_800726CC(item_window, 9);
                             }
                         } else {
-                            func_800722CC(temp_s0, 1);
-                            func_800726CC(temp_s0, 0x0000001E);
+                            func_800722CC(item_window, 1);
+                            func_800726CC(item_window, 0x0000001E);
                             object->unk_0D6 = 0;
                         }
                     }
@@ -4108,11 +4108,11 @@ void func_8007B34C(s32 playerId) {
     }
     object->activeTLUT = (u8*) gItemWindowTLUTs[object->textureListIndex];
     object->activeTexture = gItemWindowTextures[object->textureListIndex];
-    sp38->currentItemCopy = object->type;
+    player->currentItemCopy = object->type;
 }
 
-void func_8007BB9C(s32 arg0) {
-    func_8007B34C(arg0);
+void func_8007BB9C(s32 playerId) {
+    func_8007B34C(playerId);
 }
 
 void func_8007BBBC(s32 objectIndex) {

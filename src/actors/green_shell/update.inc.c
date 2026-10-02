@@ -60,7 +60,7 @@ void update_actor_green_shell(struct ShellActor* shell) {
                 if ((controller->buttonDepressed & Z_TRIG) != 0) {
                     remove_player_item(shell->playerId);
                     controller->buttonDepressed &= ~Z_TRIG;
-                    if (controller->rawStickY < -0x2D) {
+                    if (controller->rawStickY < -45) {
                         var_f2 = 8.0f;
                         if (player->speed > 8.0f) {
                             var_f2 = player->speed * 1.2f;

@@ -2156,14 +2156,14 @@ void evaluate_actor_collision_between_two_destructible_actors(struct Actor* acto
 
 void evaluate_collision_between_player_actor(Player* player, struct Actor* actor) {
     UNUSED s32 pad;
-    s16 temp_lo;
+    s16 playerId;
     UNUSED s32 pad2[2];
     s16 temp_v1;
     Player* owner;
     f32 temp_f0;
     f32 temp_f2;
 
-    temp_lo = player - gPlayerOne;
+    playerId = player - gPlayerOne;
     switch (actor->type) {
         case ACTOR_YOSHI_EGG:
             if (!(player->effects & BOO_EFFECT) && !(player->type & PLAYER_INVISIBLE_OR_BOMB)) {
@@ -2179,7 +2179,7 @@ void evaluate_collision_between_player_actor(Player* player, struct Actor* actor
                 break;
             }
             temp_v1 = actor->rot[0];
-            if (((temp_lo == temp_v1) && (actor->flags & 0x1000)) ||
+            if (((playerId == temp_v1) && (actor->flags & 0x1000)) ||
                 (query_collision_player_vs_actor_item(player, actor) != COLLISION)) {
                 break;
             }
@@ -2187,13 +2187,13 @@ void evaluate_collision_between_player_actor(Player* player, struct Actor* actor
             owner = &gPlayers[temp_v1];
             if (owner->type & 0x4000) {
                 if (actor->flags & 0xF) {
-                    if (temp_lo != temp_v1) {
+                    if (playerId != temp_v1) {
                         func_800C90F4(temp_v1, (owner->characterId * 0x10) + SOUND_ARG_LOAD(0x29, 0x00, 0x80, 0x06));
                     }
                 } else {
                     temp_f0 = actor->pos[0] - owner->pos[0];
                     temp_f2 = actor->pos[2] - owner->pos[2];
-                    if ((((temp_f0 * temp_f0) + (temp_f2 * temp_f2)) < 360000.0f) && (temp_lo != temp_v1)) {
+                    if ((((temp_f0 * temp_f0) + (temp_f2 * temp_f2)) < 360000.0f) && (playerId != temp_v1)) {
                         func_800C90F4(temp_v1, (owner->characterId * 0x10) + SOUND_ARG_LOAD(0x29, 0x00, 0x80, 0x06));
                     }
                 }
@@ -2208,14 +2208,14 @@ void evaluate_collision_between_player_actor(Player* player, struct Actor* actor
                 break;
             }
             temp_v1 = actor->rot[2];
-            if (((temp_lo == temp_v1) && (actor->flags & 0x1000)) ||
+            if (((playerId == temp_v1) && (actor->flags & 0x1000)) ||
                 (query_collision_player_vs_actor_item(player, actor) != COLLISION)) {
                 break;
             }
             player->triggers |= LOW_TUMBLE_TRIGGER;
             func_800C98B8(player->pos, player->velocity, SOUND_ARG_LOAD(0x19, 0x01, 0x80, 0x10));
             owner = &gPlayers[temp_v1];
-            if ((owner->type & 0x4000) && (temp_lo != temp_v1)) {
+            if ((owner->type & 0x4000) && (playerId != temp_v1)) {
                 func_800C90F4(temp_v1, (owner->characterId * 0x10) + SOUND_ARG_LOAD(0x29, 0x00, 0x80, 0x06));
             }
             destroy_destructable_actor(actor);
@@ -2225,7 +2225,7 @@ void evaluate_collision_between_player_actor(Player* player, struct Actor* actor
                 break;
             }
             temp_v1 = actor->rot[2];
-            if (((temp_lo == temp_v1) && (actor->flags & 0x1000)) ||
+            if (((playerId == temp_v1) && (actor->flags & 0x1000)) ||
                 (query_collision_player_vs_actor_item(player, actor) != COLLISION)) {
                 break;
             }
@@ -2234,10 +2234,10 @@ void evaluate_collision_between_player_actor(Player* player, struct Actor* actor
                 func_800C98B8(player->pos, player->velocity, SOUND_ARG_LOAD(0x19, 0x01, 0x80, 0x10));
             }
             owner = &gPlayers[temp_v1];
-            if ((owner->type & 0x4000) && (temp_lo != temp_v1)) {
+            if ((owner->type & 0x4000) && (playerId != temp_v1)) {
                 func_800C90F4(temp_v1, (owner->characterId * 0x10) + SOUND_ARG_LOAD(0x29, 0x00, 0x80, 0x06));
             }
-            if (temp_lo == actor->unk_04) {
+            if (playerId == actor->unk_04) {
                 destroy_destructable_actor(actor);
             }
             break;
@@ -2250,7 +2250,7 @@ void evaluate_collision_between_player_actor(Player* player, struct Actor* actor
                 break;
             }
             temp_v1 = actor->rot[2];
-            if (((temp_lo == temp_v1) && (actor->flags & 0x1000)) ||
+            if (((playerId == temp_v1) && (actor->flags & 0x1000)) ||
                 (query_collision_player_vs_actor_item(player, actor) != COLLISION)) {
                 break;
             }
@@ -2259,7 +2259,7 @@ void evaluate_collision_between_player_actor(Player* player, struct Actor* actor
                 func_800C98B8(player->pos, player->velocity, SOUND_ARG_LOAD(0x19, 0x01, 0x80, 0x10));
             }
             owner = &gPlayers[temp_v1];
-            if ((owner->type & 0x4000) && (temp_lo != temp_v1)) {
+            if ((owner->type & 0x4000) && (playerId != temp_v1)) {
                 func_800C90F4(temp_v1, (owner->characterId * 0x10) + SOUND_ARG_LOAD(0x29, 0x00, 0x80, 0x06));
             }
             destroy_destructable_actor(actor);
@@ -2300,7 +2300,7 @@ void evaluate_collision_between_player_actor(Player* player, struct Actor* actor
                     if (player->effects & STAR_EFFECT) {
                         actor->velocity[1] = 10.0f;
                     } else {
-                        trigger_squish(player, player - gPlayerOne);
+                        trigger_squish(player, playerId);
                     }
                 }
             }
@@ -2311,7 +2311,7 @@ void evaluate_collision_between_player_actor(Player* player, struct Actor* actor
                 break;
             }
             temp_v1 = actor->velocity[0];
-            if (((temp_lo == temp_v1) && (actor->flags & 0x1000)) ||
+            if (((playerId == temp_v1) && (actor->flags & 0x1000)) ||
                 (query_collision_player_vs_actor_item(player, actor) != COLLISION)) {
                 break;
             }
@@ -2319,13 +2319,13 @@ void evaluate_collision_between_player_actor(Player* player, struct Actor* actor
             owner = &gPlayers[temp_v1];
             if (owner->type & 0x4000) {
                 if (actor->flags & 0xF) {
-                    if (temp_lo != temp_v1) {
+                    if (playerId != temp_v1) {
                         func_800C90F4(temp_v1, (owner->characterId * 0x10) + SOUND_ARG_LOAD(0x29, 0x00, 0x80, 0x06));
                     }
                 } else {
                     temp_f0 = actor->pos[0] - owner->pos[0];
                     temp_f2 = actor->pos[2] - owner->pos[2];
-                    if ((((temp_f0 * temp_f0) + (temp_f2 * temp_f2)) < 360000.0f) && (temp_lo != temp_v1)) {
+                    if ((((temp_f0 * temp_f0) + (temp_f2 * temp_f2)) < 360000.0f) && (playerId != temp_v1)) {
                         func_800C90F4(temp_v1, (owner->characterId * 0x10) + SOUND_ARG_LOAD(0x29, 0x00, 0x80, 0x06));
                     }
                 }
@@ -2343,7 +2343,7 @@ void evaluate_collision_between_player_actor(Player* player, struct Actor* actor
                 actor->flags = -0x8000;
                 actor->unk_04 = 0;
                 if (player->type & PLAYER_HUMAN) {
-                    func_8007ABFC(player - gPlayerOne, 7);
+                    func_8007ABFC(playerId, 7);
                 }
             } else if (actor->state == 0) {
                 actor->state = 1;
@@ -2355,8 +2355,10 @@ void evaluate_collision_between_player_actor(Player* player, struct Actor* actor
                 actor->state = 3;
                 actor->flags = -0x8000;
                 actor->unk_04 = 0;
+                //item roulette only happens if you don't have an item, so it must check that somewhere
+                
                 if (player->type & PLAYER_HUMAN) {
-                    func_8007ABFC(player - gPlayerOne, 0);
+                    func_8007ABFC(playerId, 0);
                 }
             } else if (actor->state == 0) {
                 actor->state = 1;
