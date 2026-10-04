@@ -370,6 +370,8 @@ s8 gTournamentTrainBoat = 0;
 s8 gTournamentAA = 0;
 s8 gTournamentForceMap = 0;
 s8 gTournamentExtraMode = 0;
+s8 gTournamentPractice = 0;
+s8 gTournamentInputDisplay = 0;
 
 static const COURSES rand_courses[] = {
     COURSE_MARIO_RACEWAY,     // 0x00
@@ -5939,7 +5941,9 @@ void render_custom_overlay(void) {
         "mp train boat",
         "AA",
         "force minimap",
-        "extra"
+        "extra",
+        "practice",
+        "input display"
         /* keep last empty if CUSTOM_MENU_ROWS > 12 */
     };
 
@@ -5953,6 +5957,8 @@ void render_custom_overlay(void) {
     static const char* AA_labels[] = {"default", "disabled"};
     static const char* minimap_labels[] = {"default", "prog view", "map"};
     static const char* extra_labels[] = {"default", "enabled"};
+    static const char* practice_labels[] = {"off", "on"};
+    static const char* input_labels[] = {"off", "on"};
 
     set_text_color(TEXT_YELLOW);
 
@@ -6060,6 +6066,22 @@ void render_custom_overlay(void) {
              print_text1_center_mode_1(x + 0x50, rowY, (char*)extra_labels[idx], 0, 0.6f, 0.6f);
              gTournamentExtraMode = idx;
              break;
+        case 9:
+            /* practice: labels (off, on) */
+            idx = gCustomMenuOptionValues[i];
+            if (idx < 0) idx = 0;
+            if (idx >= (int)(sizeof(practice_labels) / sizeof(practice_labels[0]))) idx = 0;
+            print_text1_center_mode_1(x + 0x50, rowY, (char*)practice_labels[idx], 0, 0.6f, 0.6f);
+            gTournamentPractice = idx;
+            break;
+        case 10:
+            /* input display: labels (off, on) */
+            idx = gCustomMenuOptionValues[i];
+            if (idx < 0) idx = 0;
+            if (idx >= (int)(sizeof(input_labels) / sizeof(input_labels[0]))) idx = 0;
+            print_text1_center_mode_1(x + 0x50, rowY, (char*)input_labels[idx], 0, 0.6f, 0.6f);
+            gTournamentInputDisplay = idx;
+            break;
         }
     }
 }

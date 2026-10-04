@@ -34,7 +34,7 @@ all: $(PROGRAMS) torch
 
 torch:
 	@echo "Building Torch..."
-	$(MAKE) -C torch type=release -j$(N_THREADS)
+	@if [ -f torch/cmake-build-release/torch.exe ]; then echo Torch already present; else $(MAKE) -C torch type=release -j$(N_THREADS); fi
 
 # Remove generated files
 clean:

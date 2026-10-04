@@ -861,6 +861,8 @@ extern s8 gTournamentTrainBoat;
 extern s8 gTournamentAA;
 extern s8 gTournamentForceMap;
 extern s8 gTournamentExtraMode;
+extern s8 gTournamentPractice;
+extern s8 gTournamentInputDisplay;
 extern COURSES sRandomTrackOrder[16];
 extern u8 currentRandomIndex;
 #endif
