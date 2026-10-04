@@ -38,4 +38,19 @@ extern s32 D_80162DE8;
 extern s32 gPauseTriggered;
 extern s32 gPostTimeTrialReplayCannotSave;
 
+typedef struct SaveStateReplayCursor {
+    u16 playerButtonsPrev;
+    u32 playerFramesRemaining;
+    s16 playerReplayIdx;
+    u16 courseButtonsPrev;
+    u32 courseFramesRemaining;
+    s16 courseReplayIdx;
+    u16 postTTButtonsPrev;
+    s32 postTTFramesRemaining;
+    s16 postTTReplayIdx;
+} SaveStateReplayCursor;
+
+void SaveStateGetReplayCursor(SaveStateReplayCursor *out);
+void SaveStateSetReplayCursor(SaveStateReplayCursor *in);
+
 #endif /* STAFF_GHOSTS_H */
