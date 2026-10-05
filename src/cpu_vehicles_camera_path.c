@@ -1411,7 +1411,7 @@ void update_cpu_player(s32 playerId, Player* player){
     }
     // one update it try to use an item, the other it doesn't
     if ((playerId & 1) != (gIncrementUpdatePlayer & 1)) {
-        if ((player->type & PLAYER_HUMAN_CPU) == PLAYER_HUMAN_CPU){
+        if ((player->type & PLAYER_PRACTICE) == PLAYER_PRACTICE){
             cpu_practice_use_item_strategy(playerId);
         } else {
             cpu_use_item_strategy(playerId);

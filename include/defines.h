@@ -93,6 +93,7 @@
  * Used in the Player struct's 'type' member: player->type
  */
 #define PLAYER_INACTIVE 0                 // 0x0000
+#define PLAYER_PRACTICE (1 << 3)          // 0x0008
 #define PLAYER_UNKNOWN_0x10 (1 << 4)      // 0x0010
 #define PLAYER_UNKNOWN_0x40 (1 << 6)      // 0x0040
 #define PLAYER_UNKNOWN_0x80 (1 << 7)      // 0x0080
@@ -102,12 +103,13 @@
 #define PLAYER_CINEMATIC_MODE (1 << 11)   // 0x0800 // Also used to track eliminations in Battle mode.
 #define PLAYER_CPU (1 << 12)              // 0x1000
 #define PLAYER_START_SEQUENCE (1 << 13)   // 0x2000
-#define PLAYER_HUMAN (1 << 14)            // 0x4000
+#define PLAYER_HUMAN (1 << 14)            // 0x4000 // Also used by practice bots because they use standard human code paths
 #define PLAYER_EXISTS (1 << 15)           // 0x8000
 
 // Compiles to -0x1000 in diff.py
 #define PLAYER_HUMAN_CPU (PLAYER_HUMAN | PLAYER_CPU)
-#define PLAYER_HUMAN_CPU_START (PLAYER_EXISTS | PLAYER_HUMAN | PLAYER_CPU | PLAYER_START_SEQUENCE)
+#define PLAYER_HUMAN_CPU_START_EXISTS (PLAYER_HUMAN_CPU | PLAYER_START_SEQUENCE | PLAYER_EXISTS)
+#define PLAYER_PRACTICE_START (PLAYER_PRACTICE | PLAYER_START_SEQUENCE)
 
 #define ZERO_PLAYERS_SELECTED 0
 #define ONE_PLAYERS_SELECTED 1

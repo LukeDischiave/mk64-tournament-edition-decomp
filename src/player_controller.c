@@ -4701,7 +4701,7 @@ void handle_a_press_for_player_during_race(Player* player, struct Controller* co
             }
         }
     }
-    if ((player->type & PLAYER_HUMAN_CPU_START) == PLAYER_HUMAN_CPU_START){
+    if ((player->type & PLAYER_PRACTICE_START) == PLAYER_PRACTICE_START){
         player->triggers |= START_BOOST_TRIGGER;
     }
 }

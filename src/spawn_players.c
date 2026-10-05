@@ -93,7 +93,7 @@ void spawn_player(Player* player, s8 playerIndex, f32 startingRow, f32 startingC
             && (playerType & PLAYER_HUMAN)
             && !(playerType & PLAYER_INVISIBLE_OR_BOMB)
             && !(getLiveControllerBits() & (1 << playerIndex))) {
-                playerType |= PLAYER_HUMAN_CPU;
+                playerType |= (PLAYER_PRACTICE | PLAYER_HUMAN_CPU);
             }
         }
         
@@ -543,7 +543,7 @@ void spawn_players_gp_one_player(f32* arg0, f32* arg1, f32 arg2) {
     D_8016556E = 0;
     if (gDemoMode == 1) {
         spawn_player(gPlayerOneCopy, 0, arg0[D_80165270[0]], arg1[D_80165270[0]], arg2, 32768.0f,
-                     gCharacterSelections[0], PLAYER_HUMAN_CPU_START);
+                     gCharacterSelections[0], PLAYER_HUMAN_CPU_START_EXISTS);
         spawn_player(gPlayerTwo, 1, arg0[D_80165270[1]], arg1[D_80165270[1]], arg2, 32768.0f, cpu_chooseCharacters[0],
                      PLAYER_EXISTS | PLAYER_CPU | PLAYER_START_SEQUENCE);
         spawn_player(gPlayerThree, 2, arg0[D_80165270[2]], arg1[D_80165270[2]], arg2, 32768.0f, cpu_chooseCharacters[1],
@@ -594,7 +594,7 @@ void spawn_players_versus_one_player(f32* arg0, f32* arg1, f32 arg2) {
                  PLAYER_START_SEQUENCE | PLAYER_CPU);
     if (gDemoMode == 1) {
         spawn_player(gPlayerOneCopy, 0, arg0[0], arg1[0], arg2, 32768.0f, gCharacterSelections[0],
-                     PLAYER_HUMAN_CPU_START);
+                     PLAYER_HUMAN_CPU_START_EXISTS);
         spawn_player(gPlayerTwo, 1, arg0[0], arg1[0], arg2, 32768.0f, gCharacterSelections[0],
                      PLAYER_START_SEQUENCE | PLAYER_CPU);
         spawn_player(gPlayerThree, 2, arg0[1], arg1[1], arg2, 32768.0f, gCharacterSelections[0],
@@ -681,7 +681,7 @@ void spawn_players_gp_two_player(f32* arg0, f32* arg1, f32 arg2) {
 
     if (gDemoMode == 1) {
         spawn_player(gPlayerOneCopy, 0, arg0[D_80165270[0]], arg1[D_80165270[0]], arg2, 32768.0f,
-                     gCharacterSelections[0], PLAYER_HUMAN_CPU_START);
+                     gCharacterSelections[0], PLAYER_HUMAN_CPU_START_EXISTS);
     } else {
         spawn_player(gPlayerOneCopy, 0, arg0[D_80165270[0]], arg1[D_80165270[0]], arg2, 32768.0f,
                      gCharacterSelections[0], PLAYER_EXISTS | PLAYER_START_SEQUENCE | PLAYER_HUMAN);
@@ -713,13 +713,13 @@ void spawn_players_versus_two_player(f32* arg0, f32* arg1, f32 arg2) {
                  PLAYER_START_SEQUENCE | PLAYER_CPU);
     if (gDemoMode == 1) {
         spawn_player(gPlayerOneCopy, 0, arg0[0], arg1[0], arg2, 32768.0f, gCharacterSelections[0],
-                     PLAYER_HUMAN_CPU_START);
+                     PLAYER_HUMAN_CPU_START_EXISTS);
     } else {
         spawn_player(gPlayerOneCopy, 0, arg0[0], arg1[0], arg2, 32768.0f, gCharacterSelections[0],
                      PLAYER_EXISTS | PLAYER_START_SEQUENCE | PLAYER_HUMAN);
     }
     if (gDemoMode == 1) {
-        spawn_player(gPlayerTwo, 1, arg0[1], arg1[1], arg2, 32768.0f, gCharacterSelections[1], PLAYER_HUMAN_CPU_START);
+        spawn_player(gPlayerTwo, 1, arg0[1], arg1[1], arg2, 32768.0f, gCharacterSelections[1], PLAYER_HUMAN_CPU_START_EXISTS);
     } else {
         spawn_player(gPlayerTwo, 1, arg0[1], arg1[1], arg2, 32768.0f, gCharacterSelections[1],
                      PLAYER_EXISTS | PLAYER_START_SEQUENCE | PLAYER_HUMAN);
@@ -760,9 +760,9 @@ void func_8003B318(f32* arg0, f32* arg1, f32 arg2) {
     spawn_player(gPlayerThree, 2, arg0[2], arg1[2], arg2, 32768.0f, gCharacterSelections[2],
                  PLAYER_EXISTS | PLAYER_START_SEQUENCE | PLAYER_HUMAN);
     if (gDemoMode == 1) {
-        spawn_player(gPlayerOne, 0, arg0[0], arg1[0], arg2, 32768.0f, gCharacterSelections[0], PLAYER_HUMAN_CPU_START);
-        spawn_player(gPlayerTwo, 1, arg0[1], arg1[1], arg2, 32768.0f, gCharacterSelections[1], PLAYER_HUMAN_CPU_START);
-        spawn_player(gPlayerThree, 2, arg0[2], arg1[2], arg2, 32768.0f, gCharacterSelections[2], PLAYER_HUMAN_CPU_START);
+        spawn_player(gPlayerOne, 0, arg0[0], arg1[0], arg2, 32768.0f, gCharacterSelections[0], PLAYER_HUMAN_CPU_START_EXISTS);
+        spawn_player(gPlayerTwo, 1, arg0[1], arg1[1], arg2, 32768.0f, gCharacterSelections[1], PLAYER_HUMAN_CPU_START_EXISTS);
+        spawn_player(gPlayerThree, 2, arg0[2], arg1[2], arg2, 32768.0f, gCharacterSelections[2], PLAYER_HUMAN_CPU_START_EXISTS);
     }
 
     spawn_player(gPlayerFour, 3, arg0[3], arg1[3], arg2, 32768.0f, 3, PLAYER_START_SEQUENCE | PLAYER_CPU);
@@ -809,10 +809,10 @@ void func_8003B870(f32* arg0, f32* arg1, f32 arg2) {
     spawn_player(gPlayerFour, 3, arg0[3], arg1[3], arg2, 32768.0f, gCharacterSelections[3],
                  PLAYER_EXISTS | PLAYER_START_SEQUENCE | PLAYER_HUMAN);
     if (gDemoMode == 1) {
-        spawn_player(gPlayerOne, 0, arg0[0], arg1[0], arg2, 32768.0f, gCharacterSelections[0], PLAYER_HUMAN_CPU_START);
-        spawn_player(gPlayerTwo, 1, arg0[1], arg1[1], arg2, 32768.0f, gCharacterSelections[1], PLAYER_HUMAN_CPU_START);
-        spawn_player(gPlayerThree, 2, arg0[2], arg1[2], arg2, 32768.0f, gCharacterSelections[2], PLAYER_HUMAN_CPU_START);
-        spawn_player(gPlayerFour, 3, arg0[3], arg1[3], arg2, 32768.0f, gCharacterSelections[3], PLAYER_HUMAN_CPU_START);
+        spawn_player(gPlayerOne, 0, arg0[0], arg1[0], arg2, 32768.0f, gCharacterSelections[0], PLAYER_HUMAN_CPU_START_EXISTS);
+        spawn_player(gPlayerTwo, 1, arg0[1], arg1[1], arg2, 32768.0f, gCharacterSelections[1], PLAYER_HUMAN_CPU_START_EXISTS);
+        spawn_player(gPlayerThree, 2, arg0[2], arg1[2], arg2, 32768.0f, gCharacterSelections[2], PLAYER_HUMAN_CPU_START_EXISTS);
+        spawn_player(gPlayerFour, 3, arg0[3], arg1[3], arg2, 32768.0f, gCharacterSelections[3], PLAYER_HUMAN_CPU_START_EXISTS);
     }
     spawn_player(gPlayerFive, 4, arg0[4], arg1[4], arg2, 32768.0f, 4, PLAYER_START_SEQUENCE | PLAYER_CPU);
     spawn_player(gPlayerSix, 5, arg0[5], arg1[5], arg2, 32768.0f, 5, PLAYER_START_SEQUENCE | PLAYER_CPU);

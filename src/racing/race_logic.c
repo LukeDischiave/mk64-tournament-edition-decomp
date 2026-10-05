@@ -577,7 +577,7 @@ void func_8028EF28(void) {
         } else if (gLapCountByPlayerId[playerId] > player->lapCount) {
             player->lapCount++;
 
-            // if slot has an active player or practice CPU
+            // if slot has an active player
             if (player->type & PLAYER_HUMAN) {
                 // if player finishes (3 = starting 4th lap = finished)
                 if (player->lapCount == 3) {
