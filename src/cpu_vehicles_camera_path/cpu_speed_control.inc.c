@@ -146,8 +146,7 @@ void regulate_cpu_speed(s32 playerId, f32 targetSpeed, Player* player) {
             }
         } else {
             if (gPracticeMode) {
-                if ((gModeSelection == VERSUS) && (player->type & PLAYER_CPU)) {
-                    player->effects |= CPU_FAST_EFFECT;
+                if ((gModeSelection == VERSUS) && (player->type & PLAYER_PRACTICE)) {
                     player_accelerate_alternative(player);
                     return;
                 }
