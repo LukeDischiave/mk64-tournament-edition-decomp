@@ -138,6 +138,7 @@ u16 check_player_camera_collision(Player* player, Camera* camera, f32 arg2, f32 
     return ret;
 }
 
+//used for slipstreams
 u16 func_8001FD78(Player* player, f32 posX, UNUSED f32 arg2, f32 posZ) {
     f32 sp64;
     f32 sp60;
@@ -896,10 +897,10 @@ void func_8002276C(void) {
                     break;
                 case TIME_TRIALS: /* switch 1 */
                     func_80022A98(gPlayerOne, 0);
-                    if ((gPlayerTwo->type & 0x100) == 0x100) {
+                    if ((gPlayerTwo->type & PLAYER_INVISIBLE_OR_BOMB) == PLAYER_INVISIBLE_OR_BOMB) {
                         func_80022A98(gPlayerTwo, 1);
                     }
-                    if ((gPlayerThree->type & 0x100) == 0x100) {
+                    if ((gPlayerThree->type & PLAYER_INVISIBLE_OR_BOMB) == PLAYER_INVISIBLE_OR_BOMB) {
                         func_80022A98(gPlayerThree, 2);
                     }
                     break;

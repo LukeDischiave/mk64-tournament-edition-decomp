@@ -220,22 +220,22 @@ s32 get_player_index_for_player(Player* player) {
 
 void func_80027DA8(Player* player, s8 playerId) {
     if (D_8015F890 != 1) {
-        if ((player->type & 0x10) != 0x10) {
-            if (((D_8018D168 == 1) && ((player->type & PLAYER_HUMAN) == 0x4000)) && ((player->type & 0x100) != 0x100)) {
+        if ((player->type & PLAYER_UNKNOWN_0x10) != PLAYER_UNKNOWN_0x10) {
+            if (((D_8018D168 == 1) && ((player->type & PLAYER_HUMAN) == PLAYER_HUMAN)) && ((player->type & PLAYER_INVISIBLE_OR_BOMB) != PLAYER_INVISIBLE_OR_BOMB)) {
                 func_800C94A4(playerId);
-                player->type |= 0x10;
-            } else if ((player->type & 0x2000) == 0) {
+                player->type |= PLAYER_UNKNOWN_0x10;
+            } else if ((player->type & PLAYER_START_SEQUENCE) == 0) {
                 func_800C9A88(playerId);
-                player->type |= 0x10;
+                player->type |= PLAYER_UNKNOWN_0x10;
             }
         }
-    } else if ((player->type & 0x10) != 0x10) {
+    } else if ((player->type & PLAYER_UNKNOWN_0x10) != PLAYER_UNKNOWN_0x10) {
         if ((D_8018D168 == 1) && (player == gPlayerOne)) {
             func_800C94A4(playerId);
-            player->type |= 0x10;
-        } else if ((player->type & 0x2000) == 0) {
+            player->type |= PLAYER_UNKNOWN_0x10;
+        } else if ((player->type & PLAYER_START_SEQUENCE) == 0) {
             func_800C9A88(playerId);
-            player->type |= 0x10;
+            player->type |= PLAYER_UNKNOWN_0x10;
         }
     }
 }
@@ -558,7 +558,7 @@ void func_80028864(Player* player, Camera* camera, s8 playerId, s8 screenId) {
     } else if ((player->type & PLAYER_STAGING) == PLAYER_STAGING) {
         func_8002D028(player, playerId);
         func_8002F730(player, camera, screenId, playerId);
-    } else if (player->type & 0x80) {
+    } else if (player->type & PLAYER_UNKNOWN_0x80) {
         func_8002D268(player, camera, screenId, playerId);
     } else {
         if ((player->type & PLAYER_HUMAN) != PLAYER_HUMAN) {
@@ -2066,7 +2066,7 @@ void func_8002D028(Player* player, s8 playerIndex) {
     if (temp_f18 <= 8.0f) {
         adjust_angle(&player->rotation[1], -0x8000, 0x016C);
         if ((player->rotation[1] < (-0x7F41)) || (player->rotation[1] > 0x7F41)) {
-            player->type &= ~0x0200;
+            player->type &= ~PLAYER_STAGING;
         }
         player->unk_08C = 0;
         player->speed = 0;
@@ -3785,10 +3785,10 @@ void player_decelerate_global(Player* player, f32 speedReduction, s32 playerInde
     player->unk_098 = (gPlayerCurrentSpeed[playerIndex] * gPlayerCurrentSpeed[playerIndex]) / 25.0f;
 }
 
-void func_80033850(Player* arg0, f32 arg1) {
-    arg0->unk_090 += arg1;
-    if (arg0->unk_090 >= 0.0f) {
-        arg0->unk_090 = 0.0f;
+void func_80033850(Player* player, f32 arg1) {
+    player->unk_090 += arg1;
+    if (player->unk_090 >= 0.0f) {
+        player->unk_090 = 0.0f;
     }
 }
 
@@ -4701,13 +4701,16 @@ void handle_a_press_for_player_during_race(Player* player, struct Controller* co
             }
         }
     }
+    if ((player->type & PLAYER_PRACTICE_START) == PLAYER_PRACTICE_START){
+        player->triggers |= START_BOOST_TRIGGER;
+    }
 }
 
 void handle_a_press_for_all_players_during_race(void) {
-    u16 temp_v0_3;
-    u16 temp_v0_4;
-    u16 temp_v0_5;
-    u16 temp_v0_6;
+    u16 player_two_type;
+    u16 player_three_type;
+    u16 player_two_type_alt;
+    u16 player_three_type_alt;
 
     switch (gActiveScreenMode) {
         case SCREEN_MODE_1P:
@@ -4718,25 +4721,25 @@ void handle_a_press_for_all_players_during_race(void) {
                 case TIME_TRIALS:
                     if (D_8015F890 != 1) {
                         handle_a_press_for_player_during_race(gPlayerOne, gControllerOne, 0);
-                        temp_v0_3 = gPlayerTwo->type;
-                        if (((temp_v0_3 & 0x100) == 0x100) && ((temp_v0_3 & 0x800) != 0x800)) {
+                        player_two_type = gPlayerTwo->type;
+                        if (((player_two_type & PLAYER_INVISIBLE_OR_BOMB) == PLAYER_INVISIBLE_OR_BOMB) && ((player_two_type & PLAYER_CINEMATIC_MODE) != PLAYER_CINEMATIC_MODE)) {
                             handle_a_press_for_player_during_race(gPlayerTwo, gControllerSix, 1);
                         }
-                        temp_v0_4 = gPlayerThree->type;
-                        if (((temp_v0_4 & 0x100) == 0x100) && ((temp_v0_4 & 0x800) != 0x800)) {
+                        player_three_type = gPlayerThree->type;
+                        if (((player_three_type & PLAYER_INVISIBLE_OR_BOMB) == PLAYER_INVISIBLE_OR_BOMB) && ((player_three_type & PLAYER_CINEMATIC_MODE) != PLAYER_CINEMATIC_MODE)) {
                             handle_a_press_for_player_during_race(gPlayerThree, gControllerSeven, 2);
                             return;
                         }
                     } else {
-                        if ((gPlayerOne->type & 0x800) != 0x800) {
+                        if ((gPlayerOne->type & PLAYER_CINEMATIC_MODE) != PLAYER_CINEMATIC_MODE) {
                             handle_a_press_for_player_during_race(gPlayerOne, gControllerEight, 0);
                         }
-                        temp_v0_5 = gPlayerTwo->type;
-                        if (((temp_v0_5 & 0x100) == 0x100) && ((temp_v0_5 & 0x800) != 0x800)) {
+                        player_two_type_alt = gPlayerTwo->type;
+                        if (((player_two_type_alt & PLAYER_INVISIBLE_OR_BOMB) == PLAYER_INVISIBLE_OR_BOMB) && ((player_two_type_alt & PLAYER_CINEMATIC_MODE) != PLAYER_CINEMATIC_MODE)) {
                             handle_a_press_for_player_during_race(gPlayerTwo, gControllerSix, 1);
                         }
-                        temp_v0_6 = gPlayerThree->type;
-                        if (((temp_v0_6 & 0x100) == 0x100) && ((temp_v0_6 & 0x800) != 0x800)) {
+                        player_three_type_alt = gPlayerThree->type;
+                        if (((player_three_type_alt & PLAYER_INVISIBLE_OR_BOMB) == PLAYER_INVISIBLE_OR_BOMB) && ((player_three_type_alt & PLAYER_CINEMATIC_MODE) != PLAYER_CINEMATIC_MODE)) {
                             handle_a_press_for_player_during_race(gPlayerThree, gControllerSeven, 2);
                             return;
                         }

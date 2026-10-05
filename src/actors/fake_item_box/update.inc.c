@@ -8,7 +8,7 @@
  */
 void update_actor_fake_item_box(struct FakeItemBox* fake_item_box) {
     u32 temp_v1 = fake_item_box->playerId;
-    Player* temp_v0_4 = &gPlayers[temp_v1];
+    Player* player = &gPlayers[temp_v1];
     struct Controller* temp_v1_3;
 
     UNUSED s32 pad[7];
@@ -25,28 +25,29 @@ void update_actor_fake_item_box(struct FakeItemBox* fake_item_box) {
             fake_item_box->rot[1] += 0x16C;
             fake_item_box->rot[2] -= 0xB6;
 
-            temp_f14 = temp_v0_4->pos[0] - fake_item_box->pos[0];
-            temp_f16 = temp_v0_4->pos[1] - fake_item_box->pos[1];
-            temp_f18 = temp_v0_4->pos[2] - fake_item_box->pos[2];
+            temp_f14 = player->pos[0] - fake_item_box->pos[0];
+            temp_f16 = player->pos[1] - fake_item_box->pos[1];
+            temp_f18 = player->pos[2] - fake_item_box->pos[2];
 
             temp_f2_2 = sqrtf((temp_f14 * temp_f14) + (temp_f16 * temp_f16) + (temp_f18 * temp_f18)) / 10.0f;
             temp_f14 /= temp_f2_2;
             temp_f16 /= temp_f2_2;
             temp_f18 /= temp_f2_2;
-            fake_item_box->pos[0] = temp_v0_4->pos[0] - temp_f14;
-            fake_item_box->pos[1] = (temp_v0_4->pos[1] - temp_f16) - 1.0f;
-            fake_item_box->pos[2] = temp_v0_4->pos[2] - temp_f18;
+            fake_item_box->pos[0] = player->pos[0] - temp_f14;
+            fake_item_box->pos[1] = (player->pos[1] - temp_f16) - 1.0f;
+            fake_item_box->pos[2] = player->pos[2] - temp_f18;
             check_bounding_collision(&fake_item_box->unk30, fake_item_box->boundingBoxSize, fake_item_box->pos[0],
                                      fake_item_box->pos[1], fake_item_box->pos[2]);
             func_802B4E30((struct Actor*) fake_item_box);
             temp_v1_3 = &gControllers[temp_v1];
-            if ((temp_v0_4->type & 0x4000) != 0) {
+            if ((player->type & PLAYER_HUMAN) != 0) {
 
                 if ((temp_v1_3->buttonDepressed & Z_TRIG) != 0) {
+                    remove_player_item(fake_item_box->playerId);
                     temp_v1_3->buttonDepressed &= 0xDFFF;
                     func_802A1064(fake_item_box);
-                    temp_v0_4->triggers &= ~DRAG_ITEM_EFFECT;
-                    func_800C9060((u8) (temp_v0_4 - gPlayerOne), SOUND_ARG_LOAD(0x19, 0x00, 0x80, 0x12));
+                    player->triggers &= ~DRAG_ITEM_EFFECT;
+                    func_800C9060((u8) (player - gPlayerOne), SOUND_ARG_LOAD(0x19, 0x00, 0x80, 0x12));
                 }
             }
             break;

@@ -80,6 +80,7 @@ void spawn_course_actors(void);
 void init_actors_and_load_textures(void);
 void play_sound_before_despawn(struct Actor*);
 void destroy_actor(struct Actor*);
+void remove_player_item(s32 playerId);
 s16 try_remove_destructable_item(Vec3f, Vec3s, Vec3f, s16);
 s16 add_actor_to_empty_slot(Vec3f, Vec3s, Vec3f, s16);
 s16 spawn_actor_at_pos(Vec3f, s16);

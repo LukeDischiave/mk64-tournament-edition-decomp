@@ -364,7 +364,7 @@ typedef struct {
     /* 0x0DAC */ f32 unk_DAC;
     /* 0x0DB0 */ f32 unk_DB0;
     /* 0x0DB4 */ struct UnkPlayerInner unk_DB4;
-    /* 0x0DB6 */ // s16 unk_DB6;
+    /* 0x0DB6 */ s32 heldItem;
     /* 0x0DB8 */ // f32 unk_DB8;
     /* 0x0DBC */ // f32 unk_DBC;
     /* 0x0DC0 */ // f32 unk_DC0;

@@ -276,6 +276,7 @@ void update_actor_red_blue_shell(struct ShellActor* shell) {
 
             if ((controller->buttonDepressed & Z_TRIG) != 0) {
                 controller->buttonDepressed &= ~Z_TRIG;
+                remove_player_item(shell->playerId);
                 shell->state = RELEASED_SHELL;
                 if (player->unk_0C0 > 0) {
                     shell->rotAngle = 0x78E3;
@@ -478,7 +479,7 @@ void update_actor_red_blue_shell(struct ShellActor* shell) {
                 shell->state = BLUE_SHELL_TARGET_ELIMINATED;
             }
             break;
-        case 9:
+        case BLUE_SHELL_TARGET_ELIMINATED:
             func_802B3E7C(shell, &gPlayers[shell->targetPlayer]);
             break;
         default:

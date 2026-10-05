@@ -55,8 +55,6 @@ UNUSED s32 D_802BA03C;
 s16 D_802BA040[4];
 u16 D_802BA048;
 
-bool gPracticeCPU[4];
-
 void func_8028DF00(void) {
     struct Controller* controllers = &gControllers[0];
     s32 i;
@@ -579,8 +577,8 @@ void func_8028EF28(void) {
         } else if (gLapCountByPlayerId[playerId] > player->lapCount) {
             player->lapCount++;
 
-            // if slot has an active player or practice CPU
-            if ((player->type & PLAYER_HUMAN) || gPracticeCPU[playerId]) {
+            // if slot has an active player
+            if (player->type & PLAYER_HUMAN) {
                 // if player finishes (3 = starting 4th lap = finished)
                 if (player->lapCount == 3) {
                     add_cinematic_mode(playerId);
@@ -681,7 +679,7 @@ void func_8028EF28(void) {
                     }
 
                 } else if (player->lapCount == 2) {
-                    if ((player->type & 0x100) != 0) {
+                    if ((player->type & PLAYER_INVISIBLE_OR_BOMB) != 0) {
                         return;
                     }
                     if ((D_802BA032 & 0x4000) == 0) {
@@ -1004,7 +1002,7 @@ void end_demo_update(void) {
 }
 // controls races
 void func_8028FCBC(void) {
-    Player* ply = &gPlayers[0];
+    Player* player = &gPlayers[0];
     s32 i;
     u32 phi_v0_4;
 
@@ -1038,11 +1036,11 @@ void func_8028FCBC(void) {
                 func_8005C64C(&D_8018D2AC);
             }
             for (i = 0; i < NUM_PLAYERS; i++) {
-                if ((ply->type & PLAYER_EXISTS) == 0) {
+                if ((player->type & PLAYER_EXISTS) == 0) {
                     continue;
                 }
-                ply->type |= PLAYER_START_SEQUENCE;
-                ply++;
+                player->type |= PLAYER_START_SEQUENCE;
+                player++;
             }
             D_800DC5B8 = 1;
             break;
@@ -1439,24 +1437,24 @@ void func_802903D8(Player* playerOne, Player* playerTwo) {
 }
 
 void func_802909F0(void) {
-    Player* ply;
-    Player* ply2;
+    Player* player;
+    Player* player2;
     s32 i;
     s32 k;
 
     for (i = 0; i < 7; i++) {
-        ply = &gPlayers[i];
+        player = &gPlayers[i];
 
-        if ((ply->type & PLAYER_EXISTS) && (!(ply->effects & BOO_EFFECT)) &&
-            (!(ply->type & PLAYER_INVISIBLE_OR_BOMB)) && (!(ply->effects & SQUISH_EFFECT))) {
+        if ((player->type & PLAYER_EXISTS) && (!(player->effects & BOO_EFFECT)) &&
+            (!(player->type & PLAYER_INVISIBLE_OR_BOMB)) && (!(player->effects & SQUISH_EFFECT))) {
 
             for (k = i + 1; k < NUM_PLAYERS; k++) {
-                ply2 = &gPlayers[k];
+                player2 = &gPlayers[k];
 
-                if ((ply2->type & PLAYER_EXISTS) && (!(ply2->effects & BOO_EFFECT)) &&
-                    (!(ply2->type & PLAYER_INVISIBLE_OR_BOMB)) && (!(ply2->effects & SQUISH_EFFECT))) {
+                if ((player2->type & PLAYER_EXISTS) && (!(player2->effects & BOO_EFFECT)) &&
+                    (!(player2->type & PLAYER_INVISIBLE_OR_BOMB)) && (!(player2->effects & SQUISH_EFFECT))) {
 
-                    func_802903D8(ply, ply2);
+                    func_802903D8(player, player2);
                 }
             }
         }

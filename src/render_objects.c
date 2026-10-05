@@ -2472,7 +2472,7 @@ void draw_minimap_character(s32 arg0, s32 playerId, s32 characterId) {
     s16 y;
     Player *player = &gPlayerOne[playerId];
 
-    if (player->type & (1 << 15)) {
+    if (player->type & PLAYER_EXISTS) {
         thing0 = player->pos[0] * gMiniMapMarkerScale;
         thing1 = player->pos[2] * gMiniMapMarkerScale;
         x = ((gMiniMapFinishLineX[arg0] + D_8018D2F0) - (D_8018D2B0 / 2)) + gMiniMapX + (s16)(thing0);
@@ -3398,12 +3398,12 @@ void render_object_trash_bin(s32 cameraId) {
 }
 
 void func_8005285C(s32 arg0) {
-    Player* temp_v0;
+    Player* player;
 
-    temp_v0 = &gPlayerOne[arg0];
-    D_80183E40[0] = temp_v0->pos[0];
-    D_80183E40[1] = temp_v0->pos[1];
-    D_80183E40[2] = temp_v0->pos[2];
+    player = &gPlayerOne[arg0];
+    D_80183E40[0] = player->pos[0];
+    D_80183E40[1] = player->pos[1];
+    D_80183E40[2] = player->pos[2];
     D_80183E80[0] = 0;
     D_80183E80[1] = 0;
     D_80183E80[2] = 0;
@@ -3478,14 +3478,14 @@ void render_ice_block(s32 arg0) {
 
 void func_80052D70(s32 playerId) {
     s32 test;
-    Player* temp_v1;
+    Player* player;
 
-    temp_v1 = &gPlayerOne[playerId];
+    player = &gPlayerOne[playerId];
     test = gIndexLakituList[playerId];
     if (func_80072320(test, 8) != 0) {
-        D_80183E40[0] = temp_v1->pos[0];
-        D_80183E40[1] = temp_v1->unk_074 - 6.5;
-        D_80183E40[2] = temp_v1->pos[2];
+        D_80183E40[0] = player->pos[0];
+        D_80183E40[1] = player->unk_074 - 6.5;
+        D_80183E40[2] = player->pos[2];
         func_800435A0(D_80183E40, (u16*) D_80183E80, 0.02f, d_course_sherbet_land_dl_ice_block, 0x000000FF);
     }
 }
@@ -4532,7 +4532,7 @@ void func_80056A94(s32 playerIndex) {
 }
 
 void render_object_bomb_kart(s32 cameraId) {
-    Player* temp_v0;
+    Player* player;
     s32 temp_s1;
     s32 temp_s0;
     s32 payerId;
@@ -4543,11 +4543,11 @@ void render_object_bomb_kart(s32 cameraId) {
         object = &gObjectList[temp_s0];
         if (object->state != 0) {
             temp_s1 = object->primAlpha;
-            temp_v0 = &gPlayerOne[payerId];
-            object->pos[0] = temp_v0->pos[0];
-            object->pos[1] = temp_v0->pos[1] - 2.0;
-            object->pos[2] = temp_v0->pos[2];
-            object->surfaceHeight = temp_v0->unk_074;
+            player = &gPlayerOne[payerId];
+            object->pos[0] = player->pos[0];
+            object->pos[1] = player->pos[1] - 2.0;
+            object->pos[2] = player->pos[2];
+            object->surfaceHeight = player->unk_074;
             func_800563DC(temp_s0, cameraId, temp_s1);
             func_8005669C(temp_s0, cameraId, temp_s1);
             func_800568A0(temp_s0, cameraId);
