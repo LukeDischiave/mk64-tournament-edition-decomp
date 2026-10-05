@@ -1956,6 +1956,8 @@ void destroy_destructable_actor(struct Actor* actor) {
                     break;
                 case HELD_BANANA:
                     player = &gPlayers[banana->playerId];
+                    // destroyed banana
+                    remove_player_item(banana->playerId);
                     player->triggers &= ~DRAG_ITEM_EFFECT;
                     /* fallthrough */
                 case BANANA_ON_GROUND:
@@ -1973,6 +1975,10 @@ void destroy_destructable_actor(struct Actor* actor) {
         case ACTOR_GREEN_SHELL:
             shell = (struct ShellActor*) actor;
             if (shell->state != GREEN_SHELL_HIT_A_RACER) {
+                // not putting in switch statement due to fall throughs
+                if (shell->state == HELD_SHELL){
+                    remove_player_item(shell->playerId);
+                }
                 switch (shell->state) {
                     case MOVING_SHELL:
                         delete_actor_in_unexpired_actor_list(actor - gActorList);
@@ -1996,6 +2002,9 @@ void destroy_destructable_actor(struct Actor* actor) {
         case ACTOR_BLUE_SPINY_SHELL:
             shell = (struct ShellActor*) actor;
             if (shell->state != DESTROYED_SHELL) {
+                if (shell->state == HELD_SHELL){
+                    remove_player_item(shell->playerId);
+                }
                 switch (shell->state) {
                     case MOVING_SHELL:
                     case RED_SHELL_LOCK_ON:
@@ -2022,6 +2031,9 @@ void destroy_destructable_actor(struct Actor* actor) {
         case ACTOR_RED_SHELL:
             shell = (struct ShellActor*) actor;
             if (shell->state != DESTROYED_SHELL) {
+                if (shell->state == HELD_SHELL){
+                    remove_player_item(shell->playerId);
+                }
                 switch (shell->state) {
                     case MOVING_SHELL:
                     case RED_SHELL_LOCK_ON:
@@ -2051,6 +2063,8 @@ void destroy_destructable_actor(struct Actor* actor) {
             fakeItemBox = (struct FakeItemBox*) actor;
             player = &gPlayers[(s16) fakeItemBox->playerId];
             if (fakeItemBox->state == HELD_FAKE_ITEM_BOX) {
+                // destroyed fake item
+                remove_player_item(fakeItemBox->playerId);
                 player->triggers &= ~DRAG_ITEM_EFFECT;
             }
             fakeItemBox->state = DESTROYED_FAKE_ITEM_BOX;
@@ -2330,6 +2344,8 @@ void evaluate_collision_between_player_actor(Player* player, struct Actor* actor
                     }
                 }
                 if (actor->state == 0) {
+                    // player runs into fake item
+                    remove_player_item(temp_v1);
                     owner->triggers &= ~DRAG_ITEM_EFFECT;
                 }
             }

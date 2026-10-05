@@ -3974,6 +3974,11 @@ void cpu_practice_use_item_strategy(s32 playerId){
         heldItem = &gActorList[actorIdx];
         itemType = heldItem->type;
 
+        /* failsafe if item was removed from player and game didn't notice*/
+        if (itemType == 0){
+            remove_player_item(playerId);
+        }
+
         // for the moment, all items use the same timing. This could be customized
         // and moved inside case stamements in the future.
         if (cpuStrategy->timeBeforeUse == -1){
@@ -3989,7 +3994,6 @@ void cpu_practice_use_item_strategy(s32 playerId){
             case ACTOR_BLUE_SPINY_SHELL:
                 // dragged items you release
                 if (cpuStrategy->timeBeforeUse < cpuStrategy->timer) {
-                    // TODO throwing bananas
                     controller->buttonDepressed |= Z_TRIG;
                 }
                 break;
