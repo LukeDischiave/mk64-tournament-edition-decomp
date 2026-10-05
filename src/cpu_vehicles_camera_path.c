@@ -977,7 +977,7 @@ bool func_800088D8(s32 playerId, s16 arg1, s16 arg2) {
         return 1;
     }
     player = &gPlayers[playerId];
-    if (player->type & 0x4000) {
+    if (player->type & PLAYER_HUMAN) {
         return 1;
     }
 
@@ -2436,24 +2436,24 @@ UNUSED void func_8001530C(void) {
 
 void func_80015314(s32 playerId, UNUSED f32 arg1, s32 cameraId) {
     Camera* temp_a0;
-    Player* temp_a1;
+    Player* player;
 
     // wtf is up with the pointer accesses here?
     // What aren't they just doing thing = &some_pointer[some_index]?
-    temp_a1 = gPlayerOne;
+    player = gPlayerOne;
     temp_a0 = camera1;
-    temp_a1 += playerId;
+    player += playerId;
     temp_a0 += cameraId;
-    temp_a0->unk_2C = temp_a1->rotation[1];
-    func_80015390(temp_a0, temp_a1, 0);
+    temp_a0->unk_2C = player->rotation[1];
+    func_80015390(temp_a0, player, 0);
 }
 
-void func_80015390(Camera* camera, UNUSED Player* player, UNUSED s32 arg2) {
+void func_80015390(Camera* camera, UNUSED Player* playerArg, UNUSED s32 arg2) {
     UNUSED s32 pad[6];
     f32 temp_f12;
     f32 sp90;
     f32 temp_f14;
-    Player* temp_s1;
+    Player* player;
     f32 sp84;
     f32 sp80;
     f32 sp7C;
@@ -2464,22 +2464,22 @@ void func_80015390(Camera* camera, UNUSED Player* player, UNUSED s32 arg2) {
 
     /*
     Doing the more sensible:
-    temp_s1 = &gPlayerOne[camera->playerId];
+    player = &gPlayerOne[camera->playerId];
     leads to some regalloc differences
     */
-    temp_s1 = gPlayerOne;
-    temp_s1 += camera->playerId;
-    if (temp_s1->unk_078 == 0) {
+    player = gPlayerOne;
+    player += camera->playerId;
+    if (player->unk_078 == 0) {
         var_a2 = 0x0064;
-    } else if (temp_s1->unk_078 < 0) {
-        var_a2 = 0xA0 - (temp_s1->unk_078 / 16);
+    } else if (player->unk_078 < 0) {
+        var_a2 = 0xA0 - (player->unk_078 / 16);
     } else {
-        var_a2 = 0xA0 + (temp_s1->unk_078 / 16);
+        var_a2 = 0xA0 + (player->unk_078 / 16);
     }
-    if (!((temp_s1->effects & BANANA_SPINOUT_EFFECT) || (temp_s1->effects & DRIVING_SPINOUT_EFFECT))) {
-        adjust_angle(&camera->unk_2C, temp_s1->rotation[1], var_a2);
+    if (!((player->effects & BANANA_SPINOUT_EFFECT) || (player->effects & DRIVING_SPINOUT_EFFECT))) {
+        adjust_angle(&camera->unk_2C, player->rotation[1], var_a2);
     }
-    func_8001D794(temp_s1, camera, sp64, &sp84, &sp80, &sp7C, camera->unk_2C);
+    func_8001D794(player, camera, sp64, &sp84, &sp80, &sp7C, camera->unk_2C);
     check_bounding_collision(&camera->collision, 10.0f, sp84, sp80, sp7C);
     camera->lookAt[0] = sp64[0];
     camera->lookAt[1] = sp64[1];
@@ -3684,9 +3684,9 @@ void func_8001A0A4(UNUSED u16* arg0, UNUSED Camera* arg1, UNUSED Player* arg2, U
     func_80019C50(arg4);
 }
 
-void func_8001A0DC(u16* arg0, Camera* arg1, Player* arg2, s8 arg3, s32 arg4) {
-    func_8001A0A4(arg0, arg1, arg2, arg3, arg4);
-    func_80019D2C(arg1, arg2, arg4);
+void func_8001A0DC(u16* arg0, Camera* arg1, Player* player, s8 arg3, s32 arg4) {
+    func_8001A0A4(arg0, arg1, player, arg3, arg4);
+    func_80019D2C(arg1, player, arg4);
 }
 
 void func_8001A124(s32 arg0, s32 arg1) {
@@ -4631,14 +4631,14 @@ void cpu_use_item_strategy(s32 playerId) {
 #undef BANANA_BUNCH
 
 void func_8001BE78(void) {
-    Player* temp_s1;
+    Player* player;
     TrackPathPoint* temp_s0;
     s32 i;
 
     init_players();
     for (i = 0; i < 4; i++) {
-        temp_s1 = &gPlayerOne[i];
-        temp_s1->type &= 0xDFFF;
+        player = &gPlayerOne[i];
+        player->type &= ~PLAYER_START_SEQUENCE;
         gPathIndexByPlayerId[i] = i;
         gPlayerTrackPositionFactorInstruction[i].unkC = 0.0f;
         gPlayerTrackPositionFactorInstruction[i].target = 0.0f;
@@ -4658,13 +4658,13 @@ void func_8001BE78(void) {
                 break;
         }
         temp_s0 = &gTrackPaths[i][gNearestPathPointByPlayerId[i]];
-        temp_s1->pos[0] = (f32) temp_s0->posX;
-        temp_s1->pos[1] =
-            get_surface_height((f32) temp_s0->posX, 2000.0f, (f32) temp_s0->posZ) + temp_s1->boundingBoxSize;
-        temp_s1->pos[2] = (f32) temp_s0->posZ;
-        temp_s1->rotation[1] = (s16) *gPathExpectedRotation[i];
-        apply_cpu_turn(temp_s1, 0);
-        temp_s1++;
+        player->pos[0] = (f32) temp_s0->posX;
+        player->pos[1] =
+            get_surface_height((f32) temp_s0->posX, 2000.0f, (f32) temp_s0->posZ) + player->boundingBoxSize;
+        player->pos[2] = (f32) temp_s0->posZ;
+        player->rotation[1] = (s16) *gPathExpectedRotation[i];
+        apply_cpu_turn(player, 0);
+        player++;
         D_80163410[i] = 0;
     }
 }
@@ -4697,7 +4697,7 @@ void func_8001C14C(void) {
     f32 temp_f0;
     f32 temp_f2;
     s32 playerId;
-    Player* temp_s0;
+    Player* player;
 
     if (D_8016347C == 1) {
         D_80163480 += 1;
@@ -4715,28 +4715,28 @@ void func_8001C14C(void) {
             break;
         }
 
-        temp_s0 = &gPlayerOne[playerId];
+        player = &gPlayerOne[playerId];
         update_player(playerId);
-        if (!(temp_s0->type & 0x2000)) {
-            temp_f0 = D_80163418[playerId] - temp_s0->pos[0];
-            temp_f2 = D_80163438[playerId] - temp_s0->pos[2];
+        if (!(player->type & PLAYER_START_SEQUENCE)) {
+            temp_f0 = D_80163418[playerId] - player->pos[0];
+            temp_f2 = D_80163438[playerId] - player->pos[2];
             if ((f64) ((temp_f0 * temp_f0) + (temp_f2 * temp_f2)) < 1.0) {
                 if (playerId != 3) {
                     if (1) {}
                     // Why oh why is a ternary required here? Who does that?
-                    (D_8016347C == 0) ? (temp_s0->type |= 0x2000) : (temp_s0->type &= ~0x2000);
-                    if ((gPlayerOne->type & 0x2000) && (gPlayerTwo->type & 0x2000) && (gPlayerThree->type & 0x2000)) {
+                    (D_8016347C == 0) ? (player->type |= PLAYER_START_SEQUENCE) : (player->type &= ~PLAYER_START_SEQUENCE);
+                    if ((gPlayerOne->type & PLAYER_START_SEQUENCE) && (gPlayerTwo->type & PLAYER_START_SEQUENCE) && (gPlayerThree->type & PLAYER_START_SEQUENCE)) {
                         D_8016347C = 1;
                         D_80163480 = 0;
                     }
                 } else if (D_8016347E == 0) {
-                    if (!(temp_s0->effects & EXPLOSION_CRASH_EFFECT)) {
-                        temp_s0->type |= 0x2000;
+                    if (!(player->effects & EXPLOSION_CRASH_EFFECT)) {
+                        player->type |= PLAYER_START_SEQUENCE;
                     }
                     D_8016347E = 1;
                     D_80163484 = 0;
-                } else if (!(temp_s0->effects & EXPLOSION_CRASH_EFFECT)) {
-                    temp_s0->type |= 0x2000;
+                } else if (!(player->effects & EXPLOSION_CRASH_EFFECT)) {
+                    player->type |= PLAYER_START_SEQUENCE;
                 }
             }
         }

@@ -614,7 +614,7 @@ void func_8008D760(Player* player) {
     player->rotation[1] = player->unk_0AE;
     player->effects &= ~UNKNOWN_EFFECT_0x80000;
     player->kartGravity = gKartGravityTable[(gTournamentCharacterStats == 0) ? YOSHI : (gTournamentCharacterStats == 2) ? WARIO : player->characterId];
-    player->type &= 0xFF7F;
+    player->type &= ~PLAYER_UNKNOWN_0x80;
 }
 
 void func_8008D7B0(Player* player, s8 playerIndex) {
@@ -718,7 +718,7 @@ void trigger_squish(Player* player, s8 playerIndex) {
         }
 
         player->effects |= SQUISH_EFFECT;
-        if (((player->type) & 0x1000) != 0) {
+        if (((player->type) & PLAYER_CPU) != 0) {
             play_cpu_sound_effect(playerIndex, player);
         }
     }
@@ -963,7 +963,7 @@ void func_8008E4A4(Player* player, s8 playerIndex) {
         D_80165190[2][playerIndex] = 1;
         D_80165190[3][playerIndex] = 1;
         player->unk_042 = 0;
-        player->type &= ~0x80;
+        player->type &= ~PLAYER_UNKNOWN_0x80;
 
         if ((gIsPlayerTripleAButtonCombo[playerIndex] == true) && ((player->type & PLAYER_HUMAN) == PLAYER_HUMAN)) {
             player->currentSpeed += 100.0f;
@@ -993,7 +993,7 @@ void func_8008E4A4(Player* player, s8 playerIndex) {
                     player->currentSpeed += 100.0f;
                 }
 
-                player->type &= ~0x80;
+                player->type &= ~PLAYER_UNKNOWN_0x80;
             }
         }
     }
@@ -1272,7 +1272,7 @@ void func_8008F1B8(Player* player, s8 arg1) {
             temp = ((u16) D_8018D920[arg1] / 182);
             if (temp == 180) {
                 player->effects &= ~EARLY_START_SPINOUT_EFFECT;
-                player->type &= ~0x80;
+                player->type &= ~PLAYER_UNKNOWN_0x80;
                 player->currentSpeed /= 3.0f;
             }
         } else {
@@ -1282,7 +1282,7 @@ void func_8008F1B8(Player* player, s8 arg1) {
             temp = ((u16) D_8018D920[arg1] / 182);
             if (temp == 180) {
                 player->effects &= ~EARLY_START_SPINOUT_EFFECT;
-                player->type &= ~0x80;
+                player->type &= ~PLAYER_UNKNOWN_0x80;
                 player->currentSpeed /= 3.0f;
             }
         }
@@ -1451,7 +1451,7 @@ void apply_boo_effect(Player* player, s8 playerIndex) {
             player->alpha = ALPHA_MAX;
             gPlayerOtherScreensAlpha[playerIndex] = ALPHA_MAX;
             player->effects &= ~BOO_EFFECT;
-            if ((player->type & 0x4000) != 0) {
+            if ((player->type & PLAYER_HUMAN) != 0) {
                 func_800CB064(playerIndex);
             }
         }
@@ -1461,7 +1461,7 @@ void apply_boo_effect(Player* player, s8 playerIndex) {
             gPlayerOtherScreensAlpha[playerIndex] = ALPHA_MAX;
             player->alpha = ALPHA_MAX;
             player->effects &= ~BOO_EFFECT;
-            if ((player->type & 0x4000) != 0) {
+            if ((player->type & PLAYER_HUMAN) != 0) {
                 func_800CB064(playerIndex);
             }
         }
@@ -1500,7 +1500,7 @@ void func_8008FB30(Player* player, s8 playerIndex) {
         gPlayerOtherScreensAlpha[playerIndex] = ALPHA_MAX;
 
         player->effects &= ~BOO_EFFECT;
-        if ((player->type & 0x4000) != 0) {
+        if ((player->type & PLAYER_HUMAN) != 0) {
             func_800CB064(playerIndex);
         }
     }
@@ -1510,7 +1510,7 @@ void func_8008FB30(Player* player, s8 playerIndex) {
         gPlayerOtherScreensAlpha[playerIndex] = ALPHA_MAX;
         player->alpha = ALPHA_MAX;
         player->effects &= ~BOO_EFFECT;
-        if ((player->type & 0x4000) != 0) {
+        if ((player->type & PLAYER_HUMAN) != 0) {
             func_800CB064(playerIndex);
         }
     }
@@ -1521,7 +1521,7 @@ void func_8008FC1C(Player* player) {
 
     if ((player->type & PLAYER_UNKNOWN_0x40) != 0) {
         playerIndex = get_player_index_for_player(player);
-        player->type = 0x7000;
+        player->type = (PLAYER_HUMAN | PLAYER_START_SEQUENCE | PLAYER_CPU);
         func_80056A94(playerIndex);
     }
 }
@@ -1877,7 +1877,7 @@ void func_80090970(Player* player, s8 playerId, s8 arg2) {
             }
             break;
         case 1:
-            if (((player->type & PLAYER_HUMAN) == 0x4000) && ((player->type & PLAYER_CPU) == 0)) {
+            if (((player->type & PLAYER_HUMAN) == PLAYER_HUMAN) && ((player->type & PLAYER_CPU) == 0)) {
                 func_8009E088(playerId, 0xA);
             }
             if ((player->unk_0CA & 1) == 1) {
@@ -2106,6 +2106,6 @@ void func_80091298(Player* player, s8 arg1) {
 void func_80091440(s8 arg0) {
     if ((gPlayers[arg0].unk_044 & 0x800) == 0) {
         gPlayers[arg0].unk_044 |= 0x2400;
-        gPlayers[arg0].type &= ~0x2000;
+        gPlayers[arg0].type &= ~PLAYER_START_SEQUENCE;
     }
 }

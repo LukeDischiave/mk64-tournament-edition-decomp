@@ -3549,7 +3549,7 @@ void func_8007A3F0(s32 objectIndex, s32 arg1) {
 }
 
 void update_object_lakitu_reverse(s32 objectIndex, s32 playerId) {
-    Player* sp2C = &gPlayerOne[playerId];
+    Player* player = &gPlayerOne[playerId];
 
     switch (gObjectList[objectIndex].state) {
         case 0:
@@ -3571,7 +3571,7 @@ void update_object_lakitu_reverse(s32 objectIndex, s32 playerId) {
     }
     switch (gObjectList[objectIndex].unk_0D6) { /* switch 1; irregular */
         case 1:                                 /* switch 1 */
-            if ((gObjectList[objectIndex].state >= 3) && (!(sp2C->effects & REVERSE_EFFECT))) {
+            if ((gObjectList[objectIndex].state >= 3) && (!(player->effects & REVERSE_EFFECT))) {
                 func_80086F10(objectIndex, 6, &D_800E69F4);
                 gObjectList[objectIndex].unk_0D6 = 2;
                 gObjectList[objectIndex].unk_04C = 0x00000050;
@@ -3844,7 +3844,7 @@ s32 func_8007B040(s32 objectIndex, s32 playerId) {
     s32 sp50[4];
     s32 sp40[4];
     s32 var_v1_2;
-    Player* sp38;
+    Player* player;
     s16 temp_a1;
 
     var_a3 = 0;
@@ -3877,10 +3877,10 @@ s32 func_8007B040(s32 objectIndex, s32 playerId) {
             temp_v1 = sp50[var_v1];
             gObjectList[objectIndex].unk_0D1 = temp_v1;
             temp_a0 = gItemWindowObjectByPlayerId[temp_v1];
-            sp38 = &gPlayerOne[temp_v1];
+            player = &gPlayerOne[temp_v1];
             func_800722A4(temp_a0, 1);
             gObjectList[temp_a0].type = 0;
-            sp38->currentItemCopy = 0;
+            player->currentItemCopy = 0;
             if (func_80072320(temp_a0, 2) != 0) {
                 func_800722CC(temp_a0, 2);
                 gObjectList[temp_a0].animationTimer = 0;
@@ -6080,20 +6080,20 @@ void func_80080A4C(s32 objectIndex, s32 cameraPlayerId) {
 
 void func_80080B28(s32 objectIndex, s32 playerId) {
     f32 temp_f0;
-    Player* temp_s0;
+    Player* player;
 
-    temp_s0 = &gPlayerOne[playerId];
+    player = &gPlayerOne[playerId];
     if (is_obj_flag_status_active(objectIndex, 0x00000200) != 0) {
-        if (!(temp_s0->triggers & THWOMP_SQUISH_TRIGGER)) {
-            temp_f0 = func_80088F54(objectIndex, temp_s0);
-            if ((temp_f0 <= 9.0) && !(temp_s0->effects & SQUISH_EFFECT) &&
-                (has_collided_horizontally_with_player(objectIndex, temp_s0) != 0)) {
-                if ((temp_s0->type & PLAYER_EXISTS) && !(temp_s0->type & 0x100)) {
-                    if (!(temp_s0->effects & STAR_EFFECT)) {
+        if (!(player->triggers & THWOMP_SQUISH_TRIGGER)) {
+            temp_f0 = func_80088F54(objectIndex, player);
+            if ((temp_f0 <= 9.0) && !(player->effects & SQUISH_EFFECT) &&
+                (has_collided_horizontally_with_player(objectIndex, player) != 0)) {
+                if ((player->type & PLAYER_EXISTS) && !(player->type & PLAYER_INVISIBLE_OR_BOMB)) {
+                    if (!(player->effects & STAR_EFFECT)) {
                         func_80089474(objectIndex, playerId, 1.4f, 1.1f, SOUND_ARG_LOAD(0x19, 0x00, 0xA0, 0x4C));
                     } else if (func_80072354(objectIndex, 0x00000040) != 0) {
-                        if (temp_s0->type & 0x1000) {
-                            func_800C98B8(temp_s0->pos, temp_s0->velocity, SOUND_ARG_LOAD(0x19, 0x01, 0xA2, 0x4A));
+                        if (player->type & PLAYER_CPU) {
+                            func_800C98B8(player->pos, player->velocity, SOUND_ARG_LOAD(0x19, 0x01, 0xA2, 0x4A));
                         } else {
                             func_800C9060((u8) playerId, SOUND_ARG_LOAD(0x19, 0x01, 0xA2, 0x4A));
                         }
@@ -6106,21 +6106,21 @@ void func_80080B28(s32 objectIndex, s32 playerId) {
                     }
                 }
             } else if ((temp_f0 <= 17.5) && (func_80072320(objectIndex, 1) != 0) &&
-                       (is_within_horizontal_distance_of_player(objectIndex, temp_s0, (temp_s0->speed * 0.5) + 7.0) !=
+                       (is_within_horizontal_distance_of_player(objectIndex, player, (player->speed * 0.5) + 7.0) !=
                         0)) {
-                if ((temp_s0->type & PLAYER_EXISTS) && !(temp_s0->type & 0x100)) {
+                if ((player->type & PLAYER_EXISTS) && !(player->type & PLAYER_INVISIBLE_OR_BOMB)) {
                     if (is_obj_flag_status_active(objectIndex, 0x04000000) != 0) {
                         func_80072180();
                     }
                     func_800722A4(objectIndex, 2);
-                    temp_s0->unk_040 = (s16) objectIndex;
-                    temp_s0->unk_046 |= 2;
-                    temp_s0->triggers |= THWOMP_SQUISH_TRIGGER;
-                    func_80088FF0(temp_s0);
+                    player->unk_040 = (s16) objectIndex;
+                    player->unk_046 |= 2;
+                    player->triggers |= THWOMP_SQUISH_TRIGGER;
+                    func_80088FF0(player);
                 }
             }
         } else {
-            func_80088FF0(temp_s0);
+            func_80088FF0(player);
         }
     }
 }
@@ -6491,7 +6491,7 @@ void func_80081D34(s32 objectIndex) {
     for (playerIndex = 0; playerIndex < D_8018D158; playerIndex++, player++, var_s4++) {
         if ((is_obj_flag_status_active(objectIndex, 0x00000200) != 0) && !(player->effects & BOO_EFFECT) &&
             (has_collided_with_player(objectIndex, player) != 0)) {
-            if ((player->type & PLAYER_EXISTS) && !(player->type & 0x100)) {
+            if ((player->type & PLAYER_EXISTS) && !(player->type & PLAYER_INVISIBLE_OR_BOMB)) {
                 var_s5 = 1;
                 object = &gObjectList[objectIndex];
                 if (is_obj_flag_status_active(objectIndex, 0x04000000) != 0) {
@@ -7224,10 +7224,10 @@ void func_80083F18(s32 objectIndex) {
 
 void func_80083FD0(s32 objectIndex, s32 arg1, s32 playerId) {
     Object* object;
-    Player* sp20;
+    Player* player;
 
     object = &gObjectList[objectIndex];
-    sp20 = &gPlayerOne[playerId];
+    player = &gPlayerOne[playerId];
     object->unk_084[7] = playerId;
     init_object(objectIndex, 0);
     object->activeTLUT = d_course_sherbet_land_ice;
@@ -7236,9 +7236,9 @@ void func_80083FD0(s32 objectIndex, s32 arg1, s32 playerId) {
     object->velocity[1] = ((f32) random_int(0x0032U) * 0.05) + 1.0;
     object->unk_034 = ((f32) random_int(0x000AU) * 0.1) + 1.0;
     object->direction_angle[1] = D_801657A2 * arg1;
-    object->origin_pos[0] = (sp20->pos[0] + random_int(0x0014U)) - 10.0f;
-    object->origin_pos[1] = (sp20->pos[1] - 10.0) + random_int(0x000AU);
-    object->origin_pos[2] = (sp20->pos[2] + random_int(0x0014U)) - 10.0f;
+    object->origin_pos[0] = (player->pos[0] + random_int(0x0014U)) - 10.0f;
+    object->origin_pos[1] = (player->pos[1] - 10.0) + random_int(0x000AU);
+    object->origin_pos[2] = (player->pos[2] + random_int(0x0014U)) - 10.0f;
 }
 
 void func_8008421C(UNUSED s32 arg0, s32 playerId) {

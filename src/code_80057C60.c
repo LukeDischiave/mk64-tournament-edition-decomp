@@ -4023,9 +4023,9 @@ void func_800621BC(Player* player, s16 arg1, s32 arg2, UNUSED s8 arg3, UNUSED s8
     s32 temp_v1;
     s32 phi_t0;
     s32 phi_t1;
-    Player* new_var;
+    Player* player_a;
     f32 phi_f2;
-    Player* new_var2;
+    Player* player_b;
 
     phi_t0 = 0xFF;
     temp_v1 = random_int(8) & 1;
@@ -4065,25 +4065,25 @@ void func_800621BC(Player* player, s16 arg1, s32 arg2, UNUSED s8 arg3, UNUSED s8
             return;
         }
 
-        new_var2 = player;
-        if (new_var2->particles[30 + arg2].timer > 0) {
-            set_particle_position_and_rotation(new_var2, &new_var2->particles[30 + arg1], 0.0f, phi_f2, 0.0f, phi_t0, phi_t1);
-            init_particle_player(&new_var2->particles[30 + arg1], 8, 1.0f);
-            set_particle_colour(&new_var2->particles[30 + arg1], 0xFFFF20, 0xFF);
-            new_var2->particles[30 + arg1].rotation = 0;
-            if (new_var2->particles[30 + arg1].unk_010 == 1) {
-                new_var2->particles[30 + arg1].rotation += 2184;
+        player_b = player;
+        if (player_b->particles[30 + arg2].timer > 0) {
+            set_particle_position_and_rotation(player_b, &player_b->particles[30 + arg1], 0.0f, phi_f2, 0.0f, phi_t0, phi_t1);
+            init_particle_player(&player_b->particles[30 + arg1], 8, 1.0f);
+            set_particle_colour(&player_b->particles[30 + arg1], 0xFFFF20, 0xFF);
+            player_b->particles[30 + arg1].rotation = 0;
+            if (player_b->particles[30 + arg1].unk_010 == 1) {
+                player_b->particles[30 + arg1].rotation += 2184;
             } else {
-                new_var2->particles[30 + arg1].rotation -= 2184;
+                player_b->particles[30 + arg1].rotation -= 2184;
             }
 
-            new_var = new_var2;
-            new_var->particles[30 + arg1].pos[2] =
-                new_var->pos[2] +
-                (coss((new_var->particles[30 + arg1].rotation - new_var->rotation[1]) - new_var->unk_0C0) * 5.0f);
-            new_var->particles[30 + arg1].pos[0] =
-                new_var->pos[0] +
-                (sins((new_var->particles[30 + arg1].rotation - new_var->rotation[1]) - new_var->unk_0C0) * 5.0f);
+            player_a = player_b;
+            player_a->particles[30 + arg1].pos[2] =
+                player_a->pos[2] +
+                (coss((player_a->particles[30 + arg1].rotation - player_a->rotation[1]) - player_a->unk_0C0) * 5.0f);
+            player_a->particles[30 + arg1].pos[0] =
+                player_a->pos[0] +
+                (sins((player_a->particles[30 + arg1].rotation - player_a->rotation[1]) - player_a->unk_0C0) * 5.0f);
         }
     }
 }
@@ -6447,54 +6447,54 @@ void func_8006C9B8(Player* player, s16 arg1, s8 playerIndex, s8 arg3) {
     }
 }
 
-void func_8006CEC0(Player* arg0, s16 arg1, s8 arg2, s8 arg3) {
+void func_8006CEC0(Player* player, s16 arg1, s8 arg2, s8 arg3) {
     UNUSED u16 temp_v0_3;
     s32 sp20 = arg1;
     if (--sp20 < 0) {
         sp20 = 9;
     }
     //Spawn particles when oob
-    if (arg0->particles[arg1].IsAlive == 1) {
-        switch (arg0->particles[arg1].type) {
+    if (player->particles[arg1].IsAlive == 1) {
+        switch (player->particles[arg1].type) {
             case 1:
-                func_80062C74(arg0, arg1, arg2, arg3);
+                func_80062C74(player, arg1, arg2, arg3);
                 break;
             case 3:
-                func_80064184(arg0, arg1, arg2, arg3);
+                func_80064184(player, arg1, arg2, arg3);
                 break;
             case 5:
-                set_oob_splash_particle_position(arg0, arg1, arg2, arg3);
+                set_oob_splash_particle_position(player, arg1, arg2, arg3);
                 break;
             case 6:
-                func_800631A8(arg0, arg1, arg2, arg3);
+                func_800631A8(player, arg1, arg2, arg3);
                 break;
             case 7:
-                func_80063268(arg0, arg1, arg2, arg3);
+                func_80063268(player, arg1, arg2, arg3);
                 break;
         }
     } else {
-        if ((arg0->unk_044 & 0x200) && (arg0->type & 0x4000)) {
-            func_80061224(arg0, arg1, sp20, arg2, arg3);
+        if ((player->unk_044 & 0x200) && (player->type & PLAYER_HUMAN)) {
+            func_80061224(player, arg1, sp20, arg2, arg3);
             return;
-        } else if (((arg0->effects & LIGHTNING_EFFECT) == LIGHTNING_EFFECT) && (arg0->unk_0B0 < 0x32)) {
-            func_80061094(arg0, arg1, sp20, arg2, arg3);
+        } else if (((player->effects & LIGHTNING_EFFECT) == LIGHTNING_EFFECT) && (player->unk_0B0 < 0x32)) {
+            func_80061094(player, arg1, sp20, arg2, arg3);
             return;
-        } else if ((arg0->type & 0x4000) == 0x4000) {
-            if ((arg0->unk_0DE & 8) == 8) {
-                func_80060F50(arg0, arg1, sp20, arg2, arg3);
+        } else if ((player->type & PLAYER_HUMAN) == PLAYER_HUMAN) {
+            if ((player->unk_0DE & 8) == 8) {
+                func_80060F50(player, arg1, sp20, arg2, arg3);
                 return;
-            } else if ((arg0->unk_0DE & 2) || (arg0->unk_0DE & 1)) {
-                func_80060B14(arg0, arg1, sp20, arg2, arg3);
+            } else if ((player->unk_0DE & 2) || (player->unk_0DE & 1)) {
+                func_80060B14(player, arg1, sp20, arg2, arg3);
                 return;
             }
         }
         switch (gActiveScreenMode) {
             case SCREEN_MODE_1P:
-                if (((arg0->effects & SQUISH_EFFECT) != SQUISH_EFFECT) &&
-                    ((arg0->effects & HIT_BY_GREEN_SHELL_EFFECT) != HIT_BY_GREEN_SHELL_EFFECT) &&
-                    ((arg0->effects & EXPLOSION_CRASH_EFFECT) != EXPLOSION_CRASH_EFFECT)) {
-                    if (((arg0->unk_0CA & 2) != 2) && ((arg0->unk_0CA & 0x10) != 0x10) && !(arg0->unk_0CA & 0x100)) {
-                        func_80060504(arg0, arg1, sp20, arg2, arg3);
+                if (((player->effects & SQUISH_EFFECT) != SQUISH_EFFECT) &&
+                    ((player->effects & HIT_BY_GREEN_SHELL_EFFECT) != HIT_BY_GREEN_SHELL_EFFECT) &&
+                    ((player->effects & EXPLOSION_CRASH_EFFECT) != EXPLOSION_CRASH_EFFECT)) {
+                    if (((player->unk_0CA & 2) != 2) && ((player->unk_0CA & 0x10) != 0x10) && !(player->unk_0CA & 0x100)) {
+                        func_80060504(player, arg1, sp20, arg2, arg3);
                     }
                 }
                 break;
@@ -6503,11 +6503,11 @@ void func_8006CEC0(Player* arg0, s16 arg1, s8 arg2, s8 arg3) {
             case SCREEN_MODE_2P_SPLITSCREEN_HORIZONTAL:
             case SCREEN_MODE_2P_SPLITSCREEN_VERTICAL:
             case SCREEN_MODE_3P_4P_SPLITSCREEN:
-                if (((arg0->type & 0x4000) != 0) && ((arg0->effects & SQUISH_EFFECT) != SQUISH_EFFECT) &&
-                    ((arg0->effects & HIT_BY_GREEN_SHELL_EFFECT) != HIT_BY_GREEN_SHELL_EFFECT) &&
-                    ((arg0->effects & EXPLOSION_CRASH_EFFECT) != EXPLOSION_CRASH_EFFECT)) {
-                    if (((arg0->unk_0CA & 2) != 2) && ((arg0->unk_0CA & 0x10) != 0x10) && !(arg0->unk_0CA & 0x100)) {
-                        func_80060504(arg0, arg1, sp20, arg2, arg3);
+                if (((player->type & PLAYER_HUMAN) != 0) && ((player->effects & SQUISH_EFFECT) != SQUISH_EFFECT) &&
+                    ((player->effects & HIT_BY_GREEN_SHELL_EFFECT) != HIT_BY_GREEN_SHELL_EFFECT) &&
+                    ((player->effects & EXPLOSION_CRASH_EFFECT) != EXPLOSION_CRASH_EFFECT)) {
+                    if (((player->unk_0CA & 2) != 2) && ((player->unk_0CA & 0x10) != 0x10) && !(player->unk_0CA & 0x100)) {
+                        func_80060504(player, arg1, sp20, arg2, arg3);
                     }
                 }
                 break;
@@ -6705,48 +6705,48 @@ void func_8006DC54(Player* player, s8 playerIndex, s8 screenId) {
     }
 }
 
-void func_8006DD3C(Player* arg0, s8 arg1, s8 arg2) {
+void func_8006DD3C(Player* player, s8 arg1, s8 arg2) {
     s16 temp_s0;
     s32 temp_v0;
 
     temp_v0 = 8 << (arg2 * 4);
-    if (temp_v0 == (arg0->unk_002 & temp_v0)) {
+    if (temp_v0 == (player->unk_002 & temp_v0)) {
         for (temp_s0 = 0; temp_s0 < 10; ++temp_s0) {
-            temp_v0 = arg0->particles[temp_s0].type;
+            temp_v0 = player->particles[temp_s0].type;
             if (temp_v0 != 3) {
                 if (temp_v0 == 5) {
-                    func_8006A280(arg0, arg1, temp_s0, arg2);
+                    func_8006A280(player, arg1, temp_s0, arg2);
                 }
             } else if (gActiveScreenMode == SCREEN_MODE_3P_4P_SPLITSCREEN) {
                 if (arg2 == arg1) {
-                    func_80066998(arg0, arg1, temp_s0, arg2);
+                    func_80066998(player, arg1, temp_s0, arg2);
                 }
             } else {
-                func_80066998(arg0, arg1, temp_s0, arg2);
+                func_80066998(player, arg1, temp_s0, arg2);
             }
         }
 
-        if (((arg0->type & 0x4000) == 0x4000) && (arg2 == arg1)) {
-            switch (arg0->particles[20].type) {
+        if (((player->type & PLAYER_HUMAN) == PLAYER_HUMAN) && (arg2 == arg1)) {
+            switch (player->particles[20].type) {
                 case 2:
-                    render_player_onomatopoeia_crash(arg0, arg1, arg0->particles[20].scale, arg2, 0);
+                    render_player_onomatopoeia_crash(player, arg1, player->particles[20].scale, arg2, 0);
                     break;
                 case 3:
-                    render_player_onomatopoeia_whrrrr(arg0, arg1, arg0->particles[20].scale, arg2, 0);
+                    render_player_onomatopoeia_whrrrr(player, arg1, player->particles[20].scale, arg2, 0);
                     break;
                 case 4:
-                    func_80068724(arg0, arg1, arg0->particles[20].scale, arg2, 0);
+                    func_80068724(player, arg1, player->particles[20].scale, arg2, 0);
                     break;
                 case 5:
-                    render_player_onomatopoeia_boing(arg0, arg1, arg0->particles[20].scale, arg2, 0);
+                    render_player_onomatopoeia_boing(player, arg1, player->particles[20].scale, arg2, 0);
                     break;
                 case 6:
-                    render_player_onomatopoeia_pomp(arg0, arg1, arg0->particles[20].scale, arg2, 0);
+                    render_player_onomatopoeia_pomp(player, arg1, player->particles[20].scale, arg2, 0);
                     break;
             }
-            if (arg0->particles[21].type == 5) {
-                render_player_speech_bubble(arg0, arg2, D_8018D480, 1, 1.6f, 0xFFFFFF);
-                render_music_note(arg0, arg2, D_8018D484, 1, 1.6f, 0xFF);
+            if (player->particles[21].type == 5) {
+                render_player_speech_bubble(player, arg2, D_8018D480, 1, 1.6f, 0xFFFFFF);
+                render_music_note(player, arg2, D_8018D484, 1, 1.6f, 0xFF);
             }
         }
     }
@@ -6770,11 +6770,11 @@ void func_8006E058(void) {
                 case TIME_TRIALS:
                     func_8006E420(gPlayerOne, 0, 0);
 
-                    if ((gPlayerTwo->type & 0x100) == 0x100) {
+                    if ((gPlayerTwo->type & PLAYER_INVISIBLE_OR_BOMB) == PLAYER_INVISIBLE_OR_BOMB) {
                         func_8006E420(gPlayerTwo, 1, 0);
                     }
 
-                    if ((gPlayerThree->type & 0x100) == 0x100) {
+                    if ((gPlayerThree->type & PLAYER_INVISIBLE_OR_BOMB) == PLAYER_INVISIBLE_OR_BOMB) {
                         func_8006E420(gPlayerThree, 2, 0);
                         break;
                     }

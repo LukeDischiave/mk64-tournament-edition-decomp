@@ -295,7 +295,7 @@ void update_actor_banana_bunch(struct BananaBunchParent* banana_bunch) {
                 destroy_actor((struct Actor*) banana_bunch);
                 remove_player_item(banana_bunch->playerId);
                 owner->triggers &= ~DRAG_ITEM_EFFECT;
-            } else if ((owner->type & 0x4000) != 0) {
+            } else if ((owner->type & PLAYER_HUMAN) != 0) {
                 controller = &gControllers[banana_bunch->playerId];
                 if ((controller->buttonPressed & Z_TRIG) != 0) {
                     controller->buttonPressed &= ~Z_TRIG;

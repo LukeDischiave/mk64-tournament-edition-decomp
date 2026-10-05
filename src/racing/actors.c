@@ -408,18 +408,18 @@ void func_80297760(struct Actor* arg0, Vec3f arg1) {
     arg1[1] = calculate_surface_height(arg1[0], arg1[1], arg1[2], arg0->unk30.meshIndexZX);
 }
 
-void func_802977B0(Player* arg0) {
-    arg0->tyres[FRONT_RIGHT].unk_14 |= 2;
-    arg0->tyres[FRONT_LEFT].unk_14 |= 2;
-    arg0->tyres[BACK_RIGHT].unk_14 |= 2;
-    arg0->tyres[BACK_LEFT].unk_14 |= 2;
+void func_802977B0(Player* player) {
+    player->tyres[FRONT_RIGHT].unk_14 |= 2;
+    player->tyres[FRONT_LEFT].unk_14 |= 2;
+    player->tyres[BACK_RIGHT].unk_14 |= 2;
+    player->tyres[BACK_LEFT].unk_14 |= 2;
 }
 
-void func_802977E4(Player* arg0) {
-    arg0->tyres[FRONT_RIGHT].unk_14 &= ~2 & 0xFFFF;
-    arg0->tyres[FRONT_LEFT].unk_14 &= ~2 & 0xFFFF;
-    arg0->tyres[BACK_RIGHT].unk_14 &= ~2 & 0xFFFF;
-    arg0->tyres[BACK_LEFT].unk_14 &= ~2 & 0xFFFF;
+void func_802977E4(Player* player) {
+    player->tyres[FRONT_RIGHT].unk_14 &= ~2 & 0xFFFF;
+    player->tyres[FRONT_LEFT].unk_14 &= ~2 & 0xFFFF;
+    player->tyres[BACK_RIGHT].unk_14 &= ~2 & 0xFFFF;
+    player->tyres[BACK_LEFT].unk_14 &= ~2 & 0xFFFF;
 }
 
 // Invert green and red on green shell texture
@@ -1092,19 +1092,19 @@ void init_kiwano_fruit(void) {
     Vec3f sp64;
     Vec3f sp58;
     Vec3s sp50;
-    Player* phi_s1;
+    Player* player;
     struct Actor* actor;
     s16 phi_s0;
     s32 i;
 
     // phi_s0 = 0;
     for (i = 0; i < 4; i++) {
-        phi_s1 = &gPlayers[i];
-        // temp_v0 = *phi_s1;
-        if ((phi_s1->type & 0x4000) == 0) {
+        player = &gPlayers[i];
+        // temp_v0 = *player;
+        if ((player->type & PLAYER_HUMAN) == 0) {
             continue;
         }
-        if ((phi_s1->type & 0x100) != 0) {
+        if ((player->type & PLAYER_INVISIBLE_OR_BOMB) != 0) {
             continue;
         }
 
@@ -1862,29 +1862,29 @@ bool collision_tree(Player* player, struct Actor* actor) {
     return true;
 }
 
-bool query_collision_player_vs_actor_item(Player* arg0, struct Actor* arg1) {
+bool query_collision_player_vs_actor_item(Player* player, struct Actor* arg1) {
     f32 temp_f0;
     f32 dist;
     f32 yDist;
     f32 zDist;
     f32 xDist;
 
-    temp_f0 = arg0->boundingBoxSize + arg1->boundingBoxSize;
-    xDist = arg1->pos[0] - arg0->pos[0];
+    temp_f0 = player->boundingBoxSize + arg1->boundingBoxSize;
+    xDist = arg1->pos[0] - player->pos[0];
     if (temp_f0 < xDist) {
         return NO_COLLISION;
     }
     if (xDist < -temp_f0) {
         return NO_COLLISION;
     }
-    yDist = arg1->pos[1] - arg0->pos[1];
+    yDist = arg1->pos[1] - player->pos[1];
     if (temp_f0 < yDist) {
         return NO_COLLISION;
     }
     if (yDist < -temp_f0) {
         return NO_COLLISION;
     }
-    zDist = arg1->pos[2] - arg0->pos[2];
+    zDist = arg1->pos[2] - player->pos[2];
     if (temp_f0 < zDist) {
         return NO_COLLISION;
     }
@@ -2185,7 +2185,7 @@ void evaluate_collision_between_player_actor(Player* player, struct Actor* actor
             }
             player->triggers |= HIT_BANANA_TRIGGER;
             owner = &gPlayers[temp_v1];
-            if (owner->type & 0x4000) {
+            if (owner->type & PLAYER_HUMAN) {
                 if (actor->flags & 0xF) {
                     if (playerId != temp_v1) {
                         func_800C90F4(temp_v1, (owner->characterId * 0x10) + SOUND_ARG_LOAD(0x29, 0x00, 0x80, 0x06));
@@ -2215,7 +2215,7 @@ void evaluate_collision_between_player_actor(Player* player, struct Actor* actor
             player->triggers |= LOW_TUMBLE_TRIGGER;
             func_800C98B8(player->pos, player->velocity, SOUND_ARG_LOAD(0x19, 0x01, 0x80, 0x10));
             owner = &gPlayers[temp_v1];
-            if ((owner->type & 0x4000) && (playerId != temp_v1)) {
+            if ((owner->type & PLAYER_HUMAN) && (playerId != temp_v1)) {
                 func_800C90F4(temp_v1, (owner->characterId * 0x10) + SOUND_ARG_LOAD(0x29, 0x00, 0x80, 0x06));
             }
             destroy_destructable_actor(actor);
@@ -2234,7 +2234,7 @@ void evaluate_collision_between_player_actor(Player* player, struct Actor* actor
                 func_800C98B8(player->pos, player->velocity, SOUND_ARG_LOAD(0x19, 0x01, 0x80, 0x10));
             }
             owner = &gPlayers[temp_v1];
-            if ((owner->type & 0x4000) && (playerId != temp_v1)) {
+            if ((owner->type & PLAYER_HUMAN) && (playerId != temp_v1)) {
                 func_800C90F4(temp_v1, (owner->characterId * 0x10) + SOUND_ARG_LOAD(0x29, 0x00, 0x80, 0x06));
             }
             if (playerId == actor->unk_04) {
@@ -2259,7 +2259,7 @@ void evaluate_collision_between_player_actor(Player* player, struct Actor* actor
                 func_800C98B8(player->pos, player->velocity, SOUND_ARG_LOAD(0x19, 0x01, 0x80, 0x10));
             }
             owner = &gPlayers[temp_v1];
-            if ((owner->type & 0x4000) && (playerId != temp_v1)) {
+            if ((owner->type & PLAYER_HUMAN) && (playerId != temp_v1)) {
                 func_800C90F4(temp_v1, (owner->characterId * 0x10) + SOUND_ARG_LOAD(0x29, 0x00, 0x80, 0x06));
             }
             destroy_destructable_actor(actor);
@@ -2317,7 +2317,7 @@ void evaluate_collision_between_player_actor(Player* player, struct Actor* actor
             }
             player->triggers |= VERTICAL_TUMBLE_TRIGGER;
             owner = &gPlayers[temp_v1];
-            if (owner->type & 0x4000) {
+            if (owner->type & PLAYER_HUMAN) {
                 if (actor->flags & 0xF) {
                     if (playerId != temp_v1) {
                         func_800C90F4(temp_v1, (owner->characterId * 0x10) + SOUND_ARG_LOAD(0x29, 0x00, 0x80, 0x06));
@@ -2373,20 +2373,20 @@ void evaluate_collision_between_player_actor(Player* player, struct Actor* actor
 void evaluate_collision_for_players_and_actors(void) {
     struct Actor* temp_a1;
     s32 i, j;
-    Player* phi_s1;
+    Player* player;
 
     for (i = 0; i < NUM_PLAYERS; i++) {
-        phi_s1 = &gPlayers[i];
+        player = &gPlayers[i];
 
-        if (((phi_s1->type & PLAYER_EXISTS) != 0) && ((phi_s1->effects & SQUISH_EFFECT) == 0)) {
-            func_802977E4(phi_s1);
+        if (((player->type & PLAYER_EXISTS) != 0) && ((player->effects & SQUISH_EFFECT) == 0)) {
+            func_802977E4(player);
             for (j = 0; j < ACTOR_LIST_SIZE; j++) {
                 temp_a1 = &gActorList[j];
 
-                if ((phi_s1->effects & SQUISH_EFFECT) == 0) {
+                if ((player->effects & SQUISH_EFFECT) == 0) {
                     // temp_v0 = temp_a1->unk2;
                     if (((temp_a1->flags & 0x8000) != 0) && ((temp_a1->flags & 0x4000) != 0)) {
-                        evaluate_collision_between_player_actor(phi_s1, temp_a1);
+                        evaluate_collision_between_player_actor(player, temp_a1);
                     }
                 }
             }

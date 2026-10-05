@@ -1021,8 +1021,8 @@ void func_802842D8(CinematicCamera* camera) {
 }
 
 void func_80284308(CinematicCamera* camera) {
-    Player** sp30[4] = { &gPlayerOne, &gPlayerTwo, &gPlayerThree, &gPlayerFour };
-    Player* ply;
+    Player** players[4] = { &gPlayerOne, &gPlayerTwo, &gPlayerThree, &gPlayerFour };
+    Player* player;
     f32 x;
     f32 y;
     f32 z;
@@ -1031,11 +1031,11 @@ void func_80284308(CinematicCamera* camera) {
     move_cinematic_camera_along_spline(camera, (struct struct_80286A04*) D_802858E0,
                                        (struct struct_80286A04*) D_802858F8, 0);
 
-    ply = *(sp30[0] + D_802874D8.unk1D);
+    player = *(players[0] + D_802874D8.unk1D);
 
-    x = ply->pos[0] - gPlayerOne->pos[0];
-    y = ply->pos[1] - gPlayerOne->pos[1];
-    z = ply->pos[2] - gPlayerOne->pos[2];
+    x = player->pos[0] - gPlayerOne->pos[0];
+    y = player->pos[1] - gPlayerOne->pos[1];
+    z = player->pos[2] - gPlayerOne->pos[2];
 
     camera->lookAt[0] += x;
     camera->lookAt[2] += z;
