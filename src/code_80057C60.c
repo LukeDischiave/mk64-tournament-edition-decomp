@@ -37,6 +37,7 @@
 #include "sounds.h"
 #include "data/some_data.h"
 #include "menu_items.h"
+#include "practice.h"
 
 //! @warning this macro is undef'd at the end of this file
 #define MAKE_RGB(r, g, b) (((r) << 0x10) | ((g) << 0x08) | (b << 0x00))
@@ -972,6 +973,7 @@ void func_80058F78(void) {
                 }
             }
         }
+        practice_render();
     }
 }
 
