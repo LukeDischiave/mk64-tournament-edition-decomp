@@ -866,7 +866,6 @@ extern s8 gPracticeMode;
 extern s8 gVSPoints[8];
 extern s8 g200CC;
 extern s8 gStrategicItems;
-extern s8 gInputDisplay;
 extern COURSES sRandomTrackOrder[16];
 extern u8 currentRandomIndex;
 

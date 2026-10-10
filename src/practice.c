@@ -229,7 +229,7 @@ static void practice_draw_details(void) {
 void practice_update(void) {
     //defaults to ensure first boot turns on the details display.
     //will not be kept on after first race - maintain setting.
-    if (gInputDisplay) {
+    if (gPracticeMode) {
         if (!sInputDisplayWasEnabled) {
             sPracticeDetailsVisible = true;
         }
@@ -250,7 +250,7 @@ void practice_update(void) {
 }
 
 void practice_render(void) {
-    if (gInputDisplay) {
+    if (gPracticeMode) {
         practice_draw_input_display();
         if (sPracticeDetailsVisible) {
             practice_draw_details();
