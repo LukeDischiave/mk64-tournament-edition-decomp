@@ -752,7 +752,6 @@ void func_8028F4E8(void) {
             gDemoTimer = 5;
         }
     }
-    practice_update();
 }
 
 // function to set the Vp scale
