@@ -8,6 +8,7 @@
 #include "code_800029B0.h"
 #include "menu_items.h"
 #include "render_objects.h"
+#include "save_state.h"
 #include "practice.h"
 #include "math_util.h"
 
@@ -220,6 +221,12 @@ static void show_kart_metrics(void) {
         practice_print_f32(x + KART_METRICS_COL2, y + 10, "  SZ:", player->velocity[2], 1);
         practice_print_f32(x + KART_METRICS_COL2, y + 20, "  SH:", player->speed, 1);
         practice_print_f32(x + KART_METRICS_COL2, y + 30, "  SY:", player->velocity[1], 1);
+    }
+    if (gControllerOne->buttonPressed & L_JPAD) {
+        SaveState();
+    }
+    if (gControllerOne->buttonPressed & R_JPAD) {
+        LoadState();
     }
     func_80057778();
 }

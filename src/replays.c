@@ -51,6 +51,36 @@ static u32* sPostTTReplay;
 static s16 sPlayerInputIdx;
 static u32* sPlayerInputs;
 
+
+
+//These functions save/restore the state of Ghost Replays
+//Same concept as featured in save_state.c, load/restore to RAM copies.
+void SaveStateGetReplayCursor(SaveStateReplayCursor *out) {
+    out->playerButtonsPrev = sPlayerGhostButtonsPrev;
+    out->playerFramesRemaining = sPlayerGhostFramesRemaining;
+    out->playerReplayIdx = sPlayerGhostReplayIdx;
+    out->courseButtonsPrev = sButtonsPrevCourseGhost;
+    out->courseFramesRemaining = sCourseGhostFramesRemaining;
+    out->courseReplayIdx = sCourseGhostReplayIdx;
+    out->postTTButtonsPrev = sPostTTButtonsPrev;
+    out->postTTFramesRemaining = sPostTTFramesRemaining;
+    out->postTTReplayIdx = sPostTTReplayIdx;
+}
+
+void SaveStateSetReplayCursor(SaveStateReplayCursor *in) {
+    sPlayerGhostButtonsPrev = in->playerButtonsPrev;
+    sPlayerGhostFramesRemaining = in->playerFramesRemaining;
+    sPlayerGhostReplayIdx = in->playerReplayIdx;
+    sButtonsPrevCourseGhost = in->courseButtonsPrev;
+    sCourseGhostFramesRemaining = in->courseFramesRemaining;
+    sCourseGhostReplayIdx = in->courseReplayIdx;
+    sPostTTButtonsPrev = in->postTTButtonsPrev;
+    sPostTTFramesRemaining = in->postTTFramesRemaining;
+    sPostTTReplayIdx = in->postTTReplayIdx;
+}
+
+//end of Ghost Replays save/load restores.
+
 static u16 sPrevCourseId;
 u32 D_80162DC4;
 s32 D_80162DC8;
