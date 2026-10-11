@@ -26,6 +26,7 @@
 #include "menus.h"
 #include "seq_ids.h"
 #include "spawn_players.h"
+#include "practice.h"
 
 #pragma intrinsic(sqrtf)
 

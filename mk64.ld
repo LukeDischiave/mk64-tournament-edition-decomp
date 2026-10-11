@@ -51,6 +51,7 @@ SECTIONS
       BUILD_DIR/src/crash_screen.o(.text*);
       BUILD_DIR/src/animation.o(.text*);
       BUILD_DIR/src/replays.o(.text*);
+      BUILD_DIR/src/practice.o(.text*);
       BUILD_DIR/asm/unused_overflow_check.o(.text);
       BUILD_DIR/src/cpu_vehicles_camera_path.jp.o(.text*);
       BUILD_DIR/src/camera.o(.text*);
@@ -219,6 +220,7 @@ SECTIONS
       BUILD_DIR/src/profiler.o(.data*);
       BUILD_DIR/src/crash_screen.o(.data*);
       BUILD_DIR/src/replays.o(.data*);
+      BUILD_DIR/src/practice.o(.data*);
       BUILD_DIR/src/data/path_spawn_metadata.o(.data*);
       BUILD_DIR/src/camera.o(.data*);
       BUILD_DIR/src/render_player.o(.data*);
@@ -269,6 +271,7 @@ SECTIONS
       BUILD_DIR/src/main.o(.rodata*);
       BUILD_DIR/src/animation.o(.rodata*);
       BUILD_DIR/src/code_800029B0.o(.rodata*);
+      BUILD_DIR/src/practice.o(.rodata*);
       BUILD_DIR/src/cpu_vehicles_camera_path.jp.o(.rodata*);
       BUILD_DIR/src/camera.o(.rodata*);
       BUILD_DIR/src/render_player.o(.rodata*);
@@ -364,6 +367,7 @@ SECTIONS
       BUILD_DIR/src/os/osEepromWrite.o(.bss*);
       BUILD_DIR/asm/os/__osException.o(.bss);
       BUILD_DIR/src/os/osLeoDiskInit.o(.bss*);
+      BUILD_DIR/src/practice.o(.bss*);
       . = ALIGN(0x10);
    }
    END_NOLOAD(main)

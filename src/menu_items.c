@@ -5965,7 +5965,6 @@ void render_custom_overlay(void) {
     static const char* CC_200_labels[] = {"default", "enabled"};
     static const char* strategic_4p_labels[] = {"default", "enabled"};
 
-
     set_text_color(TEXT_YELLOW);
 
     // title (centered)
