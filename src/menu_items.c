@@ -5947,7 +5947,7 @@ void render_custom_overlay(void) {
         "extra",
         "practice mode",
         "200CC",
-        "4p strategic items",
+        "4p strategic items"
         /* keep last empty if CUSTOM_MENU_ROWS > 12 */
     };
 
