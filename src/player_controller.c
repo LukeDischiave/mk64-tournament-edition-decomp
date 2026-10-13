@@ -1558,17 +1558,17 @@ UNUSED void func_8002B8A4(Player* player_one, Player* player_two) {
 }
 
 void func_8002B9CC(Player* player, s8 playerIndex, UNUSED s32 arg2) {
-    f32 temp_f0;
-    f32 temp_f2;
-    f32 temp_f14;
+    f32 recoilX;
+    f32 recoilY;
+    f32 recoilZ;
     s16 temp;
     s16 temp2;
 
     if ((player->unk_046 & 2) == 2) {
-        temp_f0 = D_8018CE10[playerIndex].unk_04[0];
-        temp_f2 = 0;
-        temp_f14 = D_8018CE10[playerIndex].unk_04[2];
-        if (sqrtf((temp_f0 * temp_f0) + (temp_f2 * temp_f2) + (temp_f14 * temp_f14)) >= 6.5) {
+        recoilX = gRecoil[playerIndex].velocity[0];
+        recoilY = 0;
+        recoilZ = gRecoil[playerIndex].velocity[2];
+        if (sqrtf((recoilX * recoilX) + (recoilY * recoilY) + (recoilZ * recoilZ)) >= 6.5) {
             player->unk_08C /= 4;
             player->currentSpeed /= 4;
             if (!(player->effects & BANANA_SPINOUT_EFFECT) && !(player->effects & DRIVING_SPINOUT_EFFECT)) {
@@ -1576,10 +1576,10 @@ void func_8002B9CC(Player* player, s8 playerIndex, UNUSED s32 arg2) {
             }
         }
     } else {
-        temp_f0 = gPlayerLastVelocity[playerIndex][0] - player->velocity[0];
-        temp_f2 = gPlayerLastVelocity[playerIndex][1] - player->velocity[1];
-        temp_f14 = gPlayerLastVelocity[playerIndex][2] - player->velocity[2];
-        if (sqrtf((temp_f0 * temp_f0) + (temp_f2 * temp_f2) + (temp_f14 * temp_f14)) >= 4.2) {
+        recoilX = gPlayerLastVelocity[playerIndex][0] - player->velocity[0];
+        recoilY = gPlayerLastVelocity[playerIndex][1] - player->velocity[1];
+        recoilZ = gPlayerLastVelocity[playerIndex][2] - player->velocity[2];
+        if (sqrtf((recoilX * recoilX) + (recoilY * recoilY) + (recoilZ * recoilZ)) >= 4.2) {
             player->unk_08C /= 4;
             player->currentSpeed /= 4;
             if (!(player->effects & BANANA_SPINOUT_EFFECT) && !(player->effects & DRIVING_SPINOUT_EFFECT)) {
@@ -2241,9 +2241,9 @@ void func_8002D268(Player* player, UNUSED Camera* camera, s8 screenId, s8 player
     player->oldPos[0] = player->pos[0];
     player->oldPos[2] = player->pos[2];
     player->oldPos[1] = player->pos[1];
-    nextX = posX + player->velocity[0] + D_8018CE10[playerId].unk_04[0];
+    nextX = posX + player->velocity[0] + gRecoil[playerId].velocity[0];
     nextY = posY + player->velocity[1];
-    nextZ = posZ + player->velocity[2] + D_8018CE10[playerId].unk_04[2];
+    nextZ = posZ + player->velocity[2] + gRecoil[playerId].velocity[2];
 
     if (((((player->unk_0CA & 2) != 2) && ((player->unk_0CA & 8) != 8)) &&
          ((player->effects & SQUISH_EFFECT) != SQUISH_EFFECT)) &&
@@ -2366,8 +2366,9 @@ void func_8002D268(Player* player, UNUSED Camera* camera, s8 screenId, s8 player
     player->previousSpeed = player->speed;
     player->speed = sqrtf(temp2);
 
-    if ((player->unk_08C <= 0.0f) && (player->speed <= 0.08) && (D_8018CE10[playerId].unk_04[0] == 0.0f) &&
-        (D_8018CE10[playerId].unk_04[2] == 0.0f)) {
+    if ((player->unk_08C <= 0.0f) && (player->speed <= 0.08) && (gRecoil[playerId].velocity[0] == 0.0f) &&
+        (gRecoil[playerId].velocity[2] == 0.0f)) {
+        // supposed to set to 0
         newVelocity[0] = newVelocity[0] + (-1 * newVelocity[0]);
         newVelocity[2] = newVelocity[2] + (-1 * newVelocity[2]);
     } else {
@@ -2523,9 +2524,9 @@ void func_8002E594(Player* player, UNUSED Camera* camera, s8 screenId, s8 player
     player->oldPos[1] = player->pos[1];
     player->oldPos[2] = player->pos[2];
 
-    nextX = posX + player->velocity[0] + D_8018CE10[playerId].unk_04[0];
+    nextX = posX + player->velocity[0] + gRecoil[playerId].velocity[0];
     nextY = posY + player->velocity[1];
-    nextZ = posZ + player->velocity[2] + D_8018CE10[playerId].unk_04[2];
+    nextZ = posZ + player->velocity[2] + gRecoil[playerId].velocity[2];
     func_8002AAC0(player);
     nextY += player->kartHopVelocity;
     actor_terrain_collision(&player->collision, player->boundingBoxSize, nextX, nextY, nextZ, player->oldPos[0],

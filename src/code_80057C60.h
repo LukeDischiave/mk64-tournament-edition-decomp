@@ -19,11 +19,11 @@
 
 typedef struct {
     char unk_00[0x4];
-    Vec3f unk_04;
+    Vec3f velocity;
     char unk_10[0x4];
     s32 objectIndex;
-    char unk_18[0x8];
-} struct_D_8018CE10; // size = 0x20
+    char timer[0x8];
+} struct_gRecoil; // size = 0x20
 
 /** @cond */
 
@@ -433,7 +433,7 @@ extern Collision D_8018C830;
 extern hud_player playerHUD[];
 // extern s32 D_8018CC80[]; -> objects.h
 
-extern struct_D_8018CE10 D_8018CE10[];
+extern struct_gRecoil gRecoil[];
 // extern s32 D_8018CF10; -> objects.h
 
 extern Camera* D_8018CF14;

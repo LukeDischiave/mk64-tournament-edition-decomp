@@ -4751,6 +4751,7 @@ void func_8007D714(s32 arg0) {
     }
 }
 
+// bat recoil
 void func_8007D794(s32 objectIndex) {
     if (gCCSelection == CC_50) {
         func_80089A04(objectIndex, 0.5f, 0.2f);
@@ -4872,6 +4873,7 @@ void update_bat(void) {
 
             func_8007D8D4(temp_s0, 1);
             func_8007DAF8(temp_s0, 1);
+            // bat recoil
             func_8007D794(temp_s0);
             if (object->state == 0) {
                 delete_object_wrapper(&gObjectParticle2[var_s2]);
@@ -4897,6 +4899,7 @@ void update_bat(void) {
 
             func_8007D8D4(temp_s0, 2);
             func_8007DAF8(temp_s0, 2);
+            // bat recoil
             func_8007D794(temp_s0);
             if (object->state == 0) {
                 delete_object_wrapper(&gObjectParticle3[var_s2]);
@@ -6090,6 +6093,7 @@ void func_80080B28(s32 objectIndex, s32 playerId) {
                 (has_collided_horizontally_with_player(objectIndex, player) != 0)) {
                 if ((player->type & PLAYER_EXISTS) && !(player->type & PLAYER_INVISIBLE_OR_BOMB)) {
                     if (!(player->effects & STAR_EFFECT)) {
+                        //adds recoil for thwomp
                         func_80089474(objectIndex, playerId, 1.4f, 1.1f, SOUND_ARG_LOAD(0x19, 0x00, 0xA0, 0x4C));
                     } else if (func_80072354(objectIndex, 0x00000040) != 0) {
                         if (player->type & PLAYER_CPU) {
@@ -7630,6 +7634,7 @@ void update_penguins(void) {
             }
             func_800850B0(objectIndex, var_s1);
         }
+        // penguin recoil values
         if (func_80072320(objectIndex, 1) != 0) {
             func_80089820(objectIndex, 1.75f, 1.5f, 0x1900A046U);
         } else if (func_80072320(objectIndex, 8) != 0) {

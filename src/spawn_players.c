@@ -383,8 +383,8 @@ void spawn_player(Player* player, s8 playerIndex, f32 startingRow, f32 startingC
     player->collision.orientationVector[2] = 0.0f;
 
     D_80165300[playerIndex] = 0;
-    D_8018CE10[playerIndex].unk_04[0] = 0.0f;
-    D_8018CE10[playerIndex].unk_04[2] = 0.0f;
+    gRecoil[playerIndex].velocity[0] = 0.0f;
+    gRecoil[playerIndex].velocity[2] = 0.0f;
     func_80295BF8(playerIndex);
     reset_player_particle_pool(player);
     clear_all_player_balloons(player, playerIndex);

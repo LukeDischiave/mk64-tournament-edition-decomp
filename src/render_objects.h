@@ -307,7 +307,7 @@ void draw_lap_count(s16, s16, s8);
 void func_8004FDB4(f32, f32, s16, s16, s16, s32, s32, s32, s32);
 
 void func_80050320(void);
-s32 func_80050644(u16, s32*, s32*);
+s32 get_progress_icon_data(u16, s32*, s32*);
 void func_800507D8(u16, s32*, s32*);
 void func_800508C0(void);
 void func_80050C68(void);

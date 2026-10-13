@@ -2809,49 +2809,52 @@ void func_80050320(void) {
     gSPTexture(gDisplayListHead++, 0x0001, 0x0001, 0, G_TX_RENDERTILE, G_OFF);
 }
 
-s32 func_80050644(u16 arg0, s32* arg1, s32* arg2) {
-    s32 var_v0 = 0;
-    s32 thing = 0;
-    s32 test = gLapCountByPlayerId[arg0];
+// Gets coordinates for progress icon
+s32 get_progress_icon_data(u16 playerId, s32* displayX, s32* displayY) {
+    s32 segment = 0;
+    s32 lap_progress = 0;
+    s32 lap_count = gLapCountByPlayerId[playerId];
 
-    if (test < 3) {
+    if (lap_count < 3) {
+        // Single player mode, the icon moves around the edge of the screen. Presumably a 260x204 rectangle
         if (gPlayerCountSelection1 == 1) {
-            if (test >= 0) {
-                thing = (s32) (gLapCompletionPercentByPlayerId[arg0] * 928);
+            if (lap_count >= 0) {
+                lap_progress = (s32) (gLapCompletionPercentByPlayerId[playerId] * (260 * 2 + 204 * 2));
             }
-            if (thing < 0x104) {
-                *arg1 = thing;
-                *arg2 = 0;
-                var_v0 = 1;
-            } else if (thing < 0x1D0) {
-                *arg1 = 0x00000104;
-                *arg2 = thing - 0x104;
-                var_v0 = 2;
-            } else if (thing < 0x2D4) {
-                *arg1 = 0x2D4 - thing;
-                *arg2 = 0x000000CC;
-                var_v0 = 3;
+            if (lap_progress < 260) {
+                *displayX = lap_progress;
+                *displayY = 0;
+                segment = 1;
+            } else if (lap_progress < (260 + 204)) {
+                *displayX = 260;
+                *displayY = lap_progress - 260;
+                segment = 2;
+            } else if (lap_progress < (260 * 2 + 204)) {
+                *displayX = (260 * 2 + 204) - lap_progress;
+                *displayY = 204;
+                segment = 3;
             } else {
-                *arg1 = 0;
-                *arg2 = 0x3A0 - thing;
-                var_v0 = 4;
+                *displayX = 0;
+                *displayY = (260 * 2 + 204 * 2) - lap_progress;
+                segment = 4;
             }
         } else {
-            if (test >= 0) {
-                thing = (s32) (gLapCompletionPercentByPlayerId[arg0] * 260);
+            // In multiplayer, the icon moves across the middle of the screen
+            if (lap_count >= 0) {
+                lap_progress = (s32) (gLapCompletionPercentByPlayerId[playerId] * 260);
             }
-            *arg1 = thing;
-            *arg2 = 0;
+            *displayX = lap_progress;
+            *displayY = 0;
         }
     } else if (gPlayerCountSelection1 == 1) {
-        *arg1 = 0x00000020;
-        *arg2 = (gGPCurrentRaceRankByPlayerId[arg0] * 0x14) + 0x20;
+        *displayX = 32;
+        *displayY = (gGPCurrentRaceRankByPlayerId[playerId] * 20) + 32;
     } else {
-        thing = (s32) (gLapCompletionPercentByPlayerId[arg0] * 260);
-        *arg1 = thing;
-        *arg2 = 0;
+        lap_progress = (s32) (gLapCompletionPercentByPlayerId[playerId] * 260);
+        *displayX = lap_progress;
+        *displayY = 0;
     }
-    return var_v0;
+    return segment;
 }
 
 void func_800507D8(u16 bombIndex, s32* arg1, s32* arg2) {
@@ -2892,7 +2895,7 @@ void func_800508C0(void) {
     } else {
         var_s0 = gGPCurrentRacePlayerIdByRank[0];
     }
-    sp4C = func_80050644(var_s0, &sp54, &sp50);
+    sp4C = get_progress_icon_data(var_s0, &sp54, &sp50);
     temp_v1 = gLapCountByPlayerId[var_s0];
     if (temp_v1 > 0) {
         if (temp_v1 == 1) {
@@ -2982,21 +2985,21 @@ void func_80050C68(void) {
 }
 
 void func_80050E34(s32 playerId, s32 arg1) {
-    s32 objectIndex;
-    s32 spD0;
-    s32 spCC;
+    s32 playerIconIndex;
+    s32 iconX;
+    s32 iconY;
     Player *dummy = &gPlayerOne[playerId];
     s32 spC4;
     s32 lapCount;
     s32 characterId;
     s32 spB8;
     s32 temp_v0_2;
-    Object* object;
+    Object* playerIcon;
     Player *player = &gPlayerOne[playerId];
 
     lapCount = gLapCountByPlayerId[playerId];
     characterId = player->characterId;
-    objectIndex = D_8018CE10[playerId].objectIndex;
+    playerIconIndex = gRecoil[playerId].objectIndex;
 
     if (gPlayerCountSelection1 == 1) {
         spC4 = 0x00000012;
@@ -3004,7 +3007,7 @@ void func_80050E34(s32 playerId, s32 arg1) {
         spC4 = 0x00000078;
     }
 
-    temp_v0_2 = func_80050644(playerId, &spD0, &spCC);
+    temp_v0_2 = get_progress_icon_data(playerId, &iconX, &iconY);
     if ((temp_v0_2 == 2) || (temp_v0_2 == 3)) {
         spB8 = 1;
     } else {
@@ -3015,27 +3018,27 @@ void func_80050E34(s32 playerId, s32 arg1) {
         gSPDisplayList(gDisplayListHead++, D_0D007DB8);
         gDPLoadTLUT_pal256(gDisplayListHead++, common_tlut_portrait_bomb_kart_and_question_mark);
         rsp_load_texture(common_texture_portrait_question_mark, 0x00000020, 0x00000020);
-        object = &gObjectList[objectIndex];
-        object->pos[0] = object->offset[0] + ((f32) (spD0 + 0x20));
-        object->pos[1] = object->offset[1] + ((f32) (spC4 + spCC));
-        object->pos[2] = object->offset[2];
-        rsp_set_matrix_transformation(object->pos, object->direction_angle, object->sizeScaling);
+        playerIcon = &gObjectList[playerIconIndex];
+        playerIcon->pos[0] = playerIcon->offset[0] + ((f32) (iconX + 0x20));
+        playerIcon->pos[1] = playerIcon->offset[1] + ((f32) (spC4 + iconY));
+        playerIcon->pos[2] = playerIcon->offset[2];
+        rsp_set_matrix_transformation(playerIcon->pos, playerIcon->direction_angle, playerIcon->sizeScaling);
         gSPDisplayList(gDisplayListHead++, D_0D0069E0);
     } else {
         gDPLoadTLUT_pal256(gDisplayListHead++, gPortraitTLUTs[characterId]);
         gSPDisplayList(gDisplayListHead++, D_0D007DB8);
         if (player->effects & STAR_EFFECT) {
             func_8004B614((s32) D_801656C0, (s32) D_801656D0, (s32) D_801656E0, 0x00000080, 0x00000080, 0x00000080,
-                          (s32) gObjectList[objectIndex].primAlpha);
+                          (s32) gObjectList[playerIconIndex].primAlpha);
         } else {
-            set_transparency((s32) gObjectList[objectIndex].primAlpha);
+            set_transparency((s32) gObjectList[playerIconIndex].primAlpha);
         }
         rsp_load_texture(gPortraitTextures[characterId], 0x00000020, 0x00000020);
-        object = &gObjectList[objectIndex];
-        object->pos[0] = object->offset[0] + ((f32) (spD0 + 0x20));
-        object->pos[1] = object->offset[1] + ((f32) (spC4 + spCC));
-        object->pos[2] = object->offset[2];
-        rsp_set_matrix_transformation(object->pos, object->direction_angle, object->sizeScaling);
+        playerIcon = &gObjectList[playerIconIndex];
+        playerIcon->pos[0] = playerIcon->offset[0] + ((f32) (iconX + 0x20));
+        playerIcon->pos[1] = playerIcon->offset[1] + ((f32) (spC4 + iconY));
+        playerIcon->pos[2] = playerIcon->offset[2];
+        rsp_set_matrix_transformation(playerIcon->pos, playerIcon->direction_angle, playerIcon->sizeScaling);
         if (spB8 != 0) {
             gSPDisplayList(gDisplayListHead++, D_0D0069F8);
         } else {
@@ -3044,16 +3047,16 @@ void func_80050E34(s32 playerId, s32 arg1) {
         gDPLoadTLUT_pal256(gDisplayListHead++, common_tlut_hud_type_C_rank_tiny_font);
         rsp_load_texture(common_texture_hud_type_C_rank_tiny_font[arg1 + 1], 8, 8);
         if (spB8 != 0) {
-            func_80042330(spD0 + 0x26, (spC4 + spCC) + 4, 0U, 1.0f);
+            func_80042330(iconX + 0x26, (spC4 + iconY) + 4, 0U, 1.0f);
         } else {
-            func_80042330(spD0 + 0x1B, (spC4 + spCC) + 4, 0U, 1.0f);
+            func_80042330(iconX + 0x1B, (spC4 + iconY) + 4, 0U, 1.0f);
         }
         gSPDisplayList(gDisplayListHead++, D_0D006950);
         if ((player == gPlayerOne) && (gScreenModeSelection == SCREEN_MODE_1P)) {
             gSPDisplayList(gDisplayListHead++, D_0D007A40);
             func_8004B35C(D_8018D3E4, D_8018D3E8, D_8018D3EC, 0x000000FF);
             func_80044924(common_texture_character_portrait_border, 0x00000020, 0x00000020);
-            rsp_set_matrix_transformation(object->pos, object->direction_angle, object->sizeScaling);
+            rsp_set_matrix_transformation(playerIcon->pos, playerIcon->direction_angle, playerIcon->sizeScaling);
             gSPDisplayList(gDisplayListHead++, D_0D0069E0);
         }
     }
