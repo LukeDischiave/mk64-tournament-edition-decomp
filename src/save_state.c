@@ -86,6 +86,7 @@ typedef struct SaveStatePayload {
     f32 waterHeight;
     f32 waterVelocity;
     SaveStateReplayCursor replayCursor;
+    struct_gRecoil recoil[8];
 } SaveStatePayload;
 
 #define SAVE_STATE_RAM_END 0x80800000
@@ -153,6 +154,7 @@ void SaveState(void) {
     save->courseTimer = gCourseTimer;
     save->waterHeight = D_8015F8E4;
     save->waterVelocity = D_8015F8E8;
+    memcpy(save->recoil, gRecoil, sizeof(save->recoil));
     SaveStateGetReplayCursor(&save->replayCursor);
 }
 
@@ -214,5 +216,6 @@ void LoadState(void) {
     gCourseTimer = save->courseTimer;
     D_8015F8E4 = save->waterHeight;
     D_8015F8E8 = save->waterVelocity;
+    memcpy(gRecoil, save->recoil, sizeof(save->recoil));
     SaveStateSetReplayCursor(&save->replayCursor);
 }
