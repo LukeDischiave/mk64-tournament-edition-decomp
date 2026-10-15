@@ -4826,11 +4826,16 @@ void func_8009CE64(s32 arg0) {
                 var_a1 = 0;
                 temp_v0 = find_menu_items(0x000000B0);
                 if (temp_v0 != NULL) {
-                    // EVENT HANDLER FOR VS MENU
+                    // EVENT HANDLER FOR VS MENU (and battle mode apparently)
                     switch (temp_v0->state) { /* switch 8; irregular */
                         case 10:              /* switch 8 */
-                            // go to next track in selection (VS mode)
-                            gotoNextTrack();
+                            if (gModeSelection == VERSUS && ((gPlayerCount == 3) || (gPlayerCount == 4))) {
+                                // go to next track in selection (VS mode)
+                                gotoNextTrack();
+                            }
+                            else {
+                                func_802903B0();
+                            }
                             break;
                         case 11: /* switch 8 */
                             // course change (vs mode)
@@ -4842,8 +4847,14 @@ void func_8009CE64(s32 arg0) {
                             break;
                         default: /* switch 8 */
                         case 13: /* switch 8 */
-                            // retry (vs mode)
-                            func_802903B0();
+                            if (gModeSelection == VERSUS && ((gPlayerCount == 3) || (gPlayerCount == 4))) {
+                                // retry (vs mode)
+                                func_802903B0();
+                            }
+                            else {
+                                // quit function
+                                func_80290338();
+                            }
                             break;
                     }
                 } else {
@@ -5972,7 +5983,7 @@ void render_custom_overlay(void) {
 
     // version / date (smaller) - left-aligned to start under 'KART'
 
-    print_text1_left(x + 0x78, y + 0x06, "TE V2026-10-05 1.2b", 0, 0.65f, 0.65f);
+    print_text1_left(x + 0x78, y + 0x06, "TE V2026-10-15 1.3b", 0, 0.65f, 0.65f);
 
     // option name placeholders (second column) and values (third column)
     for (i = 0; i < CUSTOM_MENU_ROWS; i++) {
