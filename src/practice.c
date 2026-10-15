@@ -222,13 +222,23 @@ static void show_kart_metrics(void) {
         practice_print_f32(x + KART_METRICS_COL2, y + 20, "  SH:", player->speed, 1);
         practice_print_f32(x + KART_METRICS_COL2, y + 30, "  SY:", player->velocity[1], 1);
     }
-    if (gControllerOne->buttonPressed & L_JPAD) {
-        SaveState();
-    }
-    if (gControllerOne->buttonPressed & R_JPAD) {
-        LoadState();
-    }
     func_80057778();
+}
+
+void check_save_state(void) {
+    if (gPracticeMode){
+        if ((gRaceState == 2) | (gRaceState == 3) | (gRaceState == 4)){
+            if (gControllerOne->buttonPressed & L_JPAD) {
+                SaveState();
+            }
+        }
+        // I'd like to allow reloading after a race is finished, but it freezes currently
+        if ((gRaceState == 2) | (gRaceState == 3) | (gRaceState == 4)){
+            if (gControllerOne->buttonPressed & R_JPAD) {
+                LoadState();
+            }
+        }
+    }
 }
 
 void practice_render(void) {
@@ -251,6 +261,7 @@ void practice_render(void) {
                 sInputsToggled = false;
             }
         }
+        check_save_state();
         draw_input_display();
         show_kart_metrics();
     }
