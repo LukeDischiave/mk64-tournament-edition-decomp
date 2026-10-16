@@ -19,6 +19,7 @@
 #include "replays.h"
 #include "save_state.h"
 #include "spawn_players.h"
+#include "menus.h"
 
 // Save lives in expansion RAM, ending at 0x80800000.
 // Requires the expansion pak; save/load do nothing on 4MB.
@@ -116,6 +117,8 @@ typedef struct SaveStatePayload {
 #define gSaveState ((SaveStatePayload*) (SAVE_STATE_RAM_END - ALIGN16(sizeof(SaveStatePayload))))
 
 static s16 sSaveCourseId = -1;
+static s32 sModeSelection = -1; 
+static s8 sPlayerCount = -1;
 
 //SaveState will take the current data in RAM and memcpy it to the above
 
@@ -126,6 +129,8 @@ void SaveState(void) {
         return;
     }
     sSaveCourseId = gCurrentCourseId;
+    sModeSelection = gModeSelection;
+    sPlayerCount = gPlayerCount;
 
     memcpy(save->actors, gActorList, sizeof(save->actors));
     memcpy(save->objects, gObjectList, sizeof(save->objects));
@@ -197,7 +202,7 @@ void SaveState(void) {
 void LoadState(void) {
     SaveStatePayload* save = gSaveState;
 
-    if ((gExpansionPAK == 0) || (sSaveCourseId != gCurrentCourseId)) {
+    if ((gExpansionPAK == 0) || (sSaveCourseId != gCurrentCourseId) || (sModeSelection != gModeSelection) || (sPlayerCount != gPlayerCount)) {
         return;
     }
 
