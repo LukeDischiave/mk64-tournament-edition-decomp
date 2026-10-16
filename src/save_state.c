@@ -18,6 +18,7 @@
 #include "effects.h"
 #include "replays.h"
 #include "save_state.h"
+#include "spawn_players.h"
 
 // Save lives in expansion RAM, ending at 0x80800000.
 // Requires the expansion pak; save/load do nothing on 4MB.
@@ -30,6 +31,11 @@
 #define SAVE_STATE_PATH_LEN 12
 #define SAVE_STATE_FINISH_LEN 8
 #define SAVE_STATE_UNEXPIRED_LEN 8
+
+// 2 player only saves wins/losses, while 3p & 4p save 1st-3rd
+#define SAVE_STATE_VERSUS_2P_LEN 2 * 1
+#define SAVE_STATE_VERSUS_3P_LEN 3 * 3
+#define SAVE_STATE_VERSUS_4P_LEN 4 * 3
 
 
 //this struct is a layout of RAM containing a copy of all relevant race data
@@ -87,6 +93,23 @@ typedef struct SaveStatePayload {
     f32 waterVelocity;
     SaveStateReplayCursor replayCursor;
     struct_gRecoil recoil[8];
+    s32 raceState;
+    bool finished[8];
+    f32 finishTime[8];
+    s16 startCheck; //details unknown
+    s32 gasFrame[8];
+    s32 spinRemain[8];
+    s16 playerBalloonCount[8];
+    u16 playerBalloonStatus[8][3]; //gPlayerBalloonStatus
+    Vec3f balloonPhysics[8];
+
+    // special handling, versus and battle results for all player counts are stored in the same
+    // larger array and accessed through pointers
+    u8 versusResults2P[SAVE_STATE_VERSUS_2P_LEN];
+    u8 versusResults3P[SAVE_STATE_VERSUS_3P_LEN];
+    u8 versusResults4P[SAVE_STATE_VERSUS_4P_LEN];
+    // no need to save battle, as you can't load a savestate after a player has won the battle
+
 } SaveStatePayload;
 
 #define SAVE_STATE_RAM_END 0x80800000
@@ -155,6 +178,18 @@ void SaveState(void) {
     save->waterHeight = D_8015F8E4;
     save->waterVelocity = D_8015F8E8;
     memcpy(save->recoil, gRecoil, sizeof(save->recoil));
+    save->raceState = gRaceState;
+    memcpy(save->finished, gFinished, sizeof(save->finished));
+    memcpy(save->finishTime, gFinishTime, sizeof(save->finishTime));
+    memcpy(save->versusResults2P, nmi_gVersusResults2P, SAVE_STATE_VERSUS_2P_LEN * sizeof(nmi_gVersusResults2P[0]));
+    memcpy(save->versusResults3P, nmi_gVersusResults3P, SAVE_STATE_VERSUS_3P_LEN * sizeof(nmi_gVersusResults3P[0]));
+    memcpy(save->versusResults4P, nmi_gVersusResults4P, SAVE_STATE_VERSUS_4P_LEN * sizeof(nmi_gVersusResults4P[0]));
+    memcpy(save->gasFrame, D_801652E0, sizeof(save->gasFrame));
+    memcpy(save->spinRemain, D_8018D920, sizeof(save->spinRemain));
+    save->startCheck = D_801656F0;
+    memcpy(save->playerBalloonCount, gPlayerBalloonCount, sizeof(save->playerBalloonCount));
+    memcpy(save->playerBalloonStatus, gPlayerBalloonStatus, sizeof(save->playerBalloonStatus));
+    memcpy(save->balloonPhysics, D_8018D650, sizeof(save->balloonPhysics));
     SaveStateGetReplayCursor(&save->replayCursor);
 }
 
@@ -217,5 +252,17 @@ void LoadState(void) {
     D_8015F8E4 = save->waterHeight;
     D_8015F8E8 = save->waterVelocity;
     memcpy(gRecoil, save->recoil, sizeof(save->recoil));
+    gRaceState = save->raceState;
+    memcpy(gFinished, save->finished, sizeof(save->finished));
+    memcpy(gFinishTime, save->finishTime, sizeof(save->finishTime));
+    memcpy(nmi_gVersusResults2P, save->versusResults2P, sizeof(save->versusResults2P));
+    memcpy(nmi_gVersusResults3P, save->versusResults3P, sizeof(save->versusResults3P));
+    memcpy(nmi_gVersusResults4P, save->versusResults4P, sizeof(save->versusResults4P));
+    D_801656F0 = save->startCheck;
+    memcpy(D_801652E0, save->gasFrame, sizeof(save->gasFrame));
+    memcpy(D_8018D920, save->spinRemain, sizeof(save->spinRemain));
+    memcpy(gPlayerBalloonCount, save->playerBalloonCount, sizeof(save->playerBalloonCount));
+    memcpy(gPlayerBalloonStatus, save->playerBalloonStatus, sizeof(save->playerBalloonStatus));
+    memcpy(D_8018D650, save->balloonPhysics, sizeof(save->balloonPhysics));
     SaveStateSetReplayCursor(&save->replayCursor);
 }
