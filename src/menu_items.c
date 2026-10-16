@@ -375,7 +375,6 @@ s8 gTournamentExtraMode = 0;
 s8 gPracticeMode = 0;
 s8 g200CC = 0;
 s8 gStrategicItems = 0;
-s8 gSaveState = 0;
 
 static const COURSES rand_courses[] = {
     COURSE_MARIO_RACEWAY,     // 0x00
@@ -5948,8 +5947,7 @@ void render_custom_overlay(void) {
         "extra",
         "practice mode",
         "200CC",
-        "4p strategic items",
-        "save states"
+        "4p strategic items"
         /* keep last empty if CUSTOM_MENU_ROWS > 12 */
     };
 
@@ -5966,7 +5964,6 @@ void render_custom_overlay(void) {
     static const char* practice_labels[] = {"default", "enabled"};
     static const char* CC_200_labels[] = {"default", "enabled"};
     static const char* strategic_4p_labels[] = {"default", "enabled"};
-    static const char* save_state_labels[] = {"off", "on"};
 
     set_text_color(TEXT_YELLOW);
 
@@ -6099,14 +6096,6 @@ void render_custom_overlay(void) {
              print_text1_center_mode_1(x + 0x50, rowY, (char*)strategic_4p_labels[idx], 0, 0.6f, 0.6f);
              gStrategicItems = idx;
              break;
-        case 12:
-            /* practice: labels (off, on) */
-            idx = gCustomMenuOptionValues[i];
-            if (idx < 0) idx = 0;
-            if (idx >= (int)(sizeof(save_state_labels) / sizeof(save_state_labels[0]))) idx = 0;
-            print_text1_center_mode_1(x + 0x50, rowY, (char*)save_state_labels[idx], 0, 0.6f, 0.6f);
-            gSaveState = idx;
-            break;
         }
     }
 }

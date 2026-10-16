@@ -181,7 +181,7 @@ u8 currentRandomIndex = 0;
 
 // tracks, stats, scaling, widescreen, mp music, mp train boat, AA, force minimap, extra, practice mode, 200CC, strategic items, save state
 
-static const s8 gCustomMenuValueCounts[CUSTOM_MENU_ROWS] = { 3, 3, 3, 2, 2, 4, 2, 3, 2, 2, 2, 2, 2 };
+static const s8 gCustomMenuValueCounts[CUSTOM_MENU_ROWS] = { 3, 3, 3, 2, 2, 4, 2, 3, 2, 2, 2, 2 };
 
 // end of new var init
 
