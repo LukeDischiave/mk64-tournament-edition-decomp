@@ -206,27 +206,10 @@ void create_thread(OSThread* thread, OSId id, void (*entry)(void*), void* arg, v
 
 s8 gExpansionPAK = 0;
 
-//does a test of different valuesagainst 0x804X and 0x808X ranges 
-
-void probe_expansion_ram(void) {
-    vu32* mem4mb;
-    vu32* mem8mb;
-    u32 save4;
-    u32 save8;
-
-    mem4mb = (vu32*) 0xA03FFFFC;
-    mem8mb = (vu32*) 0xA07FFFFC;
-
-    gExpansionPAK = 0;
-    save4 = *mem4mb;
-    save8 = *mem8mb;
-    *mem4mb = 0x5A5AA5A5;
-    *mem8mb = 0xA5A55A5A;
-    if ((*mem4mb == 0x5A5AA5A5) && (*mem8mb == 0xA5A55A5A)) {
+void check_expansion_pak(void) {
+    if (osMemSize == 0x800000){
         gExpansionPAK = 1;
     }
-    *mem4mb = save4;
-    *mem8mb = save8;
 }
 
 void isPrintfInit(void);
@@ -246,7 +229,7 @@ void main_func(void) {
  * Initialize hardware, start main thread, then idle.
  */
 void thread1_idle(void* arg) {
-    probe_expansion_ram();
+    check_expansion_pak();
     osCreateViManager(OS_PRIORITY_VIMGR);
 #ifdef VERSION_EU
     osViSetMode(&osViModeTable[OS_VI_PAL_LAN1]);

@@ -62,7 +62,7 @@ typedef struct {
 } CollisionGrid;
 
 void create_thread(OSThread*, OSId, void (*entry)(void*), void*, void*, OSPri);
-void probe_expansion_ram(void);
+void check_expansion_pak(void);
 void main_func(void);
 void thread1_idle(void*);
 void setup_mesg_queues(void);
