@@ -205,6 +205,7 @@ void LoadState(void) {
     if ((gExpansionPAK == 0) || (sSaveCourseId != gCurrentCourseId) || (sModeSelection != gModeSelection) || (sPlayerCount != gPlayerCount)) {
         return;
     }
+    gPostTimeTrialReplayCannotSave = 1;
 
     memcpy(gActorList, save->actors, sizeof(save->actors));
     memcpy(gObjectList, save->objects, sizeof(save->objects));
