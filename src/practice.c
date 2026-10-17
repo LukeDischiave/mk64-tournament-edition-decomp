@@ -264,7 +264,6 @@ void practice_render(void) {
                 sInputsToggled = false;
             }
         }
-        check_save_state();
         draw_input_display();
         show_kart_metrics();
     }
