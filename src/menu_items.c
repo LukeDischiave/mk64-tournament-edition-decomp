@@ -1495,7 +1495,7 @@ void func_80091FA4(void) {
         add_menu_item(MENU_ITEM_TYPE_0BE, 0, 0, MENU_ITEM_PRIORITY_0);
         add_menu_item(MENU_ITEM_TYPE_10E, 0, 0, MENU_ITEM_PRIORITY_0);
     }
-    if ((D_8015F890 != 0) && (gModeSelection == TIME_TRIALS)) {
+    if ((isTimeTrialReplay != 0) && (gModeSelection == TIME_TRIALS)) {
         add_menu_item(MENU_ITEM_END_COURSE_OPTION, 0, 0, MENU_ITEM_PRIORITY_0);
     }
     if (!(gControllerBits & 1) && (gDemoUseController != 0)) {
@@ -4901,27 +4901,27 @@ void func_8009CE64(s32 arg0) {
                             switch (temp_v0->state) { /* switch 2 */
                                 case 11:              /* switch 2 */
                                     D_8015F892 = 1;
-                                    D_8015F890 = 0;
+                                    isTimeTrialReplay = 0;
                                     func_802903B0();
                                     break;
                                 case 12: /* switch 2 */
                                     D_8015F892 = 0;
-                                    D_8015F890 = 0;
+                                    isTimeTrialReplay = 0;
                                     func_80290388();
                                     break;
                                 case 13: /* switch 2 */
                                     D_8015F892 = 0;
-                                    D_8015F890 = 0;
+                                    isTimeTrialReplay = 0;
                                     func_80290360();
                                     break;
                                 case 14: /* switch 2 */
                                     D_8015F892 = 0;
-                                    D_8015F890 = 0;
+                                    isTimeTrialReplay = 0;
                                     func_80290338();
                                     break;
                                 case 15: /* switch 2 */
                                     D_8015F892 = 0;
-                                    D_8015F890 = 1;
+                                    isTimeTrialReplay = 1;
                                     func_802903B0();
                                     break;
                                 default: /* switch 2 */
@@ -12014,7 +12014,7 @@ void func_800AD2E8(MenuItem* arg0) {
             }
             switch (arg0->param1) { /* switch 3 */
                 case 5:             /* switch 3 */
-                    D_8015F890 = 0;
+                    isTimeTrialReplay = 0;
                     D_8015F892 = 1;
                     func_802903B0();
                     break;
@@ -12028,7 +12028,7 @@ void func_800AD2E8(MenuItem* arg0) {
                     func_80290338();
                     break;
                 case 9: /* switch 3 */
-                    D_8015F890 = 1;
+                    isTimeTrialReplay = 1;
                     D_8015F892 = 0;
                     func_802903B0();
                     break;

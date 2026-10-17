@@ -143,7 +143,7 @@ static void draw_input_display(void) {
     }
 
     // handle time trial replay
-    if ((gModeSelection == TIME_TRIALS) && (gActiveScreenMode == SCREEN_MODE_1P) && (D_8015F890 == 1)){
+    if ((gModeSelection == TIME_TRIALS) && (gActiveScreenMode == SCREEN_MODE_1P) && (isTimeTrialReplay == 1)){
         controller = gControllerEight;
     } else {
         controller = gControllerOne;
@@ -227,6 +227,9 @@ static void show_kart_metrics(void) {
 
 void check_save_state(void) {
     if (gPracticeMode){
+        if (isTimeTrialReplay == 1){
+            return;
+        }
         if ((gRaceState == 2) | (gRaceState == 3) | (gRaceState == 4)){
             if (gControllerOne->buttonPressed & L_JPAD) {
                 SaveState();

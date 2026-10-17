@@ -1931,7 +1931,7 @@ void load_menu_states(s32 menuSelection) {
     gMenuTimingCounter = 0;
     gMenuDelayTimer = 0;
     gDemoUseController = 0;
-    D_8015F890 = 0;
+    isTimeTrialReplay = 0;
     D_8015F892 = 0;
     gDebugGotoScene = DEBUG_GOTO_RACING;
     gGhostPlayerInit = 0;

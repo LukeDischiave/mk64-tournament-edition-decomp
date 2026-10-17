@@ -1556,7 +1556,7 @@ void render_ghost(Player* player, s8 playerId, s8 screenId, s8 flipOffset) {
     s16 thing;
 
     if (screenId) {}
-    if (D_8015F890 == 1) {
+    if (isTimeTrialReplay == 1) {
         spC2 = 0x00FF;
     } else {
         spC2 = 0x0070;

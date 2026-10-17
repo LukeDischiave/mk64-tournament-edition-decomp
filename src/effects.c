@@ -520,7 +520,7 @@ void trigger_shroom(Player* player, s8 playerIndex) {
     player->unk_DB4.unk0 = 0;
     player->unk_DB4.unk8 = 8.0f;
 
-    if (D_8015F890 != 1) {
+    if (isTimeTrialReplay != 1) {
         if (((player->type & PLAYER_HUMAN) == PLAYER_HUMAN) &&
             ((player->type & PLAYER_INVISIBLE_OR_BOMB) != PLAYER_INVISIBLE_OR_BOMB)) {
             func_800C9250(playerIndex);
@@ -1160,7 +1160,7 @@ void trigger_asphalt_ramp_boost(Player* player, s8 playerId) {
     player->triggers &= ~BOOST_RAMP_ASPHALT_TRIGGER;
     player->unk_DB4.unk0 = 0;
     player->unk_DB4.unk8 = 8.0f;
-    if (D_8015F890 != 1) {
+    if (isTimeTrialReplay != 1) {
         if (((player->type & PLAYER_HUMAN) == PLAYER_HUMAN) && ((player->type & PLAYER_INVISIBLE_OR_BOMB) == 0)) {
             func_800C90F4(playerId, (player->characterId * 0x10) + 0x29008001);
             func_800C9060(playerId, 0x1900A40B);
@@ -1207,7 +1207,7 @@ void trigger_wood_ramp_boost(Player* player, s8 playerId) {
     player->effects |= BOOST_RAMP_WOOD_EFFECT;
     player->triggers &= ~BOOST_RAMP_WOOD_TRIGGER;
 
-    if (D_8015F890 != 1) {
+    if (isTimeTrialReplay != 1) {
         if (((player->type & PLAYER_HUMAN) == PLAYER_HUMAN) && ((player->type & PLAYER_INVISIBLE_OR_BOMB) == 0)) {
             func_800C90F4(playerId, (player->characterId * 0x10) + 0x29008001);
             func_800C9060(playerId, 0x1900A40B);

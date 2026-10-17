@@ -51,36 +51,6 @@ static u32* sPostTTReplay;
 static s16 sPlayerInputIdx;
 static u32* sPlayerInputs;
 
-
-
-//These functions save/restore the state of Ghost Replays
-//Same concept as featured in save_state.c, load/restore to RAM copies.
-void SaveStateGetReplayCursor(SaveStateReplayCursor *out) {
-    out->playerButtonsPrev = sPlayerGhostButtonsPrev;
-    out->playerFramesRemaining = sPlayerGhostFramesRemaining;
-    out->playerReplayIdx = sPlayerGhostReplayIdx;
-    out->courseButtonsPrev = sButtonsPrevCourseGhost;
-    out->courseFramesRemaining = sCourseGhostFramesRemaining;
-    out->courseReplayIdx = sCourseGhostReplayIdx;
-    out->postTTButtonsPrev = sPostTTButtonsPrev;
-    out->postTTFramesRemaining = sPostTTFramesRemaining;
-    out->postTTReplayIdx = sPostTTReplayIdx;
-}
-
-void SaveStateSetReplayCursor(SaveStateReplayCursor *in) {
-    sPlayerGhostButtonsPrev = in->playerButtonsPrev;
-    sPlayerGhostFramesRemaining = in->playerFramesRemaining;
-    sPlayerGhostReplayIdx = in->playerReplayIdx;
-    sButtonsPrevCourseGhost = in->courseButtonsPrev;
-    sCourseGhostFramesRemaining = in->courseFramesRemaining;
-    sCourseGhostReplayIdx = in->courseReplayIdx;
-    sPostTTButtonsPrev = in->postTTButtonsPrev;
-    sPostTTFramesRemaining = in->postTTFramesRemaining;
-    sPostTTReplayIdx = in->postTTReplayIdx;
-}
-
-//end of Ghost Replays save/load restores.
-
 static u16 sPrevCourseId;
 u32 D_80162DC4;
 s32 D_80162DC8;
@@ -248,7 +218,7 @@ void func_80005310(void) {
 
         if (gModeSelection == TIME_TRIALS && gActiveScreenMode == SCREEN_MODE_1P) {
 
-            if (D_8015F890 == 1) {
+            if (isTimeTrialReplay == 1) {
                 load_post_time_trial_replay();
                 if (D_80162DD8 == 0) {
                     load_player_ghost();
@@ -628,7 +598,7 @@ void func_80005E6C(void) {
 }
 
 void replays_loop(void) {
-    if (D_8015F890 == 1) {
+    if (isTimeTrialReplay == 1) {
         func_80005E6C();
         return;
     }

@@ -219,7 +219,7 @@ s32 get_player_index_for_player(Player* player) {
 }
 
 void func_80027DA8(Player* player, s8 playerId) {
-    if (D_8015F890 != 1) {
+    if (isTimeTrialReplay != 1) {
         if ((player->type & PLAYER_UNKNOWN_0x10) != PLAYER_UNKNOWN_0x10) {
             if (((D_8018D168 == 1) && ((player->type & PLAYER_HUMAN) == PLAYER_HUMAN)) && ((player->type & PLAYER_INVISIBLE_OR_BOMB) != PLAYER_INVISIBLE_OR_BOMB)) {
                 func_800C94A4(playerId);
@@ -1123,7 +1123,7 @@ void func_8002A79C(Player* player, s8 playerIndex) {
         player->unk_23A = 0;
         player->driftState = 0;
         player->unk_228 = 0;
-        if (D_8015F890 != 1) {
+        if (isTimeTrialReplay != 1) {
             if ((player->type & PLAYER_HUMAN) && !(player->type & PLAYER_INVISIBLE_OR_BOMB)) {
                 func_800C9250(playerIndex);
             }
@@ -4720,7 +4720,7 @@ void handle_a_press_for_all_players_during_race(void) {
                     handle_a_press_for_player_during_race(gPlayerOne, gControllerOne, 0);
                     return;
                 case TIME_TRIALS:
-                    if (D_8015F890 != 1) {
+                    if (isTimeTrialReplay != 1) {
                         handle_a_press_for_player_during_race(gPlayerOne, gControllerOne, 0);
                         player_two_type = gPlayerTwo->type;
                         if (((player_two_type & PLAYER_INVISIBLE_OR_BOMB) == PLAYER_INVISIBLE_OR_BOMB) && ((player_two_type & PLAYER_CINEMATIC_MODE) != PLAYER_CINEMATIC_MODE)) {

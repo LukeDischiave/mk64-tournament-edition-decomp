@@ -124,7 +124,7 @@ Vec3f D_8015F778;
 f32 gCourseDirection; // Extra mode, flips vertices.
 s32 D_8015F788;
 s32 D_8015F790[64]; // Unknown data, potentially not used.
-u16 D_8015F890;
+u16 isTimeTrialReplay;
 u16 D_8015F892;
 u16 D_8015F894;
 // Indexed by Player ID. Track time in seconds since player has last crossed the finish line

@@ -92,7 +92,6 @@ typedef struct SaveStatePayload {
     f32 courseTimer;
     f32 waterHeight;
     f32 waterVelocity;
-    SaveStateReplayCursor replayCursor;
     struct_gRecoil recoil[8];
     s32 raceState;
     bool finished[8];
@@ -195,7 +194,6 @@ void SaveState(void) {
     memcpy(save->playerBalloonCount, gPlayerBalloonCount, sizeof(save->playerBalloonCount));
     memcpy(save->playerBalloonStatus, gPlayerBalloonStatus, sizeof(save->playerBalloonStatus));
     memcpy(save->balloonPhysics, D_8018D650, sizeof(save->balloonPhysics));
-    SaveStateGetReplayCursor(&save->replayCursor);
 }
 
 //do memcpy to restore all the variables to their locations in RAM.
@@ -270,5 +268,4 @@ void LoadState(void) {
     memcpy(gPlayerBalloonCount, save->playerBalloonCount, sizeof(save->playerBalloonCount));
     memcpy(gPlayerBalloonStatus, save->playerBalloonStatus, sizeof(save->playerBalloonStatus));
     memcpy(D_8018D650, save->balloonPhysics, sizeof(save->balloonPhysics));
-    SaveStateSetReplayCursor(&save->replayCursor);
 }

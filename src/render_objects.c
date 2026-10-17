@@ -2665,7 +2665,7 @@ void render_hud_timer(s32 playerId) {
 
     if ((gModeSelection != 2) && (gModeSelection != 3)) {
         if (D_8018D320 == playerHUD[playerId].lapCount) {
-            if (D_8015F890 == 0) {
+            if (isTimeTrialReplay == 0) {
                 for (var_s0 = 0; var_s0 < 3; var_s0++) {
                     if (D_80165658[var_s0] == 0) {
                         print_timer(playerHUD[playerId].lapCompletionTimeXs[var_s0],
