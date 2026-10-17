@@ -2,6 +2,7 @@
 #define PRACTICE_H
 
 void practice_render(void);
+void check_save_state(void);
 
 struct buttonRender {
 	u16 button;

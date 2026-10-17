@@ -8,6 +8,7 @@
 #include "code_800029B0.h"
 #include "menu_items.h"
 #include "render_objects.h"
+#include "save_state.h"
 #include "practice.h"
 #include "math_util.h"
 
@@ -142,7 +143,7 @@ static void draw_input_display(void) {
     }
 
     // handle time trial replay
-    if ((gModeSelection == TIME_TRIALS) && (gActiveScreenMode == SCREEN_MODE_1P) && (D_8015F890 == 1)){
+    if ((gModeSelection == TIME_TRIALS) && (gActiveScreenMode == SCREEN_MODE_1P) && (isTimeTrialReplay == 1)){
         controller = gControllerEight;
     } else {
         controller = gControllerOne;
@@ -222,6 +223,25 @@ static void show_kart_metrics(void) {
         practice_print_f32(x + KART_METRICS_COL2, y + 30, "  SY:", player->velocity[1], 1);
     }
     func_80057778();
+}
+
+void check_save_state(void) {
+    if (gPracticeMode){
+        if (isTimeTrialReplay == 1){
+            return;
+        }
+        if ((gRaceState == RACE_STAGING) | (gRaceState == RACE_IN_PROGRESS) | (gRaceState == RACE_HUMAN_FINISHED)){
+            if (gControllerOne->buttonPressed & L_JPAD) {
+                SaveState();
+            }
+        }
+        // I'd like to allow reloading after a race is finished, but it freezes currently
+        if ((gRaceState == RACE_STAGING) | (gRaceState == RACE_IN_PROGRESS) | (gRaceState == RACE_HUMAN_FINISHED)){
+            if (gControllerOne->buttonPressed & R_JPAD) {
+                LoadState();
+            }
+        }
+    }
 }
 
 void practice_render(void) {

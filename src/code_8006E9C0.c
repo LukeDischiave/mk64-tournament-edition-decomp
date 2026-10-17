@@ -544,7 +544,7 @@ void func_8006FA94(void) {
     player = gPlayerOne;
     for (i = 0; i < NUM_PLAYERS; i++) {
         D_8018D0F0[i] = D_8018D050[i] = -32.0f;
-        D_8018CE10[i].unk_04[0] = D_8018CE10[i].unk_04[1] = D_8018CE10[i].unk_04[2] = 0.0f;
+        gRecoil[i].velocity[0] = gRecoil[i].velocity[1] = gRecoil[i].velocity[2] = 0.0f;
         D_8018CF50[i] = i;
         D_8018CF28[i] = player;
         player->unk_040 = -1;
@@ -556,7 +556,9 @@ void func_80070148(void) {
     s32 var_s0;
 
     for (var_s0 = 0; var_s0 < 8; var_s0++) {
-        find_unused_obj_index(&D_8018CE10[var_s0].objectIndex);
+        // Creates a link from gRecoil to progress icons
+        // so that we can spin the icons if a player spins out
+        find_unused_obj_index(&gRecoil[var_s0].objectIndex);
     }
 }
 

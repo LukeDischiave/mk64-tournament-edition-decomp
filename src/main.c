@@ -203,6 +203,15 @@ void create_thread(OSThread* thread, OSId id, void (*entry)(void*), void* arg, v
     thread->queue = NULL;
     osCreateThread(thread, id, entry, arg, sp, pri);
 }
+
+s8 gExpansionPAK = 0;
+
+void check_expansion_pak(void) {
+    if (osMemSize == 0x800000){
+        gExpansionPAK = 1;
+    }
+}
+
 void isPrintfInit(void);
 void main_func(void) {
 #ifdef VERSION_EU
@@ -220,6 +229,7 @@ void main_func(void) {
  * Initialize hardware, start main thread, then idle.
  */
 void thread1_idle(void* arg) {
+    check_expansion_pak();
     osCreateViManager(OS_PRIORITY_VIMGR);
 #ifdef VERSION_EU
     osViSetMode(&osViModeTable[OS_VI_PAL_LAN1]);

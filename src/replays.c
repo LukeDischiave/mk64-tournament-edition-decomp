@@ -218,7 +218,7 @@ void func_80005310(void) {
 
         if (gModeSelection == TIME_TRIALS && gActiveScreenMode == SCREEN_MODE_1P) {
 
-            if (D_8015F890 == 1) {
+            if (isTimeTrialReplay == 1) {
                 load_post_time_trial_replay();
                 if (D_80162DD8 == 0) {
                     load_player_ghost();
@@ -598,7 +598,7 @@ void func_80005E6C(void) {
 }
 
 void replays_loop(void) {
-    if (D_8015F890 == 1) {
+    if (isTimeTrialReplay == 1) {
         func_80005E6C();
         return;
     }

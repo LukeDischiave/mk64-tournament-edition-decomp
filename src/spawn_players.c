@@ -383,8 +383,8 @@ void spawn_player(Player* player, s8 playerIndex, f32 startingRow, f32 startingC
     player->collision.orientationVector[2] = 0.0f;
 
     D_80165300[playerIndex] = 0;
-    D_8018CE10[playerIndex].unk_04[0] = 0.0f;
-    D_8018CE10[playerIndex].unk_04[2] = 0.0f;
+    gRecoil[playerIndex].velocity[0] = 0.0f;
+    gRecoil[playerIndex].velocity[2] = 0.0f;
     func_80295BF8(playerIndex);
     reset_player_particle_pool(player);
     clear_all_player_balloons(player, playerIndex);
@@ -599,7 +599,7 @@ void spawn_players_versus_one_player(f32* arg0, f32* arg1, f32 arg2) {
                      PLAYER_START_SEQUENCE | PLAYER_CPU);
         spawn_player(gPlayerThree, 2, arg0[1], arg1[1], arg2, 32768.0f, gCharacterSelections[0],
                      PLAYER_START_SEQUENCE | PLAYER_CPU);
-    } else if (D_8015F890 != 1) {
+    } else if (isTimeTrialReplay != 1) {
         spawn_player(gPlayerOneCopy, 0, arg0[0], arg1[0], arg2, 32768.0f, gCharacterSelections[0],
                      PLAYER_EXISTS | PLAYER_START_SEQUENCE | PLAYER_HUMAN);
         if (bPlayerGhostDisabled == 0) {

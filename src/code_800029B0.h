@@ -113,7 +113,7 @@ extern f32 gCourseDirection;
 extern s32 D_8015F788;
 
 extern s32 D_8015F790[];
-extern u16 D_8015F890;
+extern u16 isTimeTrialReplay;
 extern u16 D_8015F892;
 extern u16 D_8015F894;
 extern f32 gTimePlayerLastTouchedFinishLine[];
