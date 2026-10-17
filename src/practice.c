@@ -230,13 +230,13 @@ void check_save_state(void) {
         if (isTimeTrialReplay == 1){
             return;
         }
-        if ((gRaceState == 2) | (gRaceState == 3) | (gRaceState == 4)){
+        if ((gRaceState == RACE_STAGING) | (gRaceState == RACE_IN_PROGRESS) | (gRaceState == RACE_HUMAN_FINISHED)){
             if (gControllerOne->buttonPressed & L_JPAD) {
                 SaveState();
             }
         }
         // I'd like to allow reloading after a race is finished, but it freezes currently
-        if ((gRaceState == 2) | (gRaceState == 3) | (gRaceState == 4)){
+        if ((gRaceState == RACE_STAGING) | (gRaceState == RACE_IN_PROGRESS) | (gRaceState == RACE_HUMAN_FINISHED)){
             if (gControllerOne->buttonPressed & R_JPAD) {
                 LoadState();
             }
