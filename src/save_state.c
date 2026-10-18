@@ -21,11 +21,19 @@
 #include "spawn_players.h"
 #include "menus.h"
 
+#include "audio/data.h"
+#include "ending/ceremony_and_credits.h"
 // Save lives in expansion RAM, ending at 0x80800000.
 // Requires the expansion pak; save/load do nothing on 4MB.
 // The snapshot is tagged with the course it was taken on and is dropped
 // when a different course loads. Retry keeps it.
 
+#include "animation.h"
+#include "audio/heap.h"
+#include "code_800AF9B0.h"
+#include "render_player.h"
+#include "replays.h"
+#include "racing/race_logic.h"
 
 #define SAVE_STATE_CAMERA_COUNT 4
 #define SAVE_STATE_RANK_LEN 10
@@ -111,6 +119,12 @@ typedef struct SaveStatePayload {
     u8 versusResults4P[SAVE_STATE_VERSUS_4P_LEN];
     // no need to save battle, as you can't load a savestate after a player has won the battle
 
+    f32 cloudMaybe; // D_8018D1E8
+    s16 isPlayerNewPathPoint; //gIsPlayerNewPathPoint
+    s16 someNearestPathPoint; // sSomeNearestPathPoint;
+    s16 matrixEffectCount; //gMatrixEffectCount
+    s16 d_8018D200; //D_8018D200
+    s16 d_8018D208; //D_8018D208
 } SaveStatePayload;
 
 #define SAVE_STATE_RAM_END 0x80800000
@@ -195,6 +209,12 @@ void SaveState(void) {
     memcpy(save->playerBalloonCount, gPlayerBalloonCount, sizeof(save->playerBalloonCount));
     memcpy(save->playerBalloonStatus, gPlayerBalloonStatus, sizeof(save->playerBalloonStatus));
     memcpy(save->balloonPhysics, D_8018D650, sizeof(save->balloonPhysics));
+    save->cloudMaybe = D_8018D1E8;
+    save->isPlayerNewPathPoint = gIsPlayerNewPathPoint;
+    save->someNearestPathPoint = sSomeNearestPathPoint;
+    save->matrixEffectCount = gMatrixEffectCount;
+    save->d_8018D200 = D_8018D200;
+    save->d_8018D208 = D_8018D208;
     SaveStateGetReplayCursor(&save->replayCursor);
 }
 
@@ -270,5 +290,457 @@ void LoadState(void) {
     memcpy(gPlayerBalloonCount, save->playerBalloonCount, sizeof(save->playerBalloonCount));
     memcpy(gPlayerBalloonStatus, save->playerBalloonStatus, sizeof(save->playerBalloonStatus));
     memcpy(D_8018D650, save->balloonPhysics, sizeof(save->balloonPhysics));
+    D_8018D1E8 = save->cloudMaybe;
+    gIsPlayerNewPathPoint = save->isPlayerNewPathPoint;
+    sSomeNearestPathPoint = save->someNearestPathPoint;
+    D_8018D200 = save->d_8018D200;
+    D_8018D208 = save->d_8018D208;
     SaveStateSetReplayCursor(&save->replayCursor);
 }
+
+#define BOOL_COUNT 1
+#define BOOL8_COUNT 8
+#define F32_COUNT 35
+#define S16_COUNT 114
+
+bool sBool_globals[BOOL_COUNT]; 
+bool8 sBool8_globals[BOOL8_COUNT]; 
+f32 sF32_globals[F32_COUNT];
+s16 sS16_globals[S16_COUNT];
+
+void TakeSnapshots(void){
+    TakeSnapshot_bool();
+    TakeSnapshot_bool8();
+    TakeSnapshot_f32();
+    TakeSnapshot_s16();
+}
+
+void CheckSnapshots(s16* rtn){
+    s16 typ_idx;
+    s16 rtn_idx;
+
+    typ_idx = 0;
+
+    //0
+    rtn_idx = CheckSnapshot_bool();
+    if (rtn_idx != -1){
+        rtn[0] = typ_idx;
+        rtn[1] = rtn_idx;
+        return;
+    }
+    typ_idx++;
+
+    //1
+    rtn_idx = CheckSnapshot_bool8();
+    if (rtn_idx != -1){
+        rtn[0] = typ_idx;
+        rtn[1] = rtn_idx;
+        return;
+    }
+    typ_idx++;
+
+    //2
+    rtn_idx = CheckSnapshot_f32();
+    if (rtn_idx != -1){
+        rtn[0] = typ_idx;
+        rtn[1] = rtn_idx;
+        return;
+    }
+    typ_idx++;
+
+    //3
+    rtn_idx = CheckSnapshot_s16();
+    if (rtn_idx != -1){
+        rtn[0] = typ_idx;
+        rtn[1] = rtn_idx;
+        return;
+    }
+    rtn[0] = -1;
+    rtn[1] = -1;
+    return;
+}
+
+void TakeSnapshot_s16(void){
+    sS16_globals[  0] = isNotTheFirst;
+    sS16_globals[  1] = sMatrixShouldNotPop;
+    sS16_globals[  2] = sMatrixStackSize;
+    sS16_globals[  3] = gVolume;
+    sS16_globals[  4] = gTempoInternalToExternal;
+    sS16_globals[  5] = gCourseMaxX;
+    sS16_globals[  6] = gCourseMinX;
+    sS16_globals[  7] = gCourseMaxY;
+    sS16_globals[  8] = gCourseMinY;
+    sS16_globals[  9] = gCourseMaxZ;
+    sS16_globals[ 10] = gCourseMinZ;
+    sS16_globals[ 11] = D_8015F6F4;
+    sS16_globals[ 12] = D_8015F6F6;
+    sS16_globals[ 13] = D_8015F6FA;
+    sS16_globals[ 14] = D_8015F6FC;
+    sS16_globals[ 15] = gDebugPathCount;
+    sS16_globals[ 16] = sIsController1Unplugged;
+    sS16_globals[ 17] = D_801656F0;
+    sS16_globals[ 18] = D_80165708;
+    sS16_globals[ 19] = D_80165710;
+    sS16_globals[ 20] = D_80165718;
+    sS16_globals[ 21] = D_80165720;
+    sS16_globals[ 22] = D_80165728;
+    sS16_globals[ 23] = D_80165730;
+    sS16_globals[ 24] = D_80165738;
+    sS16_globals[ 25] = D_80165740;
+    sS16_globals[ 26] = D_80165748;
+    sS16_globals[ 27] = gNumActiveThwomps;
+    sS16_globals[ 28] = D_8016578C;
+    sS16_globals[ 29] = D_80165790;
+    sS16_globals[ 30] = D_80165794;
+    sS16_globals[ 31] = D_80165900;
+    sS16_globals[ 32] = D_8018CF18;
+    sS16_globals[ 33] = D_8018CF20;
+    sS16_globals[ 34] = D_8018CF48;
+    sS16_globals[ 35] = D_8018CF60;
+    sS16_globals[ 36] = D_8018CF78;
+    sS16_globals[ 37] = D_8018CF90;
+    sS16_globals[ 38] = D_8018CFA8;
+    sS16_globals[ 39] = D_8018CFB0;
+    sS16_globals[ 40] = D_8018CFB8;
+    sS16_globals[ 41] = D_8018CFC0;
+    sS16_globals[ 42] = D_8018CFC8;
+    sS16_globals[ 43] = D_8018CFD0;
+    sS16_globals[ 44] = D_8018CFD8;
+    sS16_globals[ 45] = D_8018CFE0;
+    sS16_globals[ 46] = D_8018CFE8;
+    sS16_globals[ 47] = D_8018CFF0;
+    sS16_globals[ 48] = D_8018CFF8;
+    sS16_globals[ 49] = D_8018D000;
+    sS16_globals[ 50] = D_8018D008;
+    sS16_globals[ 51] = D_8018D010;
+    sS16_globals[ 52] = D_8018D018;
+    sS16_globals[ 53] = D_8018D020;
+    sS16_globals[ 54] = D_8018D048;
+    sS16_globals[ 55] = D_8018D070;
+    sS16_globals[ 56] = D_8018D098;
+    sS16_globals[ 57] = D_8018D0C0;
+    sS16_globals[ 58] = D_8018D0E8;
+    sS16_globals[ 59] = D_8018D110;
+    sS16_globals[ 60] = D_8018D16C;
+    sS16_globals[ 61] = D_8018D174;
+    sS16_globals[ 62] = D_8018D17C;
+    sS16_globals[ 63] = D_8018D184;
+    sS16_globals[ 64] = D_8018D18C;
+    sS16_globals[ 65] = D_8018D200;
+    sS16_globals[ 66] = D_8018D208;
+    sS16_globals[ 67] = D_8018D210;
+    sS16_globals[ 68] = D_8018D218;
+    sS16_globals[ 69] = D_8018D2B0;
+    sS16_globals[ 70] = D_8018D2B8;
+    sS16_globals[ 71] = gMiniMapX;
+    sS16_globals[ 72] = gMiniMapY;
+    sS16_globals[ 73] = D_8018D2F0;
+    sS16_globals[ 74] = D_8018D2F8;
+    sS16_globals[ 75] = D_8018EDB0;
+    sS16_globals[ 76] = D_8018EDB2;
+    sS16_globals[ 77] = D_8018EDB4;
+    sS16_globals[ 78] = D_80162EB0;
+    sS16_globals[ 79] = D_80162EB2;
+    sS16_globals[ 80] = gTrainSmokeTimer;
+    sS16_globals[ 81] = sSomeNearestPathPoint;
+    sS16_globals[ 82] = D_80162FD0;
+    sS16_globals[ 83] = gIsPlayerNewPathPoint;
+    sS16_globals[ 84] = gFerrySmokeTimer;
+    sS16_globals[ 85] = sVehicleSoundRenderCounter;
+    sS16_globals[ 86] = gBestRankedHumanPlayer;
+    sS16_globals[ 87] = gIsInExtra;
+    sS16_globals[ 88] = D_8016347C;
+    sS16_globals[ 89] = D_8016347E;
+    sS16_globals[ 90] = D_8016348C;
+    sS16_globals[ 91] = D_801634EC;
+    sS16_globals[ 92] = D_80164358;
+    sS16_globals[ 93] = D_8016435A;
+    sS16_globals[ 94] = D_8016435C;
+    sS16_globals[ 95] = sCutsceneShot;
+    sS16_globals[ 96] = gCutsceneShotTimer;
+    sS16_globals[ 97] = sCutsceneSplineSegment;
+    sS16_globals[ 98] = D_80287B1E;
+    sS16_globals[ 99] = gMatrixEffectCount;
+    sS16_globals[100] = sReplayGhostBufferSize;
+    sS16_globals[101] = D_80162D86;
+    sS16_globals[102] = D_80165340;
+    sS16_globals[103] = D_8016556E;
+    sS16_globals[104] = D_80165570;
+    sS16_globals[105] = D_80165572;
+    sS16_globals[106] = D_80165574;
+    sS16_globals[107] = D_80165576;
+    sS16_globals[108] = D_80165578;
+    sS16_globals[109] = D_8016557A;
+    sS16_globals[110] = D_8016557C;
+    sS16_globals[111] = D_8016557E;
+    sS16_globals[112] = D_80165580;
+    sS16_globals[113] = D_80165582;
+}
+
+s16 CheckSnapshot_s16(void){
+    s16 i;
+    s16 s16_now[S16_COUNT];
+
+    s16_now[  0] = isNotTheFirst;
+    s16_now[  1] = sMatrixShouldNotPop;
+    s16_now[  2] = sMatrixStackSize;
+    s16_now[  3] = gVolume;
+    s16_now[  4] = gTempoInternalToExternal;
+    s16_now[  5] = gCourseMaxX;
+    s16_now[  6] = gCourseMinX;
+    s16_now[  7] = gCourseMaxY;
+    s16_now[  8] = gCourseMinY;
+    s16_now[  9] = gCourseMaxZ;
+    s16_now[ 10] = gCourseMinZ;
+    s16_now[ 11] = D_8015F6F4;
+    s16_now[ 12] = D_8015F6F6;
+    s16_now[ 13] = D_8015F6FA;
+    s16_now[ 14] = D_8015F6FC;
+    s16_now[ 15] = gDebugPathCount;
+    s16_now[ 16] = sIsController1Unplugged;
+    s16_now[ 17] = D_801656F0;
+    s16_now[ 18] = D_80165708;
+    s16_now[ 19] = D_80165710;
+    s16_now[ 20] = D_80165718;
+    s16_now[ 21] = D_80165720;
+    s16_now[ 22] = D_80165728;
+    s16_now[ 23] = D_80165730;
+    s16_now[ 24] = D_80165738;
+    s16_now[ 25] = D_80165740;
+    s16_now[ 26] = D_80165748;
+    s16_now[ 27] = gNumActiveThwomps;
+    s16_now[ 28] = D_8016578C;
+    s16_now[ 29] = D_80165790;
+    s16_now[ 30] = D_80165794;
+    s16_now[ 31] = D_80165900;
+    s16_now[ 32] = D_8018CF18;
+    s16_now[ 33] = D_8018CF20;
+    s16_now[ 34] = D_8018CF48;
+    s16_now[ 35] = D_8018CF60;
+    s16_now[ 36] = D_8018CF78;
+    s16_now[ 37] = D_8018CF90;
+    s16_now[ 38] = D_8018CFA8;
+    s16_now[ 39] = D_8018CFB0;
+    s16_now[ 40] = D_8018CFB8;
+    s16_now[ 41] = D_8018CFC0;
+    s16_now[ 42] = D_8018CFC8;
+    s16_now[ 43] = D_8018CFD0;
+    s16_now[ 44] = D_8018CFD8;
+    s16_now[ 45] = D_8018CFE0;
+    s16_now[ 46] = D_8018CFE8;
+    s16_now[ 47] = D_8018CFF0;
+    s16_now[ 48] = D_8018CFF8;
+    s16_now[ 49] = D_8018D000;
+    s16_now[ 50] = D_8018D008;
+    s16_now[ 51] = D_8018D010;
+    s16_now[ 52] = D_8018D018;
+    s16_now[ 53] = D_8018D020;
+    s16_now[ 54] = D_8018D048;
+    s16_now[ 55] = D_8018D070;
+    s16_now[ 56] = D_8018D098;
+    s16_now[ 57] = D_8018D0C0;
+    s16_now[ 58] = D_8018D0E8;
+    s16_now[ 59] = D_8018D110;
+    s16_now[ 60] = D_8018D16C;
+    s16_now[ 61] = D_8018D174;
+    s16_now[ 62] = D_8018D17C;
+    s16_now[ 63] = D_8018D184;
+    s16_now[ 64] = D_8018D18C;
+    s16_now[ 65] = D_8018D200;
+    s16_now[ 66] = D_8018D208;
+    s16_now[ 67] = D_8018D210;
+    s16_now[ 68] = D_8018D218;
+    s16_now[ 69] = D_8018D2B0;
+    s16_now[ 70] = D_8018D2B8;
+    s16_now[ 71] = gMiniMapX;
+    s16_now[ 72] = gMiniMapY;
+    s16_now[ 73] = D_8018D2F0;
+    s16_now[ 74] = D_8018D2F8;
+    s16_now[ 75] = D_8018EDB0;
+    s16_now[ 76] = D_8018EDB2;
+    s16_now[ 77] = D_8018EDB4;
+    s16_now[ 78] = D_80162EB0;
+    s16_now[ 79] = D_80162EB2;
+    s16_now[ 80] = gTrainSmokeTimer;
+    s16_now[ 81] = sSomeNearestPathPoint;
+    s16_now[ 82] = D_80162FD0;
+    s16_now[ 83] = gIsPlayerNewPathPoint;
+    s16_now[ 84] = gFerrySmokeTimer;
+    s16_now[ 85] = sVehicleSoundRenderCounter;
+    s16_now[ 86] = gBestRankedHumanPlayer;
+    s16_now[ 87] = gIsInExtra;
+    s16_now[ 88] = D_8016347C;
+    s16_now[ 89] = D_8016347E;
+    s16_now[ 90] = D_8016348C;
+    s16_now[ 91] = D_801634EC;
+    s16_now[ 92] = D_80164358;
+    s16_now[ 93] = D_8016435A;
+    s16_now[ 94] = D_8016435C;
+    s16_now[ 95] = sCutsceneShot;
+    s16_now[ 96] = gCutsceneShotTimer;
+    s16_now[ 97] = sCutsceneSplineSegment;
+    s16_now[ 98] = D_80287B1E;
+    s16_now[ 99] = gMatrixEffectCount;
+    s16_now[100] = sReplayGhostBufferSize;
+    s16_now[101] = D_80162D86;
+    s16_now[102] = D_80165340;
+    s16_now[103] = D_8016556E;
+    s16_now[104] = D_80165570;
+    s16_now[105] = D_80165572;
+    s16_now[106] = D_80165574;
+    s16_now[107] = D_80165576;
+    s16_now[108] = D_80165578;
+    s16_now[109] = D_8016557A;
+    s16_now[110] = D_8016557C;
+    s16_now[111] = D_8016557E;
+    s16_now[112] = D_80165580;
+    s16_now[113] = D_80165582;
+
+    for (i = 0; i < S16_COUNT; i++){
+        if (s16_now[i] != sS16_globals[i]){
+            return(i);
+        }
+    }
+    return(-1);
+}
+
+
+void TakeSnapshot_f32(void){
+     sF32_globals[ 0] = D_803B7178;
+     sF32_globals[ 1] = D_80164A30;
+     sF32_globals[ 2] = D_8015F704;
+     sF32_globals[ 3] = gCourseDirection;
+     sF32_globals[ 4] = D_8015F8E4;
+     sF32_globals[ 5] = D_8015F8E8;
+     sF32_globals[ 6] = D_801625FC;
+     sF32_globals[ 7] = gWinnerTime;
+     sF32_globals[ 8] = D_8018CFCC;
+     sF32_globals[ 9] = D_8018CFD4;
+     sF32_globals[10] = D_8018CFE4;
+     sF32_globals[11] = D_8018CFEC;
+     sF32_globals[12] = D_8018CFF4;
+     sF32_globals[13] = D_8018D00C;
+     sF32_globals[14] = xOrientation;
+     sF32_globals[15] = D_8018D1E8;
+     sF32_globals[16] = gMiniMapMarkerScale;
+     sF32_globals[17] = gCurrentCpuTargetSpeed;
+     sF32_globals[18] = gPathStartZ;
+     sF32_globals[19] = D_80164698;
+     sF32_globals[20] = D_8016469C;
+     sF32_globals[21] = D_801646A0;
+     sF32_globals[22] = sCutsceneSplineSegmentProgress;
+     sF32_globals[23] = D_80150118;
+     sF32_globals[24] = gScreenAspect;
+     sF32_globals[25] = gCourseFarPersp;
+     sF32_globals[26] = gCourseNearPersp;
+     sF32_globals[27] = gIntroModelScale;
+     sF32_globals[28] = gIntroModelRotX;
+     sF32_globals[29] = gIntroModelRotY;
+     sF32_globals[30] = gIntroModelRotZ;
+     sF32_globals[31] = gIntroModelPosX;
+     sF32_globals[32] = gIntroModelPosY;
+     sF32_globals[33] = gIntroModelPosZ;
+     sF32_globals[34] = D_802BA034;
+}
+
+s16 CheckSnapshot_f32(void){
+    s16 i;
+    f32 f32_now[F32_COUNT];
+    
+    f32_now[ 0] = D_803B7178;
+    f32_now[ 1] = D_80164A30;
+    f32_now[ 2] = D_8015F704;
+    f32_now[ 3] = gCourseDirection;
+    f32_now[ 4] = D_8015F8E4;
+    f32_now[ 5] = D_8015F8E8;
+    f32_now[ 6] = D_801625FC;
+    f32_now[ 7] = gWinnerTime;
+    f32_now[ 8] = D_8018CFCC;
+    f32_now[ 9] = D_8018CFD4;
+    f32_now[10] = D_8018CFE4;
+    f32_now[11] = D_8018CFEC;
+    f32_now[12] = D_8018CFF4;
+    f32_now[13] = D_8018D00C;
+    f32_now[14] = xOrientation;
+    f32_now[15] = D_8018D1E8;
+    f32_now[16] = gMiniMapMarkerScale;
+    f32_now[17] = gCurrentCpuTargetSpeed;
+    f32_now[18] = gPathStartZ;
+    f32_now[19] = D_80164698;
+    f32_now[20] = D_8016469C;
+    f32_now[21] = D_801646A0;
+    f32_now[22] = sCutsceneSplineSegmentProgress;
+    f32_now[23] = D_80150118;
+    f32_now[24] = gScreenAspect;
+    f32_now[25] = gCourseFarPersp;
+    f32_now[26] = gCourseNearPersp;
+    f32_now[27] = gIntroModelScale;
+    f32_now[28] = gIntroModelRotX;
+    f32_now[29] = gIntroModelRotY;
+    f32_now[30] = gIntroModelRotZ;
+    f32_now[31] = gIntroModelPosX;
+    f32_now[32] = gIntroModelPosY;
+    f32_now[33] = gIntroModelPosZ;
+    f32_now[34] = D_802BA034;
+
+    for (i = 0; i < F32_COUNT; i++){
+        if (f32_now[i] != sF32_globals[i]){
+            return(i);
+        }
+    }
+    return(-1);
+}
+
+void TakeSnapshot_bool(void){
+     sBool_globals[ 0] = D_8018D214;
+}
+
+s16 CheckSnapshot_bool(void){
+    s16 i;
+    bool bool_now[1];
+    
+    bool_now[ 0] = D_8018D214;
+
+    for (i = 0; i < BOOL_COUNT; i++){
+        if (bool_now[i] != sBool_globals[i]){
+            return(i);
+        }
+    }
+    return(-1);
+}
+
+void TakeSnapshot_bool8(void){
+    bool8 bool8_globals[8]; 
+    
+    bool8_globals[0] = D_801657E6;
+    bool8_globals[1] = D_801657E8;
+    bool8_globals[2] = D_801657F0;
+    bool8_globals[3] = D_801657F8;
+    bool8_globals[4] = D_80165810;
+    bool8_globals[5] = D_80165818;
+    bool8_globals[6] = gGhostPlayerInit;
+    bool8_globals[7] = gCourseMapInit;
+    memcpy(sBool8_globals, bool8_globals, sizeof(bool8_globals));
+}
+
+s16 CheckSnapshot_bool8(void){
+    s16 i;
+    bool8 bool8_now[8];
+    
+    bool8_now[0] = D_801657E6;
+    bool8_now[1] = D_801657E8;
+    bool8_now[2] = D_801657F0;
+    bool8_now[3] = D_801657F8;
+    bool8_now[4] = D_80165810;
+    bool8_now[5] = D_80165818;
+    bool8_now[6] = gGhostPlayerInit;
+    bool8_now[7] = gCourseMapInit;
+
+    for (i = 0; i < BOOL8_COUNT; i++){
+        if (bool8_now[i] != sBool8_globals[i]){
+            return(i);
+        }
+    }
+    return(-1);
+}
+

@@ -12,6 +12,12 @@
 #include "practice.h"
 #include "math_util.h"
 
+
+
+#include "animation.h"
+#include "render_player.h"
+
+
 #define INPUT_DISPLAY_X 290
 #define INPUT_DISPLAY_Y 212
 #define MINI_BOX_WIDTH 8
@@ -43,6 +49,8 @@ static bool sKartMetricsMode = METRICS_KART_ALIGNED;
 static bool sKartMetricsToggled = false;
 static bool sDisplayInputs = true;
 static bool sInputsToggled = false;
+
+static s16 sSnapshotVal[2] = { -2, -2 };
 
 static void practice_format_f32(char* dst, f32 value, u8 whole_digits) {
 
@@ -217,10 +225,12 @@ static void show_kart_metrics(void) {
         practice_print_f32(x + KART_METRICS_COL2, y + 20, "horz:", sqrtf((player->velocity[0] * player->velocity[0]) + (player->velocity[2] * player->velocity[2])), 1);
         practice_print_f32(x + KART_METRICS_COL2, y + 30, "vert:", player->velocity[1], 1);
     } else if (sKartMetricsMode == METRICS_MAP_ALIGNED){
-        practice_print_f32(x + KART_METRICS_COL2, y, "  SX:", player->velocity[0], 1);
-        practice_print_f32(x + KART_METRICS_COL2, y + 10, "  SZ:", player->velocity[2], 1);
-        practice_print_f32(x + KART_METRICS_COL2, y + 20, "  SH:", player->speed, 1);
-        practice_print_f32(x + KART_METRICS_COL2, y + 30, "  SY:", player->velocity[1], 1);
+        practice_print_f32(x + KART_METRICS_COL2, y, "styp:", sSnapshotVal[0], 1);
+        practice_print_f32(x + KART_METRICS_COL2, y + 10, "sidx:", sSnapshotVal[1], 1);
+       
+        practice_print_f32(x + KART_METRICS_COL2, y + 20, "gMat:", gMatrixEffectCount, 1);
+       // practice_print_f32(x + KART_METRICS_COL2, y + 30, "  SY:", player->velocity[1], 1);
+        
     }
     func_80057778();
 }
@@ -229,13 +239,17 @@ void check_save_state(void) {
     if (gPracticeMode){
         if ((gRaceState == 2) | (gRaceState == 3) | (gRaceState == 4)){
             if (gControllerOne->buttonPressed & L_JPAD) {
+                sSnapshotVal[0] = -2;
+                sSnapshotVal[1] = -2;
                 SaveState();
+                TakeSnapshots();
             }
         }
         // I'd like to allow reloading after a race is finished, but it freezes currently
         if ((gRaceState == 2) | (gRaceState == 3) | (gRaceState == 4)){
             if (gControllerOne->buttonPressed & R_JPAD) {
                 LoadState();
+                CheckSnapshots(sSnapshotVal);
             }
         }
     }

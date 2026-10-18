@@ -48,7 +48,7 @@ extern COURSES getRandomNextCourseId(void);
 u16 D_802BA030;
 u16 D_802BA032;
 
-float D_802BA034;
+f32 D_802BA034;
 
 s32 gDemoTimer;
 UNUSED s32 D_802BA03C;

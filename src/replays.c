@@ -55,6 +55,8 @@ static u32* sPlayerInputs;
 
 //These functions save/restore the state of Ghost Replays
 //Same concept as featured in save_state.c, load/restore to RAM copies.
+
+//TODO - rename, nothing to do with cursor
 void SaveStateGetReplayCursor(SaveStateReplayCursor *out) {
     out->playerButtonsPrev = sPlayerGhostButtonsPrev;
     out->playerFramesRemaining = sPlayerGhostFramesRemaining;

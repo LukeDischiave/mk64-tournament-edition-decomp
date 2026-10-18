@@ -214,5 +214,8 @@ s16 get_animation_length(Animation**, s16);
 void render_limb_or_add_mtx(Armature*, s16*, AnimationLimbVector, s32);
 void render_armature(Armature*, Animation*, s16);
 s16 render_animated_model(Armature*, Animation**, s16, s16);
+extern s16 isNotTheFirst;
+extern s16 sMatrixShouldNotPop;
+extern s16 sMatrixStackSize;
 
 #endif
