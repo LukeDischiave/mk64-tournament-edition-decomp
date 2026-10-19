@@ -39,6 +39,8 @@ extern s32 gPauseTriggered;
 extern s32 gPostTimeTrialReplayCannotSave;
 extern s16 sReplayGhostBufferSize;
 extern s16 D_80162D86;
+extern s32 D_80162DD0;
+extern s32 D_80162DDC;
 
 
 typedef struct SaveStateReplayCursor {

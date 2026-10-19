@@ -189,7 +189,9 @@ static void show_kart_metrics(void) {
     s16 angle_n64;
     s32 x;
     s32 y;
+  //  SaveStatePayload* save;
 
+    //save = gSaveState;
     if (sKartMetricsMode == METRICS_NONE){
         return;
     }
@@ -209,29 +211,15 @@ static void show_kart_metrics(void) {
     // debug_print_str2 adds +20 to x/y internally.
     x -= 12;
     y -= 18;
-    
-    practice_print_f32(x, y, "X:", player->pos[0], 4);
-    practice_print_f32(x, y + 10, "Y:", player->pos[1], 4);
-    practice_print_f32(x, y + 20, "Z:", player->pos[2], 4);
-
-    angle_n64 = player->rotation[1];
-    angle = ((f32) (u16) angle_n64 / 65536.0f) * 360.0f;
-    practice_print_f32(x, y + 30, "A:", angle, 4);
 
     //plot the player's velocity
-    if (sKartMetricsMode == METRICS_KART_ALIGNED){
-        practice_print_f32(x + KART_METRICS_COL2, y, " fwd:", player->velocity[2] * coss(angle_n64) - player->velocity[0] * sins(angle_n64), 1);
-        practice_print_f32(x + KART_METRICS_COL2, y + 10, "rght:", -(player->velocity[2] * sins(angle_n64) + player->velocity[0] * coss(angle_n64)), 1);
-        practice_print_f32(x + KART_METRICS_COL2, y + 20, "horz:", sqrtf((player->velocity[0] * player->velocity[0]) + (player->velocity[2] * player->velocity[2])), 1);
-        practice_print_f32(x + KART_METRICS_COL2, y + 30, "vert:", player->velocity[1], 1);
-    } else if (sKartMetricsMode == METRICS_MAP_ALIGNED){
-        practice_print_f32(x + KART_METRICS_COL2, y, "styp:", sSnapshotVal[0], 1);
-        practice_print_f32(x + KART_METRICS_COL2, y + 10, "sidx:", sSnapshotVal[1], 1);
-       
-        practice_print_f32(x + KART_METRICS_COL2, y + 20, "gMat:", gMatrixEffectCount, 1);
-       // practice_print_f32(x + KART_METRICS_COL2, y + 30, "  SY:", player->velocity[1], 1);
-        
-    }
+    practice_print_f32(x + KART_METRICS_COL2, y, "styp:", sSnapshotVal[0], 1);
+    practice_print_f32(x + KART_METRICS_COL2, y + 10, "sidx:", sSnapshotVal[1], 1);  
+    /*
+    practice_print_f32(x + KART_METRICS_COL2, y + 20, "gMat:", save->audioErrorFlags, 1);
+    practice_print_f32(x + KART_METRICS_COL2, y + 30, "  SY:", gAudioErrorFlags, 1);
+    practice_print_f32(x, y, " eq:", (gAudioErrorFlags == save->audioErrorFlags), 1);
+    */
     func_80057778();
 }
 
@@ -241,8 +229,8 @@ void check_save_state(void) {
             if (gControllerOne->buttonPressed & L_JPAD) {
                 sSnapshotVal[0] = -2;
                 sSnapshotVal[1] = -2;
-                SaveState();
                 TakeSnapshots();
+                SaveState();
             }
         }
         // I'd like to allow reloading after a race is finished, but it freezes currently
@@ -275,7 +263,7 @@ void practice_render(void) {
                 sInputsToggled = false;
             }
         }
-        check_save_state();
+        //check_save_state();
         draw_input_display();
         show_kart_metrics();
     }

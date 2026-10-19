@@ -42,4 +42,7 @@ extern f32 gLapCompletionPercentByPlayerId[];
 extern s32 gGPCurrentRaceRankByPlayerId[]; // D_801643B8 (position for each player)
 extern f32 D_802BA034;
 
+extern s32 gDemoTimer;
+extern s32 D_80162DFC;
+
 #endif

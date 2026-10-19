@@ -90,4 +90,8 @@ u8* load_course(s32);
 
 extern u8 _other_texturesSegmentRomStart[];
 
+extern s32 sGfxSeekPosition;
+extern s32 sPackedSeekPosition;
+
+
 #endif // MEMORY_H

@@ -5,6 +5,7 @@
 #include <macros.h>
 
 extern u16* pFramebuffer;
+extern s32 sButtonSequenceIndex;
 
 void crash_screen_set_framebuffer(u16*);
 

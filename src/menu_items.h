@@ -844,6 +844,15 @@ extern s32 gControllerPak1NumPagesFree;
 extern s32 gControllerPak1FileNote;
 extern s32 gControllerPak2FileNote;
 
+extern s32 D_8018E83C;
+
+extern s32 gControllerPak1NumFilesUsed;
+extern s32 gControllerPak1MaxWriteableFiles;
+extern s32 menu_item_bss_pad2;
+extern s32 sIntroModelTimer;
+
+extern s32 D_8018E864_pad;
+
 extern f32 D_8018ED98;
 extern f32 D_8018ED9C;
 extern f32 D_8018EDA0;
@@ -868,6 +877,5 @@ extern s8 g200CC;
 extern s8 gStrategicItems;
 extern COURSES sRandomTrackOrder[16];
 extern u8 currentRandomIndex;
-
 
 #endif
