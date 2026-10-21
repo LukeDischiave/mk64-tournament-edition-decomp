@@ -852,7 +852,7 @@ void func_8028F970(void) {
     s32 i;
     static u16 sPauseHoldCounter[4];
 
-    if (D_8015F890) {
+    if (isTimeTrialReplay) {
         return;
     }
 
@@ -1064,7 +1064,7 @@ void func_8028FCBC(void) {
                     for (i = 0; i < gCurrentCourseId; i++) {
                         phi_v0_4 <<= 1;
                     }
-                    if ((D_8015F890 == 0) && (!(D_800DC5AC & phi_v0_4))) {
+                    if ((isTimeTrialReplay == 0) && (!(D_800DC5AC & phi_v0_4))) {
                         func_80092630();
                         D_800DC5AC |= phi_v0_4;
                     }
@@ -1135,7 +1135,7 @@ void func_8028FCBC(void) {
                     break;
                 case TIME_TRIALS:
                     gDemoTimer = 360;
-                    if (D_8015F890 != 0) {
+                    if (isTimeTrialReplay != 0) {
                         gRaceState = 7;
                     } else {
                         gRaceState = 5;
@@ -1179,6 +1179,7 @@ void func_8028FCBC(void) {
         case 7:
             break;
     }
+    check_save_state();
 }
 
 UNUSED void func_80290314(void) {

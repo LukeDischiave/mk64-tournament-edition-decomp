@@ -62,6 +62,7 @@ typedef struct {
 } CollisionGrid;
 
 void create_thread(OSThread*, OSId, void (*entry)(void*), void*, void*, OSPri);
+void check_expansion_pak(void);
 void main_func(void);
 void thread1_idle(void*);
 void setup_mesg_queues(void);
@@ -230,6 +231,7 @@ extern s32 D_800DC56C[];
 extern s16 sNumVBlanks;
 extern f32 gVBlankTimer;
 extern f32 gCourseTimer;
+extern s8 gExpansionPAK;
 
 // end of definition of main.c variables
 

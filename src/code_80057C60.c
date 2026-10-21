@@ -346,7 +346,7 @@ hud_player playerHUD[4];
  * Also used for snowflakes like gObjectParticle1? Not sure what's up with that
  */
 s32 D_8018CC80[D_8018CC80_SIZE];
-struct_D_8018CE10 D_8018CE10[8];
+struct_gRecoil gRecoil[8];
 //! Unknown object index, only set for Kalimari Desert, never read
 s32 D_8018CF10;
 Camera* D_8018CF14;
@@ -1263,7 +1263,7 @@ void func_80059AC8(void) {
         gRaceFrameCounter++;
         for (i = 0; i < NUM_PLAYERS; i++) {
             D_8018CF68[i] = func_8008A890(&camera1[i]);
-            func_800892E0(i);
+            func_800892E0(i); // if disabled, recoil never stops
         }
         switch (gScreenModeSelection) {
             case SCREEN_MODE_1P:
@@ -1440,52 +1440,52 @@ void func_8005A070(void) {
 }
 
 void func_8005A14C(s32 playerId) {
-    s32 objectIndex;
+    s32 playerIconIndex;
     s32 lapCount;
     Player* player;
     UNUSED s32 stackPadding;
 
     player = &gPlayerOne[playerId];
-    objectIndex = D_8018CE10[playerId].objectIndex;
+    playerIconIndex = gRecoil[playerId].objectIndex;
     lapCount = gLapCountByPlayerId[playerId];
     if (player->type & PLAYER_EXISTS) {
         if (player->effects &
             (LIGHTNING_STRIKE_EFFECT | HIT_BY_GREEN_SHELL_EFFECT | BANANA_SPINOUT_EFFECT | DRIVING_SPINOUT_EFFECT)) {
-            gObjectList[objectIndex].direction_angle[2] += 0x1000;
+            gObjectList[playerIconIndex].direction_angle[2] += 0x1000;
         } else {
-            if (gObjectList[objectIndex].direction_angle[2] != 0) {
-                gObjectList[objectIndex].direction_angle[2] += 0x1000;
+            if (gObjectList[playerIconIndex].direction_angle[2] != 0) {
+                gObjectList[playerIconIndex].direction_angle[2] += 0x1000;
             }
         }
         if (player->effects & LIGHTNING_EFFECT) {
-            f32_step_towards(&gObjectList[objectIndex].sizeScaling, 0.3f, 0.02f);
+            f32_step_towards(&gObjectList[playerIconIndex].sizeScaling, 0.3f, 0.02f);
         } else {
-            f32_step_towards(&gObjectList[objectIndex].sizeScaling, 0.6f, 0.02f);
+            f32_step_towards(&gObjectList[playerIconIndex].sizeScaling, 0.6f, 0.02f);
         }
         if (player->effects & SQUISH_EFFECT) {
-            u16_step_up_towards(&gObjectList[objectIndex].direction_angle[0], 0x0C00U, 0x0100U);
+            u16_step_up_towards(&gObjectList[playerIconIndex].direction_angle[0], 0x0C00U, 0x0100U);
         } else {
-            u16_step_down_towards(&gObjectList[objectIndex].direction_angle[0], 0, 0x00000100);
+            u16_step_down_towards(&gObjectList[playerIconIndex].direction_angle[0], 0, 0x00000100);
         }
         if (player->effects & (HIT_BY_STAR_EFFECT | EXPLOSION_CRASH_EFFECT)) {
-            func_80087D24(objectIndex, 6.0f, 1.5f, 0.0f);
+            func_80087D24(playerIconIndex, 6.0f, 1.5f, 0.0f);
         } else {
-            f32_step_towards(&gObjectList[objectIndex].offset[1], 0.0f, 1.0f);
+            f32_step_towards(&gObjectList[playerIconIndex].offset[1], 0.0f, 1.0f);
         }
         if ((player->type & PLAYER_INVISIBLE_OR_BOMB) || (player->effects & BOO_EFFECT)) {
-            gObjectList[objectIndex].primAlpha = 0x0050;
+            gObjectList[playerIconIndex].primAlpha = 0x0050;
         } else {
-            gObjectList[objectIndex].primAlpha = 0x00FF;
+            gObjectList[playerIconIndex].primAlpha = 0x00FF;
         }
         if (lapCount >= 3) {
-            gObjectList[objectIndex].direction_angle[2] = 0;
-            gObjectList[objectIndex].direction_angle[1] = 0;
-            gObjectList[objectIndex].direction_angle[0] = 0;
-            gObjectList[objectIndex].offset[2] = 0.0f;
-            gObjectList[objectIndex].offset[1] = 0.0f;
-            gObjectList[objectIndex].offset[0] = 0.0f;
-            gObjectList[objectIndex].sizeScaling = 0.6f;
-            gObjectList[objectIndex].primAlpha = 0x00FF;
+            gObjectList[playerIconIndex].direction_angle[2] = 0;
+            gObjectList[playerIconIndex].direction_angle[1] = 0;
+            gObjectList[playerIconIndex].direction_angle[0] = 0;
+            gObjectList[playerIconIndex].offset[2] = 0.0f;
+            gObjectList[playerIconIndex].offset[1] = 0.0f;
+            gObjectList[playerIconIndex].offset[0] = 0.0f;
+            gObjectList[playerIconIndex].sizeScaling = 0.6f;
+            gObjectList[playerIconIndex].primAlpha = 0x00FF;
         }
     }
 }

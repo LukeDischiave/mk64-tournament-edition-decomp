@@ -966,102 +966,106 @@ UNUSED void func_8008900C(Player* player) {
     player->currentSpeed = 0.0f;
 }
 
-void func_80089020(s32 playerId, f32* arg1) {
-    f32 var_f0;
-    f32 var_f2;
+void dampen_recoil(s32 playerId, f32* playerRecoil) {
+    f32 dampen_proportion;
+    f32 player_recoil_abs;
     Player* player = &gPlayerOne[playerId];
 
-    if (*arg1 >= 0.0f) {
-        var_f2 = *arg1;
+    if (*playerRecoil >= 0.0f) {
+        player_recoil_abs = *playerRecoil;
     } else {
-        var_f2 = -*arg1;
+        player_recoil_abs = -*playerRecoil;
     }
     if (player->effects & (BANANA_SPINOUT_EFFECT | DRIVING_SPINOUT_EFFECT)) {
         if (gCurrentCourseId == COURSE_SHERBET_LAND) {
-            if (var_f2 <= 0.5) {
-                var_f0 = 0.025f;
-            } else if (var_f2 <= 2.0) {
-                var_f0 = 0.075f;
-            } else if (var_f2 <= 4.0) {
-                var_f0 = 0.15f;
+            if (player_recoil_abs <= 0.5) {
+                dampen_proportion = 0.025f;
+            } else if (player_recoil_abs <= 2.0) {
+                dampen_proportion = 0.075f;
+            } else if (player_recoil_abs <= 4.0) {
+                dampen_proportion = 0.15f;
             } else {
-                var_f0 = 0.25f;
+                dampen_proportion = 0.25f;
             }
         } else {
-            if (var_f2 <= 2.0) {
-                var_f0 = 0.1f;
-            } else if (var_f2 <= 3.0) {
-                var_f0 = 0.15f;
-            } else if (var_f2 <= 4.0) {
-                var_f0 = 0.2f;
+            if (player_recoil_abs <= 2.0) {
+                dampen_proportion = 0.1f;
+            } else if (player_recoil_abs <= 3.0) {
+                dampen_proportion = 0.15f;
+            } else if (player_recoil_abs <= 4.0) {
+                dampen_proportion = 0.2f;
             } else {
-                var_f0 = 0.25f;
+                dampen_proportion = 0.25f;
             }
         }
     } else if (gCurrentCourseId == COURSE_SHERBET_LAND) {
-        if (var_f2 <= 0.5) {
-            var_f0 = 0.025f;
-        } else if (var_f2 <= 2.0) {
-            var_f0 = 0.075f;
-        } else if (var_f2 <= 4.0) {
-            var_f0 = 0.1f;
+        if (player_recoil_abs <= 0.5) {
+            dampen_proportion = 0.025f;
+        } else if (player_recoil_abs <= 2.0) {
+            dampen_proportion = 0.075f;
+        } else if (player_recoil_abs <= 4.0) {
+            dampen_proportion = 0.1f;
         } else {
-            var_f0 = 0.15f;
+            dampen_proportion = 0.15f;
         }
     } else {
-        if (var_f2 <= 2.0) {
-            var_f0 = 0.06f;
-        } else if (var_f2 <= 3.0) {
-            var_f0 = 0.07f;
-        } else if (var_f2 <= 4.0) {
-            var_f0 = 0.075f;
+        if (player_recoil_abs <= 2.0) {
+            dampen_proportion = 0.06f;
+        } else if (player_recoil_abs <= 3.0) {
+            dampen_proportion = 0.07f;
+        } else if (player_recoil_abs <= 4.0) {
+            dampen_proportion = 0.075f;
         } else {
-            var_f0 = 0.1f;
+            dampen_proportion = 0.1f;
         }
     }
-    f32_step_towards(arg1, 0.0f, var_f0);
+    f32_step_towards(playerRecoil, 0.0f, dampen_proportion);
 }
 
 void func_800892E0(s32 playerId) {
-    func_80089020(playerId, &D_8018CE10[playerId].unk_04[0]);
-    func_80089020(playerId, &D_8018CE10[playerId].unk_04[2]);
-    if (D_8018CE10[playerId].unk_18[6] > 0) {
-        D_8018CE10[playerId].unk_18[6]--;
+    dampen_recoil(playerId, &gRecoil[playerId].velocity[0]);
+    dampen_recoil(playerId, &gRecoil[playerId].velocity[2]);
+    if (gRecoil[playerId].timer[6] > 0) {
+        gRecoil[playerId].timer[6]--;
     }
 }
 
-f32 func_8008933C(Player* player, s32 objectIndex, f32 arg2, f32 arg3) {
-    f32 var_f2;
+//add recoil function
+f32 add_recoil(Player* player, s32 objectIndex, f32 arg2, f32 arg3) {
+    f32 recoil_mag_sq;
     f32 something;
     s32 playerId;
     Object* object;
-    struct_D_8018CE10* temp_v1;
+    struct_gRecoil* player_recoil;
 
     playerId = player - gPlayerOne;
-    temp_v1 = &D_8018CE10[playerId];
-    var_f2 = 0.0f;
-    if (temp_v1->unk_18[6] == 0) {
+    player_recoil = &gRecoil[playerId];
+    recoil_mag_sq = 0.0f;
+    // Do not apply recoil every frame.
+    if (player_recoil->timer[6] == 0) {
         object = &gObjectList[objectIndex];
         player->unk_046 |= 2;
         player->effects |= ENEMY_BONK_EFFECT;
-        temp_v1->unk_18[6] = 4;
+        // can disable recoil but commenting out rest of function
+        player_recoil->timer[6] = 4;
         something = (player->pos[0] - object->pos[0]) * object->velocity[0];
         if (something >= 0.0f) {
-            temp_v1->unk_04[0] = (-player->velocity[0] * arg2) + (object->velocity[0] * arg3);
+            player_recoil->velocity[0] = (-player->velocity[0] * arg2) + (object->velocity[0] * arg3);
         } else {
-            temp_v1->unk_04[0] = -player->velocity[0] * arg2;
+            player_recoil->velocity[0] = -player->velocity[0] * arg2;
         }
         something = (player->pos[2] - object->pos[2]) * object->velocity[2];
         if (something >= 0.0f) {
-            temp_v1->unk_04[2] = (-player->velocity[2] * arg2) + (object->velocity[2] * arg3);
+            player_recoil->velocity[2] = (-player->velocity[2] * arg2) + (object->velocity[2] * arg3);
         } else {
-            temp_v1->unk_04[2] = -player->velocity[2] * arg2;
+            player_recoil->velocity[2] = -player->velocity[2] * arg2;
         }
-        var_f2 = (temp_v1->unk_04[0] * temp_v1->unk_04[0]) + (temp_v1->unk_04[2] * temp_v1->unk_04[2]);
+        recoil_mag_sq = (player_recoil->velocity[0] * player_recoil->velocity[0]) + (player_recoil->velocity[2] * player_recoil->velocity[2]);
     }
-    return var_f2;
+    return recoil_mag_sq;
 }
 
+// thwomp recoil
 void func_80089474(s32 objectIndex, s32 playerId, f32 arg2, f32 arg3, u32 soundBits) {
     UNUSED s32 stackPadding;
     Player* player;
@@ -1070,17 +1074,17 @@ void func_80089474(s32 objectIndex, s32 playerId, f32 arg2, f32 arg3, u32 soundB
     if (is_obj_flag_status_active(objectIndex, 0x04000000) != 0) {
         func_80072180();
     }
-    if ((func_8008933C(player, objectIndex, arg2, arg3) >= 4.0) && ((player->type & PLAYER_CPU) != PLAYER_CPU)) {
+    if ((add_recoil(player, objectIndex, arg2, arg3) >= 4.0) && ((player->type & PLAYER_CPU) != PLAYER_CPU)) {
         func_800C9060(playerId, soundBits);
     }
 }
 
-void func_80089538(s32 objectIndex, s32 playerId, f32 arg2, f32 arg3, u32 soundBits) {
+UNUSED void func_80089538(s32 objectIndex, s32 playerId, f32 arg2, f32 arg3, u32 soundBits) {
     UNUSED s32 stackPadding;
     Player* player;
 
     player = &gPlayerOne[playerId];
-    if ((func_8008933C(player, objectIndex, arg2, arg3) >= 4.0) && ((player->type & PLAYER_CPU) != PLAYER_CPU)) {
+    if ((add_recoil(player, objectIndex, arg2, arg3) >= 4.0) && ((player->type & PLAYER_CPU) != PLAYER_CPU)) {
         func_800C9060((u8) playerId, soundBits);
     }
 }
@@ -1106,7 +1110,7 @@ s32 func_800895E4(s32 objectIndex) {
     return var_s6;
 }
 
-void func_800896D4(s32 objectIndex, f32 arg1, f32 arg2) {
+UNUSED void func_800896D4(s32 objectIndex, f32 arg1, f32 arg2) {
     Player* player;
     s32 playerIndex;
 
@@ -1115,7 +1119,7 @@ void func_800896D4(s32 objectIndex, f32 arg1, f32 arg2) {
         for (playerIndex = 0; playerIndex < D_8018D158; playerIndex++, player++) {
             if ((gObjectList[objectIndex].state != 0) && !(player->effects & (STAR_EFFECT | BOO_EFFECT)) &&
                 (has_collided_horizontally_with_player(objectIndex, player) != 0)) {
-                func_8008933C(player, objectIndex, arg1, arg2 * 1.1);
+                add_recoil(player, objectIndex, arg1, arg2 * 1.1);
                 if (is_obj_flag_status_active(objectIndex, 0x04000000) != 0) {
                     func_80072180();
                 }
@@ -1124,6 +1128,7 @@ void func_800896D4(s32 objectIndex, f32 arg1, f32 arg2) {
     }
 }
 
+// penguin recoil
 void func_80089820(s32 objectIndex, f32 arg1, f32 arg2, u32 arg3) {
     Player* player;
     s32 playerIndex;
@@ -1141,7 +1146,7 @@ void func_80089820(s32 objectIndex, f32 arg1, f32 arg2, u32 arg3) {
                         if (is_obj_flag_status_active(objectIndex, 0x04000000) != 0) {
                             func_80072180();
                         }
-                        if ((func_8008933C(player, objectIndex, arg1, arg2 * 1.1) >= 4.0) &&
+                        if ((add_recoil(player, objectIndex, arg1, arg2 * 1.1) >= 4.0) &&
                             ((player->type & PLAYER_CPU) != PLAYER_CPU)) {
                             func_800C9060(playerIndex, arg3);
                         }
@@ -1152,6 +1157,7 @@ void func_80089820(s32 objectIndex, f32 arg1, f32 arg2, u32 arg3) {
     }
 }
 
+// bat recoil
 void func_80089A04(s32 objectIndex, f32 arg1, f32 arg2) {
     Player* player;
     s32 playerIndex;
@@ -1161,7 +1167,7 @@ void func_80089A04(s32 objectIndex, f32 arg1, f32 arg2) {
         for (playerIndex = 0; playerIndex < D_8018D158; playerIndex++, player++) {
             if ((gObjectList[objectIndex].state != 0) && !(player->effects & (BOO_EFFECT | STAR_EFFECT)) &&
                 (has_collided_with_player(objectIndex, player) != 0)) {
-                func_8008933C(player, objectIndex, arg1, arg2 * 1.1);
+                add_recoil(player, objectIndex, arg1, arg2 * 1.1);
                 if (is_obj_flag_status_active(objectIndex, 0x04000000) != 0) {
                     func_80072180();
                 }
