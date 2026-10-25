@@ -850,7 +850,7 @@ void func_8028F914(void) {
 
 void func_8028F970(void) {
     s32 i;
-    static u16 sPauseHoldCounter[4];
+    static s16 sPauseHoldCounter[4];
 
     if (isTimeTrialReplay) {
         return;
@@ -885,6 +885,7 @@ void func_8028F970(void) {
         // only run extended pause in VS mode
         if (gModeSelection == VERSUS) {
             // pausing is gated by sPauseHoldCounter, which increments every frame player i holds start
+            // also gated by gIsGamePaused, so you can easily unpause the game
             if ((controller->button & START_BUTTON) && (!(controller->button & R_TRIG)) &&
                 (!(controller->button & L_TRIG)) && (sPauseHoldCounter[i] >= 15)) {
                 func_8028DF00();
@@ -892,18 +893,7 @@ void func_8028F970(void) {
                 controller->buttonPressed = 0;
                 func_800C9F90(1);
                 gPauseTriggered = 1;
-                sPauseHoldCounter[i] = 0;
-                if (gModeSelection == TIME_TRIALS) {
-                    if (gPlayerOne->type & (PLAYER_EXISTS | PLAYER_INVISIBLE_OR_BOMB)) {
-                        func_80005AE8(gPlayerOne);
-                    }
-                    if (gPlayerTwo->type & (PLAYER_EXISTS | PLAYER_INVISIBLE_OR_BOMB)) {
-                        func_80005AE8(gPlayerTwo);
-                    }
-                    if (gPlayerThree->type & (PLAYER_EXISTS | PLAYER_INVISIBLE_OR_BOMB)) {
-                        func_80005AE8(gPlayerThree);
-                    }
-                }
+                sPauseHoldCounter[i] = -60;
                 return;
             }
         }
