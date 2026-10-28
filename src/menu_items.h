@@ -245,7 +245,7 @@ enum MENU_ITEM_TYPE {
     MENU_ITEM_TYPE_0F1,
     MENU_ITEM_UI_LOGO_INTRO = 0xFA,
     START_MENU_FLAG,
-    MENU_ITEM_TYPE_10E = 0x10E,
+    MENU_ITEM_CANNOT_SAVE = 0x10E,
     MENU_ITEM_TYPE_12B = 0X12B,
     MENU_ITEM_TYPE_12C,
     MENU_ITEM_TYPE_12D,
@@ -770,7 +770,7 @@ extern char* D_800E7938[];
 extern char* D_800E7940[];
 extern char* D_800E7980[];
 extern char* D_800E798C[];
-extern char* D_800E7A34[];
+extern char* gCannotSaveText[];
 extern char* D_800E7A3C[];
 extern char* D_800E7A44;
 extern char* D_800E7A48[];
