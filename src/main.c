@@ -597,6 +597,7 @@ void race_logic_loop(void) {
     s16 i;
     u16 rotY;
 
+    check_save_state();
     gMatrixObjectCount = 0;
     gMatrixEffectCount = 0;
     if (gIsGamePaused != 0) {
@@ -617,14 +618,14 @@ void race_logic_loop(void) {
 
     switch (gActiveScreenMode) {
         case SCREEN_MODE_1P:
-        // 60fps 
-        if (gTournamentScaling == 2) {
-            gTickSpeed = 1;
-        }
-        // 30fps
-        else {
-            gTickSpeed = 2;
-        }
+            // 60fps 
+            if (gTournamentScaling == 2) {
+                gTickSpeed = 1;
+            }
+            // 30fps
+            else {
+                gTickSpeed = 2;
+            }
             replays_loop();
             if (gIsGamePaused == 0) {
                 for (i = 0; i < gTickSpeed; i++) {

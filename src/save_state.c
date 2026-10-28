@@ -20,6 +20,7 @@
 #include "save_state.h"
 #include "spawn_players.h"
 #include "menus.h"
+#include "menu_items.h"
 
 // Save lives in expansion RAM, ending at 0x80800000.
 // Requires the expansion pak; save/load do nothing on 4MB.
@@ -102,6 +103,9 @@ typedef struct SaveStatePayload {
     s16 playerBalloonCount[8];
     u16 playerBalloonStatus[8][3]; //gPlayerBalloonStatus
     Vec3f balloonPhysics[8];
+    SaveStateReplayCursor replayCursor;
+    s32 d_801652C0[8];
+    MenuItem menuItems[MENU_ITEMS_MAX]; // gMenuItems
 
     // special handling, versus and battle results for all player counts are stored in the same
     // larger array and accessed through pointers
@@ -118,6 +122,7 @@ typedef struct SaveStatePayload {
 static s16 sSaveCourseId = -1;
 static s32 sModeSelection = -1; 
 static s8 sPlayerCount = -1;
+static u16 sIsTimeTrialReplay = 0;
 
 //SaveState will take the current data in RAM and memcpy it to the above
 
@@ -130,6 +135,7 @@ void SaveState(void) {
     sSaveCourseId = gCurrentCourseId;
     sModeSelection = gModeSelection;
     sPlayerCount = gPlayerCount;
+    sIsTimeTrialReplay = isTimeTrialReplay;
 
     memcpy(save->actors, gActorList, sizeof(save->actors));
     memcpy(save->objects, gObjectList, sizeof(save->objects));
@@ -194,16 +200,22 @@ void SaveState(void) {
     memcpy(save->playerBalloonCount, gPlayerBalloonCount, sizeof(save->playerBalloonCount));
     memcpy(save->playerBalloonStatus, gPlayerBalloonStatus, sizeof(save->playerBalloonStatus));
     memcpy(save->balloonPhysics, D_8018D650, sizeof(save->balloonPhysics));
+    memcpy(save->d_801652C0, D_801652C0, sizeof(save->d_801652C0));
+    memcpy(save->menuItems, gMenuItems, sizeof(save->menuItems));
+    SaveStateGetReplayCursor(&save->replayCursor);
 }
 
 //do memcpy to restore all the variables to their locations in RAM.
 void LoadState(void) {
     SaveStatePayload* save = gSaveState;
 
-    if ((gExpansionPAK == 0) || (sSaveCourseId != gCurrentCourseId) || (sModeSelection != gModeSelection) || (sPlayerCount != gPlayerCount)) {
+    if ((gExpansionPAK == 0) || 
+        (sSaveCourseId != gCurrentCourseId) || 
+        (sModeSelection != gModeSelection) || 
+        (sPlayerCount != gPlayerCount) ||
+        (sIsTimeTrialReplay != isTimeTrialReplay)) {
         return;
     }
-    gPostTimeTrialReplayCannotSave = 1;
 
     memcpy(gActorList, save->actors, sizeof(save->actors));
     memcpy(gObjectList, save->objects, sizeof(save->objects));
@@ -268,4 +280,7 @@ void LoadState(void) {
     memcpy(gPlayerBalloonCount, save->playerBalloonCount, sizeof(save->playerBalloonCount));
     memcpy(gPlayerBalloonStatus, save->playerBalloonStatus, sizeof(save->playerBalloonStatus));
     memcpy(D_8018D650, save->balloonPhysics, sizeof(save->balloonPhysics));
+    memcpy(D_801652C0, save->d_801652C0, sizeof(save->d_801652C0));
+    memcpy(gMenuItems, save->menuItems, sizeof(save->menuItems));
+    SaveStateSetReplayCursor(&save->replayCursor);
 }

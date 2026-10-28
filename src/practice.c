@@ -227,9 +227,6 @@ static void show_kart_metrics(void) {
 
 void check_save_state(void) {
     if (gPracticeMode){
-        if (isTimeTrialReplay == 1){
-            return;
-        }
         if ((gRaceState == RACE_STAGING) | (gRaceState == RACE_IN_PROGRESS) | (gRaceState == RACE_HUMAN_FINISHED)){
             if (gControllerOne->buttonPressed & L_JPAD) {
                 SaveState();
