@@ -757,7 +757,7 @@ char* D_800E798C[] = {
     "",
 };
 
-char* D_800E7A34[] = {
+char* gCannotSaveText[] = {
     "RACE DATA CANNOT ",
     "BE SAVED FOR GHOST",
 };
@@ -1493,7 +1493,7 @@ void func_80091FA4(void) {
     add_menu_item(MENU_ITEM_PAUSE, 0, 0, MENU_ITEM_PRIORITY_0);
     if (gModeSelection == TIME_TRIALS) {
         add_menu_item(MENU_ITEM_TYPE_0BE, 0, 0, MENU_ITEM_PRIORITY_0);
-        add_menu_item(MENU_ITEM_TYPE_10E, 0, 0, MENU_ITEM_PRIORITY_0);
+        add_menu_item(MENU_ITEM_CANNOT_SAVE, 0, 0, MENU_ITEM_PRIORITY_0);
     }
     if ((isTimeTrialReplay != 0) && (gModeSelection == TIME_TRIALS)) {
         add_menu_item(MENU_ITEM_END_COURSE_OPTION, 0, 0, MENU_ITEM_PRIORITY_0);
@@ -6677,7 +6677,7 @@ void render_menus(MenuItem* arg0) {
             case MENU_ITEM_TYPE_0F1: /* switch 6 */
                 gDisplayListHead = render_menu_textures(gDisplayListHead, D_02004638, arg0->column, arg0->row);
                 break;
-            case MENU_ITEM_TYPE_10E: /* switch 6 */
+            case MENU_ITEM_CANNOT_SAVE: /* switch 6 */
                 func_800A70E8(arg0);
                 break;
             case MENU_ITEM_TYPE_12B: /* switch 6 */
@@ -8901,8 +8901,8 @@ void func_800A70E8(MenuItem* arg0) {
     s32 stringIndex;
 
     if (arg0->state == 1) {
-        var_s0 = get_string_width(D_800E7A34[0]) * 0.45f;
-        temp_f6 = get_string_width(D_800E7A34[1]) * 0.45f;
+        var_s0 = get_string_width(gCannotSaveText[0]) * 0.45f;
+        temp_f6 = get_string_width(gCannotSaveText[1]) * 0.45f;
         if (var_s0 < temp_f6) {
             var_s0 = temp_f6;
         }
@@ -8915,7 +8915,7 @@ void func_800A70E8(MenuItem* arg0) {
         gDPSetPrimColor(gDisplayListHead++, 0, 0, 0x00, 0x00, 0x00, alpha);
         set_text_color(TEXT_RED);
         for (loopIndex = 0x2C, stringIndex = 0; loopIndex < 0x40; loopIndex += 0xA, stringIndex++) {
-            print_text_mode_2(0x000000C0, loopIndex, D_800E7A34[stringIndex], 0, 0.45f, 0.45f);
+            print_text_mode_2(0x000000C0, loopIndex, gCannotSaveText[stringIndex], 0, 0.45f, 0.45f);
         }
     }
 }
@@ -9387,7 +9387,7 @@ void handle_menus_with_pri_arg(s32 priSpecial) {
             case MENU_ITEM_TYPE_0BE: /* switch 8 */
                 func_800AEF14(entry);
                 break;
-            case MENU_ITEM_TYPE_10E: /* switch 8 */
+            case MENU_ITEM_CANNOT_SAVE: /* switch 8 */
                 func_800AEF74(entry);
                 break;
             case MENU_ITEM_TYPE_12B: /* switch 8 */

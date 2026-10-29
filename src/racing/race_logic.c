@@ -1169,7 +1169,6 @@ void func_8028FCBC(void) {
         case 7:
             break;
     }
-    check_save_state();
 }
 
 UNUSED void func_80290314(void) {

@@ -80,6 +80,38 @@ extern StaffGhost* d_mario_raceway_staff_ghost;
 extern StaffGhost* d_royal_raceway_staff_ghost;
 extern StaffGhost* d_luigi_raceway_staff_ghost;
 
+//These functions save/restore the state of Ghost Replays
+//Same concept as featured in save_state.c, load/restore to RAM copies.
+void SaveStateGetReplayCursor(SaveStateReplayCursor *out) {
+    out->playerButtonsPrev = sPlayerGhostButtonsPrev;
+    out->playerFramesRemaining = sPlayerGhostFramesRemaining;
+    out->playerReplayIdx = sPlayerGhostReplayIdx;
+    out->courseButtonsPrev = sButtonsPrevCourseGhost;
+    out->courseFramesRemaining = sCourseGhostFramesRemaining;
+    out->courseReplayIdx = sCourseGhostReplayIdx;
+    out->postTTButtonsPrev = sPostTTButtonsPrev;
+    out->postTTFramesRemaining = sPostTTFramesRemaining;
+    out->postTTReplayIdx = sPostTTReplayIdx;
+    out->replayBuffer = D_802BFB80;
+    out->playerInputIdx = sPlayerInputIdx;
+    out->replayCannotSave = gPostTimeTrialReplayCannotSave;
+}
+
+void SaveStateSetReplayCursor(SaveStateReplayCursor *in) {
+    sPlayerGhostButtonsPrev = in->playerButtonsPrev;
+    sPlayerGhostFramesRemaining = in->playerFramesRemaining;
+    sPlayerGhostReplayIdx = in->playerReplayIdx;
+    sButtonsPrevCourseGhost = in->courseButtonsPrev;
+    sCourseGhostFramesRemaining = in->courseFramesRemaining;
+    sCourseGhostReplayIdx = in->courseReplayIdx;
+    sPostTTButtonsPrev = in->postTTButtonsPrev;
+    sPostTTFramesRemaining = in->postTTFramesRemaining;
+    sPostTTReplayIdx = in->postTTReplayIdx;
+    D_802BFB80 = in->replayBuffer;
+    sPlayerInputIdx = in->playerInputIdx;
+    gPostTimeTrialReplayCannotSave = in->replayCannotSave;
+}
+
 void load_course_ghost(void) {
     sCourseGhostReplay = (u32*) &D_802BFB80.arraySize8[0][2][3];
     osInvalDCache(&sCourseGhostReplay[0], 0x4000);
