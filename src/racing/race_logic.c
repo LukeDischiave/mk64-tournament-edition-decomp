@@ -893,7 +893,7 @@ void func_8028F970(void) {
                 controller->buttonPressed = 0;
                 func_800C9F90(1);
                 gPauseTriggered = 1;
-                sPauseHoldCounter[i] = -60;
+                sPauseHoldCounter[i] = -10000;
                 return;
             }
         }
